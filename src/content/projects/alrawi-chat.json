@@ -1,0 +1,135 @@
+{
+  "id": 550,
+  "title": "Alrawi Chat",
+  "subtitle": "Local Network Messaging Application via TCP/IP Sockets",
+  "isFeatured": true,
+  "description": "Alrawi Chat is a desktop messaging application built with C# and Windows Forms that enables real-time communication between users on the same local network (WiFi). It is built on a server-client architecture using TCP/IP sockets, with multi-threading for concurrency and UI responsiveness.",
+  "longDescription": "Alrawi Chat is a C# Windows Forms application that allows multiple users on the same local network to communicate in real time. The app can run in either Server or Client mode. The server binds to a local IP and port, accepts multiple simultaneous client connections, and broadcasts messages to all connected users.\n\nEach client connection is handled on its own dedicated thread, ensuring that one client's activity does not block others. A fixed-size header protocol is used to delimit messages over the TCP stream, ensuring reliable message framing. All data is encoded in UTF-8.\n\nThe Haversine-inspired approach to thread safety uses lock() on shared client lists to prevent race conditions. UI updates from background threads are safely marshalled to the main UI thread using Control.Invoke. The app also handles graceful disconnection via a special DISCONNECT_MESSAGE signal, and cleans up all resources on form close.",
+  "category": ["Desktop", "Networking"],
+  "tags": [
+    "C#",
+    "Windows Forms",
+    "TCP/IP",
+    "Socket Programming",
+    "Multithreading",
+    "Client-Server",
+    "Local Network",
+    ".NET"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835135/439212079-389bc4bf-7847-44a3-a379-65fd5516940d_hsbdxx.png",
+  "techLogos": ["csharp", "dotnet", "windows"],
+  "date": "2025",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Desktop & Network Developer",
+  "demoLink": "https://github.com/yasir237/AlrawiChat/releases/tag/AlrawiChat",
+  "githubLink": "https://github.com/yasir237/AlrawiChat",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "C# & Windows Forms",
+      "description": "Core language and UI framework for building the desktop application."
+    },
+    {
+      "name": "System.Net.Sockets",
+      "description": "TCP socket programming for reliable, ordered, bidirectional communication over the local network."
+    },
+    {
+      "name": "System.Threading",
+      "description": "Multi-threading for concurrent client handling and non-blocking UI responsiveness."
+    },
+    {
+      "name": "NetworkStream & UTF-8 Encoding",
+      "description": "Stream-based data transfer with a fixed-size header protocol for reliable message framing."
+    },
+    {
+      "name": "TCP Protocol",
+      "description": "Connection-oriented, reliable, and ordered transport protocol ensuring no messages are lost or reordered."
+    },
+    {
+      "name": "Control.Invoke (UI Marshalling)",
+      "description": "Safe UI updates from background threads using InvokeRequired and Invoke patterns."
+    },
+    {
+      "name": "Lock-based Synchronization",
+      "description": "Prevents race conditions on shared client lists using C# lock() statements."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "Real-Time Local Network Chat with Server-Client Architecture",
+      "content": "Alrawi Chat is a desktop messaging application that allows users on the same WiFi network to communicate in real time without any internet connection or third-party service.\n\nThe application can be launched in two modes: **Server** or **Client**. The server binds to the machine's local IP address and a specified port, then listens for incoming connections. Clients connect by entering the server's IP address. Once connected, all participants can exchange messages instantly.\n\nMessages are broadcast by the server to all connected clients except the sender. Each client is handled on its own thread, so multiple users can communicate simultaneously without blocking one another. A special `!DISCONNECT` message signal is used to gracefully end a session, and all resources are properly cleaned up when the application closes."
+    },
+    {
+      "type": 1,
+      "heading": "Application Interface",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835171/437022626-e05c3b70-e825-4eca-8ebd-f707cc9a756e_gwbpid.png",
+      "caption": "Alrawi Chat — server and client interface running on local network"
+    },
+    {
+      "type": 0,
+      "heading": "Architecture & Threading Model",
+      "subheading": "Why Threads Are Essential in a Network Chat App",
+      "content": "Windows Forms applications run all UI events on a single main thread. Network operations like `Socket.Accept()` and `NetworkStream.Read()` are blocking by nature — they halt the thread until data arrives. If these were called on the main UI thread, the entire application would freeze.\n\nAlrawi Chat solves this with a dedicated threading model:\n\n**`listenThread`** — Runs `AcceptClients()` on the server side, waiting for new connections without blocking the UI.\n\n**Per-client `clientThread`** — Each accepted client gets its own thread running `HandleClient()`, so multiple clients are served concurrently and independently.\n\n**`messageThread`** — On the client side, this thread runs `ReceiveMessages()`, continuously reading incoming data from the server stream.\n\nAll UI updates from these background threads are safely routed to the main UI thread using `Control.InvokeRequired` and `Control.Invoke`, preventing cross-thread exceptions.\n\nShared resources (the `clients` and `addrs` lists) are protected with `lock(clients)` to prevent race conditions when multiple threads access or modify them simultaneously."
+    },
+    {
+      "type": 4,
+      "heading": "Core Implementation",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "language": "csharp",
+          "label": "Start Server",
+          "code": "private void StartServer(string ip, int port)\n{\n    IPEndPoint endPoint = new IPEndPoint(IPAddress.Parse(ip), port);\n    server = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);\n    server.Bind(endPoint);\n    server.Listen(5);\n\n    listenThread = new Thread(AcceptClients);\n    listenThread.IsBackground = true;\n    listenThread.Start();\n\n    AppendToChatHistory($\"[SYSTEM] Server started on {ip}:{port}\");\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Accept Clients",
+          "code": "private void AcceptClients()\n{\n    while (true)\n    {\n        Socket clientSocket = server.Accept();\n        IPEndPoint clientEndPoint = (IPEndPoint)clientSocket.RemoteEndPoint;\n\n        lock (clients)\n        {\n            clients.Add(clientSocket);\n            addrs.Add(clientEndPoint);\n        }\n\n        Thread clientThread = new Thread(() => HandleClient(clientSocket, clientEndPoint));\n        clientThread.IsBackground = true;\n        clientThread.Start();\n\n        AppendToChatHistory($\"[SYSTEM] New client connected: {clientEndPoint}\");\n    }\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Broadcast",
+          "code": "private void Broadcast(IPEndPoint senderEndPoint, string message)\n{\n    lock (clients)\n    {\n        for (int i = 0; i < clients.Count; i++)\n        {\n            if (addrs[i].Equals(senderEndPoint)) continue;\n\n            try\n            {\n                byte[] data = Encoding.UTF8.GetBytes(message);\n                clients[i].Send(data);\n            }\n            catch { }\n        }\n    }\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Connect to Server",
+          "code": "private bool ConnectToServer(string serverIP, int port)\n{\n    try\n    {\n        client = new TcpClient();\n        client.Connect(serverIP, port);\n        clientStream = client.GetStream();\n\n        messageThread = new Thread(ReceiveMessages);\n        messageThread.IsBackground = true;\n        messageThread.Start();\n\n        return true;\n    }\n    catch (Exception ex)\n    {\n        MessageBox.Show($\"Connection failed: {ex.Message}\");\n        return false;\n    }\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "UI Thread Safety",
+          "code": "private void AppendToChatHistory(string message)\n{\n    if (this.InvokeRequired)\n    {\n        this.Invoke(new Action<string>(AppendToChatHistory), message);\n        return;\n    }\n\n    // Safe to update UI here\n    RichTextBox chatBox = currentPanel.Tag as RichTextBox;\n    if (chatBox != null)\n    {\n        chatBox.AppendText(message + Environment.NewLine);\n        chatBox.ScrollToCaret();\n    }\n}"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "TCP vs UDP — Why TCP Was Chosen",
+      "content": "The transport protocol choice is fundamental to any networked application. Alrawi Chat uses **TCP (Transmission Control Protocol)** for the following reasons:\n\n**Reliability** — TCP guarantees delivery. Every packet is acknowledged by the receiver, and lost packets are automatically retransmitted. In a chat application, losing a message is unacceptable.\n\n**Ordering** — TCP ensures packets arrive in the exact order they were sent. This is critical for chat — messages must appear in the correct sequence.\n\n**Connection-Oriented** — A proper handshake is performed before any data is exchanged, ensuring both sides are ready to communicate.\n\n**UDP**, by contrast, is connectionless and does not guarantee delivery or ordering. It is faster and lower-latency, making it suitable for real-time applications like video streaming, VoIP, or online games — where a dropped frame is preferable to a delayed one. For text messaging, TCP's guarantees are the right trade-off."
+    },
+    {
+      "type": 0,
+      "heading": "Message Framing Protocol",
+      "content": "TCP is a stream-based protocol — it does not inherently know where one message ends and the next begins. Without a framing strategy, the receiver may read partial messages or combine multiple messages into one.\n\nAlrawi Chat solves this with a **fixed-size header** approach:\n\n1. Before sending a message, the sender calculates the byte length of the message.\n2. This length is encoded as a string, padded to exactly **64 bytes** (`HEADER = 64`).\n3. The header is sent first, followed by the actual message bytes.\n4. The receiver reads exactly 64 bytes first, parses the message length, then reads exactly that many bytes for the message body.\n\nThis simple protocol ensures reliable message boundary detection over the TCP stream, regardless of how the network splits or combines packets."
+    },
+    {
+      "type": 0,
+      "heading": "Key Features",
+      "content": "**🖧 Server & Client Modes** — The same application can act as either a server or a client, selectable at startup.\n\n**📍 Local IP Discovery** — The server automatically detects and displays its local IPv4 address so clients can connect easily.\n\n**💬 Real-Time Messaging** — Messages are delivered instantly to all connected participants.\n\n**👥 Multi-Client Support** — The server handles multiple simultaneous client connections, each on its own dedicated thread.\n\n**🔒 Thread-Safe Shared State** — All access to shared client lists is protected with `lock()` to prevent race conditions.\n\n**🎨 Styled Chat History** — Messages are color-coded by type: system messages in gray, server messages in blue, errors in red, and user messages in teal.\n\n**🧹 Graceful Disconnection** — A `!DISCONNECT` signal ensures clean session termination and proper resource cleanup.\n\n**🏷️ Username Support** — Each user is identified by their machine name or a custom username."
+    },
+    {
+  "type": 0,
+  "heading": "Installation & Setup",
+  "subheading": "How to run Alrawi Chat on your local network",
+  "content": "**Requirements**\n- Windows operating system\n- Two or more computers connected to the same WiFi network\n\n**Option 1 — Download the Release (Recommended)**\n1. Go to the [Releases page](https://github.com/yasir237/AlrawiChat/releases/tag/AlrawiChat) and download `AlrawiChat.zip`.\n2. Extract the zip file on each computer.\n3. Run `AlrawiChat.exe` on all machines.\n\n**Option 2 — Build from Source**\n1. Clone the repository:\n```\ngit clone https://github.com/yasir237/AlrawiChat\n```\n2. Open the solution in Visual Studio.\n3. Build and run the project.\n\n**Starting a Session**\n1. On one computer, click **Start Server** — the app will display the local IP address.\n2. On other computers, enter that IP address and click **Connect**.\n3. Start chatting instantly over the local network.\n\n> **Note:** All devices must be on the same WiFi network. Internet connection is not required and not supported in this version."
+}
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

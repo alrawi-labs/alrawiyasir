@@ -1,0 +1,146 @@
+{
+  "id": 170,
+  "title": "Tejreed",
+  "subtitle": "AI-Powered Creative Tools Platform — Music Remover, Transcription & More",
+  "isFeatured": true,
+  "description": "Tejreed is a SaaS platform built with Next.js and FastAPI that brings AI-powered creative tools to everyone. The first live tool — Music Remover — uses Meta's HTDemucs model to separate vocals from any video or audio file with crystal clarity. Built with a subscription-based credits system, multi-language support, and a modern animated UI.",
+  "longDescription": "Tejreed is an AI creative tools platform designed to make professional-grade audio and visual processing accessible to everyone through a clean, intuitive web interface.\n\nThe platform is built as a full-stack SaaS application: a Next.js frontend with Framer Motion animations, connected to a Python FastAPI backend that handles file processing, AI model inference, and user management.\n\nThe first and currently live tool — Music Remover — leverages Meta's HTDemucs deep learning model to perform stem separation: given a video or audio file, the AI isolates vocals from the background music track, producing high-quality separated audio in seconds. The backend processes files through FFmpeg for format handling before and after the model inference.\n\nThe platform includes a full user system with Supabase authentication, a credits-based subscription model for tool usage, a pricing page, and multi-language support with a Turkish/English toggle. Additional tools — Transcript, Background Remover, Image Enhancer, and Noise Reducer — are under development and will be released in upcoming versions.",
+  "category": ["Web", "AI / ML"],
+  "tags": [
+    "Next.js",
+    "TypeScript",
+    "Python",
+    "FastAPI",
+    "HTDemucs",
+    "Demucs",
+    "PyTorch",
+    "FFmpeg",
+    "Supabase",
+    "SaaS",
+    "AI Tools",
+    "Audio Processing",
+    "Framer Motion",
+    "Stem Separation"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836988/585137294-312ff09c-1ade-42ba-899b-508759eec763_ep7jgh.png",
+  "techLogos": ["nextjs", "python", "fastapi", "pytorch", "supabase"],
+  "date": "2025",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Full Stack Developer",
+  "demoLink": "https://tejreed.vercel.app",
+  "githubLink": null,
+  "buy": null,
+  "technologies": [
+    {
+      "name": "Next.js",
+      "description": "React-based frontend framework used for the platform UI, with server-side rendering support, file-based routing, and optimized production builds."
+    },
+    {
+      "name": "Framer Motion",
+      "description": "Animation library used throughout the UI for smooth page transitions, micro-interactions, and entrance animations."
+    },
+    {
+      "name": "FastAPI (Python)",
+      "description": "High-performance Python web framework used to build the backend API that handles file uploads, AI processing queues, and user management."
+    },
+    {
+      "name": "HTDemucs (Meta AI)",
+      "description": "Meta's state-of-the-art hybrid transformer-based music source separation model. Used in the Music Remover tool to isolate vocals from audio and video files."
+    },
+    {
+      "name": "FFmpeg",
+      "description": "Industry-standard multimedia processing library used to extract audio from video files, convert formats, and prepare files for model input and output."
+    },
+    {
+      "name": "Supabase",
+      "description": "Backend-as-a-service used for user authentication, database, and session management across the platform."
+    },
+    {
+      "name": "Credits System",
+      "description": "Subscription-based usage model where users purchase credits to use AI tools. Each tool operation consumes a defined number of credits."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "One platform. Multiple AI tools. Zero complexity.",
+      "content": "Tejreed is an AI creative tools platform that turns complex audio and visual AI models into simple, one-click web tools. Instead of running Python scripts locally or using expensive desktop software, users upload a file, click a button, and get a processed result in seconds.\n\nThe platform is live at [tejreed.vercel.app](https://tejreed.vercel.app) with the first tool — **Music Remover** — fully operational. More tools are actively under development."
+    },
+    {
+      "type": 1,
+      "heading": "Platform Homepage",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777837019/585136086-9fff324a-a4aa-4549-9490-9ee4ec98da80_ce0lqi.png",
+      "caption": "Tejreed — AI creative tools platform landing page with tool cards and navigation"
+    },
+    {
+      "type": 0,
+      "heading": "Music Remover",
+      "subheading": "Separate vocals from any video or audio — instantly",
+      "content": "The Music Remover is the first live tool on Tejreed. It accepts any video or audio file and uses Meta's **HTDemucs** model to perform stem separation — extracting the vocal track from the background music.\n\nHTDemucs is a hybrid transformer-convolutional architecture trained on thousands of music tracks. It processes audio in the frequency domain using both spectral and waveform representations simultaneously, producing separation quality that is significantly better than older methods like Open-Unmix or the original Demucs.\n\nThe processing pipeline:\n1. User uploads a file (video or audio)\n2. FFmpeg extracts and normalizes the audio track\n3. HTDemucs runs inference to separate vocals and accompaniment\n4. The isolated vocal track is returned as a downloadable file"
+    },
+    {
+      "type": 1,
+      "heading": "Music Remover Interface",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777837029/585136045-7916ebcf-b430-45d6-a383-12b86e03408f_sorvvp.png",
+      "caption": "Music Remover tool — file upload, processing state, and result download"
+    },
+    {
+      "type": 0,
+      "heading": "Technical Architecture",
+      "subheading": "Full-stack SaaS: React frontend + FastAPI backend + AI models",
+      "content": "**Frontend — Next.js**\nThe frontend is built with Next.js, providing file-based routing, server-side rendering capabilities, and optimized production builds. Framer Motion handles all animations. The UI includes tool cards, user authentication flows, a pricing page, and per-tool processing interfaces.\n\n**Backend — Python + FastAPI**\nThe backend is a FastAPI application running in a Python virtual environment (Python 3.11). It handles file upload endpoints, job queuing, AI model inference, and file output delivery. The backend uses FFmpeg for audio/video preprocessing and HTDemucs for stem separation.\n\n**AI Model — HTDemucs**\nMeta's HTDemucs 4-stem pretrained model is loaded at backend startup. The `htdemucs` model variant is used for 2-stem separation (vocals + accompaniment). Processed outputs are stored temporarily in an output directory and served to the frontend.\n\n**Auth & Database — Supabase**\nUser accounts, sessions, and credits balances are managed through Supabase. The frontend communicates with Supabase directly for auth flows, and the backend validates sessions for protected API endpoints."
+    },
+    {
+      "type": 0,
+      "heading": "Platform Features",
+      "content": "**🎵 Music Remover (Live)** — Separate vocals from any audio or video file using the HTDemucs AI model. Crystal-clear output in seconds.\n\n**📝 Transcript (Coming Soon)** — Automatically extract text from audio and video files.\n\n**🖼️ Background Remover (Coming Soon)** — Remove image backgrounds with a single click.\n\n**✨ Image Enhancer (Coming Soon)** — Upscale and sharpen low-resolution photos using AI.\n\n**🔇 Noise Reducer (Coming Soon)** — Remove background noise from audio recordings.\n\n**🔐 User Authentication** — Sign up, log in, and manage your account via Supabase.\n\n**💳 Credits System** — Purchase credits to use AI tools. Usage is tracked per operation.\n\n**🌐 Multi-language** — Full Turkish and English support with a language toggle in the navigation.\n\n**📱 Responsive Design** — Optimized for desktop and mobile use."
+    },
+    {
+      "type": 0,
+      "heading": "Roadmap",
+      "content": "Tejreed is actively being developed. The planned roadmap includes:\n\n- **Transcript tool** — Audio/video to text with speaker detection\n- **Background Remover** — One-click image background removal\n- **Image Enhancer** — AI upscaling and sharpening\n- **Noise Reducer** — Background noise elimination for audio\n- **Batch processing** — Process multiple files at once\n- **API access** — Developer API for programmatic access to all tools\n- **Mobile app** — Native iOS and Android clients"
+    },
+    {
+      "type": 0,
+      "heading": "Project Info",
+      "content": "**Live at:** [tejreed.vercel.app](https://tejreed.vercel.app)\n\n**Stack:** Next.js + FastAPI + HTDemucs + FFmpeg + Supabase\n\n**Type:** SaaS — AI Creative Tools Platform\n\n**Developer:** Yasir Ayad Hamed AL RAWEE"
+    }
+  ],
+  "challenges": [
+    "Serving large AI model inference (HTDemucs) from a web API with acceptable response times",
+    "Handling large file uploads and processing pipelines without blocking the API server",
+    "Building a credits and subscription system that accurately tracks usage per tool operation",
+    "Integrating FFmpeg video preprocessing with the PyTorch model pipeline"
+  ],
+  "solutions": [
+    "HTDemucs model is loaded once at backend startup to eliminate per-request cold start time",
+    "File processing runs asynchronously with status polling from the frontend",
+    "Supabase handles credits balance as a real-time database field updated after each successful job",
+    "FFmpeg python bindings handle all format conversion before and after model inference"
+  ],
+  "results": [
+    {
+      "metric": "Tools",
+      "value": "1 Live",
+      "description": "Music Remover is fully operational; 4 more tools in active development"
+    },
+    {
+      "metric": "Model",
+      "value": "HTDemucs",
+      "description": "Meta AI's state-of-the-art hybrid transformer model for stem separation"
+    },
+    {
+      "metric": "Stack",
+      "value": "Full-Stack",
+      "description": "React + FastAPI + PyTorch — end-to-end from UI to AI inference"
+    },
+    {
+      "metric": "Platform",
+      "value": "SaaS",
+      "description": "Credits-based subscription model with user accounts and multi-language support"
+    }
+  ],
+  "testimonial": null
+}

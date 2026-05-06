@@ -1,0 +1,168 @@
+{
+  "id": 850,
+  "title": "Rawi Rush",
+  "subtitle": "Traffic Dodge Car Racing Game — First Year CS Project",
+  "isFeatured": false,
+  "description": "Rawi Rush is a C# and Windows Forms car racing game developed in 2021 during the first year of computer engineering. Players dodge oncoming traffic across 5 progressive difficulty levels, with keyboard or mouse controls, two car types, sound effects, and a persistent high score system.",
+  "longDescription": "Rawi Rush is a classic traffic dodge racing game built with C# and Windows Forms. The player controls a car moving down a scrolling road, avoiding randomly generated oncoming vehicles for as long as possible. The further you travel, the higher your score — measured in meters.\n\nThe game features two control modes: keyboard (WASD or arrow keys) and mouse (the car follows the cursor position). Players can also choose between two car type sets — race cars or classic cars — each with distinct visuals per level.\n\nThe game progresses through 5 levels. As the player advances, the speed increases, obstacles appear more frequently, road line animations accelerate, and the player's car model changes to reflect the current level. Each level transition is triggered by distance milestones.\n\nCollision detection uses a center-point distance formula with bounding box dimensions to accurately determine when the player's car overlaps with an obstacle. On collision, a crash sound plays, the game ends, and the Game Over screen appears. If the current run sets a new record, it is saved persistently using Windows application settings.\n\nThe project was originally designed in 2021 but not published due to copyright concerns over the original car images. The assets were later replaced and the project was released to GitHub in 2025.",
+  "category": ["Desktop", "Game"],
+  "tags": [
+    "C#",
+    "Windows Forms",
+    "Game Development",
+    "Guna UI",
+    ".NET",
+    "Car Racing",
+    "First Year Project",
+    "2021"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836333/440945293-c2ec97d8-3bc7-4d7a-8d02-edc877ae73fb_zs6cre.png",
+  "techLogos": ["csharp", "dotnet", "windows"],
+  "date": "2021",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Game Developer",
+  "demoLink": "https://github.com/yasir237/rawi-rush/releases/tag/RawiRushGame",
+  "githubLink": "https://github.com/yasir237/rawi-rush",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "C# & Windows Forms",
+      "description": "Core language and UI framework used to build the game, manage forms, timers, and event handling."
+    },
+    {
+      "name": "Guna UI 2",
+      "description": "Third-party .NET UI library used for modern, styled interface components in the menu screens."
+    },
+    {
+      "name": "Windows Media Player (AxWMPLib)",
+      "description": "Used to play background music and sound effects including the crash audio on collision."
+    },
+    {
+      "name": "Application Settings (Settings1)",
+      "description": "Persistent high score storage using .NET application settings — the record survives app restarts."
+    },
+    {
+      "name": "Timer-Based Game Loop",
+      "description": "Multiple System.Windows.Forms.Timer instances drive road line animation, obstacle spawning, and collision checks."
+    },
+    {
+      "name": "Center-Point Collision Detection",
+      "description": "Custom AABB-style collision formula using center distances and bounding box dimensions for accurate hit detection."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "A First-Year Game Built from Scratch",
+      "content": "Rawi Rush is a classic traffic dodge racing game developed in 2021 during the first year of computer engineering studies. The objective is simple: control your car, avoid oncoming traffic, and travel as far as possible.\n\nThe game was originally designed in 2021 but not published at the time due to copyright concerns over the car images used. The assets were replaced with original graphics and the project was released to GitHub in 2025.\n\nBuilt entirely with C# and Windows Forms — no game engine, no physics library — the game implements its own game loop using timers, its own collision detection formula, and its own level progression system."
+    },
+    {
+      "type": 1,
+      "heading": "Main Menu",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836336/440835565-f115837c-5ab7-4181-b5b9-964d521a5785_tnpgua.png",
+      "caption": "Rawi Rush main menu — control selection, car type, and high score display"
+    },
+    {
+      "type": 0,
+      "heading": "Main Menu",
+      "subheading": "Game configuration before the race begins",
+      "content": "The main menu is the starting point of the game. It displays the player's all-time high score in meters and offers the following options before starting:\n\n**CONTROL panel** — Choose how to control the car:\n- **Keyboard**: Move using WASD keys or arrow keys\n- **Mouse**: The car follows the mouse cursor position in real time\n\n**CAR TYPE panel** — Choose the visual set for the game:\n- **RACE CAR**: Modern race car designs, changing each level\n- **CLASSIC CAR**: Retro classic car designs, changing each level\n\n**Start** — Hides the menu and launches the game screen.\n**Exit** — Closes the application. Also triggered by the ESC key."
+    },
+    {
+      "type": 0,
+      "heading": "Gameplay",
+      "subheading": "Dodge traffic and survive as long as possible",
+      "content": "The game screen shows the scrolling road with the player's car at the bottom. Obstacle vehicles spawn randomly at the top and move downward. The player must steer left and right to avoid them.\n\nThe HUD displays:\n- **Score** — All-time personal best in meters\n- **Level** — Current difficulty level (1–5)\n- **Road** — Distance traveled in the current run\n- **Speed** — Current vehicle speed\n\nAs the player travels further, the game automatically advances through levels — increasing speed, decreasing obstacle spawn intervals, and changing the player's car model."
+    },
+    {
+      "type": 1,
+      "heading": "Gameplay — Race Car Mode",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836347/440835567-58ddd7b1-d0ce-4f34-99f3-9bc95f854a6a_mta4bi.png",
+      "caption": "In-game view with race car selected — HUD shows level, road, speed, and score"
+    },
+    {
+      "type": 1,
+      "heading": "Gameplay — Classic Car Mode",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836349/440835568-52a5731f-b0b6-4af5-b4e2-901ae23130a6_txziqp.png",
+      "caption": "In-game view with classic car selected — different vehicle visuals, same mechanics"
+    },
+    {
+      "type": 0,
+      "heading": "Level System",
+      "subheading": "5 levels of increasing difficulty",
+      "content": "The game progresses through 5 levels based on distance traveled. Each level transition triggers multiple simultaneous changes:\n\n- **Speed increases** — The player car and obstacles move faster\n- **Obstacle frequency increases** — The ChoseTimer interval decreases, spawning more vehicles\n- **Road line speed increases** — The LinesTimer interval decreases, giving a stronger sense of acceleration\n- **Player car model changes** — The car graphic updates to reflect the new level\n\nLevel boundaries are defined by distance milestones (e.g., 0–125m, 125–350m, 350–600m), and each level has its own speed cap and timer settings."
+    },
+    {
+      "type": 0,
+      "heading": "Collision Detection",
+      "subheading": "Center-point AABB formula",
+      "content": "Collision between the player's car and obstacle vehicles is checked using a center-point distance approach. For each obstacle, the formula calculates:\n\n1. The absolute horizontal distance between the two cars' center points\n2. The absolute vertical distance between the two cars' center points\n3. The sum of the two cars' half-widths (the minimum horizontal clearance)\n4. The sum of the two cars' half-heights (the minimum vertical clearance)\n\nA collision is detected when both the horizontal and vertical distances are smaller than their respective combined half-dimensions — meaning the bounding boxes overlap. When this condition is true, the crash sound plays, timers stop, the high score is updated if necessary, and the Game Over screen opens."
+    },
+    {
+      "type": 4,
+      "heading": "Source Code",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "language": "csharp",
+          "label": "Collision Detection",
+          "code": "float AbsoluteX = Math.Abs(\n    (RedCar.Left + (RedCar.Width / 2)) -\n    (RndCars[i].Cars.Left + (RndCars[i].Cars.Width / 2))\n);\nfloat AbsoluteY = Math.Abs(\n    (RedCar.Top + (RedCar.Height / 2)) -\n    (RndCars[i].Cars.Top + (RndCars[i].Cars.Height / 2))\n);\nfloat DifWidth  = (RedCar.Width / 2) + (RndCars[i].Cars.Width / 2);\nfloat DifHeight = (RedCar.Height / 2) + (RndCars[i].Cars.Height / 2);\n\nif (DifWidth > AbsoluteX && DifHeight > AbsoluteY)\n{\n    Movement = false;\n    axWindowsMediaPlayer1.URL = @\"music/crash.mp3\";\n    axWindowsMediaPlayer1.Ctlcontrols.play();\n    LinesTimer.Enabled = false;\n    ChoseTimer.Enabled = false;\n    if (Road1 > Settings1.Default.Score)\n    {\n        Settings1.Default.Score = Road1;\n        Settings1.Default.Save();\n        Score0.Text = Settings1.Default.Score.ToString();\n    }\n    Form3 frm3 = new Form3();\n    frm3.ShowDialog();\n    this.Close();\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Level System",
+          "code": "void Lavel()\n{\n    // Level 2\n    if (Road1 > 125 && Road1 < 350)\n    {\n        LavelNum.Text = \"2\";\n        if (speed1 < 100) speed1++;\n        LinesTimer.Interval = 125;\n        ChoseTimer.Interval = 100;\n        move = 16;\n        RedCar.Image = frm1.RaceType.Checked ? BlueCar2.Image : BlackCar2.Image;\n    }\n    // Level 3\n    else if (Road1 > 350 && Road1 < 600)\n    {\n        LavelNum.Text = \"3\";\n        if (speed1 < 125) speed1++;\n        LinesTimer.Interval = 100;\n        ChoseTimer.Interval = 75;\n        move = 18;\n        RedCar.Image = frm1.RaceType.Checked ? WhiteCar3.Image : BlackCar3.Image;\n    }\n    // ... higher levels follow the same pattern\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Random Obstacle Cars",
+          "code": "void CarsShow(PictureBox pb)\n{\n    int r = rnd.Next(0, 4);\n    switch (r)\n    {\n        case 0: pb.Image = Properties.Resources.car0; break;\n        case 1: pb.Image = Properties.Resources.car1; break;\n        case 2: pb.Image = Properties.Resources.car2; break;\n        case 3: pb.Image = Properties.Resources.car3; break;\n    }\n    pb.SizeMode = PictureBoxSizeMode.StretchImage;\n}\n\nclass CarChoos\n{\n    public bool ObstacleCar = false;\n    public PictureBox Cars;\n    public bool time = false;\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Main Menu (Form1)",
+          "code": "private void Form1_Load(object sender, EventArgs e)\n{\n    SCORE.Text = Settings1.Default.Score.ToString() + \" M\";\n}\n\nprivate void START_Click(object sender, EventArgs e)\n{\n    this.Hide();\n    Form2 frm2 = new Form2();\n    frm2.Show();\n}\n\nprivate void Form1_KeyDown(object sender, KeyEventArgs e)\n{\n    if (e.KeyCode == Keys.Escape)\n        Application.Exit();\n}"
+        },
+        {
+          "language": "csharp",
+          "label": "Game Over (Form3)",
+          "code": "private void Form3_Load(object sender, EventArgs e)\n{\n    Form2 frm2 = Application.OpenForms[\"Form2\"] as Form2;\n    RoadEd.Text = \"Road :\" + frm2.Road0.Text;\n    ScoreEd.Text = \"Score : \" + Settings1.Default.Score.ToString() + \" m\";\n\n    // Highlight new record in red\n    if (Settings1.Default.Score <= Convert.ToInt32(\n        frm2.Road0.Text.Substring(0, frm2.Road0.Text.Length - 1)))\n    {\n        ScoreEd.BackgroundImage = RedLine.Image;\n        ScoreEd.ForeColor = Color.White;\n    }\n}\n\nprivate void play_Click(object sender, EventArgs e)\n{\n    Form2 frm2 = new Form2();\n    this.Close();\n    frm2.Show();\n}\n\nprivate void Exit_Click(object sender, EventArgs e)\n{\n    Form1 frm1 = new Form1();\n    this.Close();\n    frm1.Show();\n}"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "Game Over Screen",
+      "subheading": "Score comparison and replay options",
+      "content": "When the player's car collides with an obstacle, the game stops and the Game Over screen opens. It displays:\n\n- **Road** — Distance traveled in the current run\n- **Score** — The all-time personal best\n\nIf the current run sets a new record, the Score field is highlighted with a red background and white text to make the achievement visually clear.\n\nTwo buttons are available:\n- **PLAY** — Starts a new game immediately with the same car type and control settings\n- **HOME** — Returns to the main menu"
+    },
+    {
+      "type": 1,
+      "heading": "Game Over Screen",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836435/440835566-b7e1e344-2e6f-4419-8c59-43a4694957fb_cetpue.png",
+      "caption": "Game Over screen — road distance, all-time score, and new record highlight"
+    },
+    {
+      "type": 0,
+      "heading": "Features",
+      "content": "**🎮 Two Control Modes** — Keyboard (WASD / arrow keys) or mouse — selected before the game starts.\n\n**🚗 Two Car Type Sets** — Race cars or classic cars, each with distinct models per level.\n\n**📈 5 Progressive Levels** — Each level increases speed, obstacle frequency, and changes the player car model.\n\n**🏆 Persistent High Score** — Best distance is saved using .NET application settings and survives app restarts.\n\n**🔴 New Record Highlight** — The Game Over screen visually highlights when a new personal best is set.\n\n**🔊 Sound Effects & Music** — Crash sound on collision, background audio during gameplay via Windows Media Player.\n\n**🔀 Random Obstacle Generation** — Four different obstacle car designs spawned randomly at varying positions.\n\n**🔁 Quick Replay** — The PLAY button on the Game Over screen restarts instantly with the same settings."
+    },
+    {
+      "type": 0,
+      "heading": "Planned Features",
+      "content": "Features planned for future versions:\n\n- Multiplayer mode\n- Different road and environment designs\n- More car types\n- Power-ups and special abilities\n- Difficulty selection (Easy, Medium, Hard)"
+    },
+    {
+      "type": 0,
+      "heading": "Installation",
+      "subheading": "Download and install on Windows",
+      "content": "**Option 1 — Install via Setup (Recommended)**\n1. Go to the [Releases page](https://github.com/yasir237/rawi-rush/releases/tag/RawiRushGame) and download `Rawi Rush Setup.exe`.\n2. Run the installer and follow the setup wizard.\n3. If no desktop shortcut is created, search for **Rawi Rush** in the Windows search bar, or right-click the app and create a shortcut manually.\n\n**Option 2 — Build from Source**\n1. Clone the repository:\n```\ngit clone https://github.com/yasir237/rawi-rush\n```\n2. Open the `.sln` file in Visual Studio.\n3. Restore NuGet packages (Guna UI 2, AxWMPLib).\n4. Build and run.\n\n> Requires Windows. All dependencies are bundled in the installer."
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

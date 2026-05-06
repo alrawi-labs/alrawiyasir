@@ -1,0 +1,151 @@
+{
+    "id": 350,
+    "title": "Hafiyyat",
+    "subtitle": "Image-in-Image Steganography with AES-GCM Encryption",
+    "isFeatured": true,
+    "description": "Hafiyyat is a Flutter mobile application that hides one image inside another using LSB (Least Significant Bit) steganography, reinforced with AES-GCM encryption and SHA-256 key derivation. It supports full-color RGB images and runs all processing in Flutter isolates to keep the UI fully responsive.",
+    "longDescription": "Hafiyyat (Arabic for 'hidden' / 'covert') is a mobile steganography tool built with Flutter. It allows users to invisibly embed one color image inside another using the LSB technique — modifying only the least significant bits of each pixel's RGB channels, making the change imperceptible to the human eye.\n\nBeyond basic steganography, Hafiyyat adds a full AES-GCM encryption layer. Before embedding, the secret image is losslessly compressed to PNG, then encrypted using a key derived from the user's custom passphrase via SHA-256. The first 16 bytes of the hash become the IV, and all 32 bytes become the AES key. If no passphrase is entered, the app defaults to 'melazgirt', ensuring only Hafiyyat itself can decode the image.\n\nExtraction reverses the process: LSB bits are read from the stego image, the data is decrypted with AES-GCM using the same derived key, and the PNG is decoded back into the original image. Wrong keys or corrupted data are caught and reported to the user.\n\nAll heavy operations — encryption, decryption, LSB embedding and extraction — run inside Flutter isolates via the compute() function, keeping the UI fully responsive throughout. The app supports Android Scoped Storage, handles permissions via permission_handler, and saves output images directly to the gallery using media_store_plus.",
+    "category": [
+        "Mobile",
+        "Security"
+    ],
+    "tags": [
+        "Flutter",
+        "Dart",
+        "Steganography",
+        "AES-GCM",
+        "LSB",
+        "Cryptography",
+        "Image Processing",
+        "SHA-256"
+    ],
+    "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835438/449564202-4f92e5c3-ff6f-41c4-b059-e640382df9f3_sn5tvp.png",
+    "techLogos": [
+        "flutter",
+        "dart"
+    ],
+    "date": "2025-05",
+    "duration": "1 month",
+    "teamSize": 1,
+    "role": "Mobile Developer",
+    "demoLink": "https://github.com/yasir237/Hafiyyat/releases/download/v1.3.1/app-release.apk",
+    "githubLink": "https://github.com/yasir237/Hafiyyat",
+    "buy": null,
+    "technologies": [
+        {
+            "name": "Flutter & Dart",
+            "description": "Cross-platform mobile framework used to build the full UI and application logic."
+        },
+        {
+            "name": "LSB Steganography",
+            "description": "Least Significant Bit technique to embed image data into RGB pixel channels invisibly."
+        },
+        {
+            "name": "AES-GCM Encryption",
+            "description": "Authenticated encryption ensuring both confidentiality and data integrity of the hidden image."
+        },
+        {
+            "name": "SHA-256 Key Derivation",
+            "description": "User passphrase is hashed with SHA-256 to produce a deterministic 256-bit AES key and IV."
+        },
+        {
+            "name": "PNG Lossless Compression",
+            "description": "Secret image is compressed to PNG before embedding to maximize the data that fits in the cover image."
+        },
+        {
+            "name": "Flutter Isolates (compute)",
+            "description": "Heavy operations run in isolated threads to keep the UI fully responsive during processing."
+        },
+        {
+            "name": "Android Scoped Storage",
+            "description": "media_store_plus and permission_handler used for compliant gallery access on Android 10+."
+        }
+    ],
+    "contentBlocks": [
+        {
+            "type": 0,
+            "heading": "Project Overview",
+            "subheading": "Hide an Image Inside Another Image — Invisibly and Securely",
+            "content": "Hafiyyat is a mobile steganography application that lets you embed one color photograph inside another, with no visible difference to the naked eye. The cover image looks completely normal — but inside it, a hidden image is stored at the bit level.\n\nThe app combines two independent security layers: **steganography** (hiding the data's very existence) and **AES-GCM encryption** (protecting the data's content mathematically). Even if someone suspects an image contains hidden data and attempts raw LSB extraction, they will only retrieve encrypted, meaningless bytes without the correct passphrase.\n\nBuilt with Flutter, Hafiyyat works on Android and evolved through five versions — from a basic grayscale prototype to a full-color, encrypted, production-ready tool. All processing runs in background Flutter isolates so the app never freezes during heavy operations."
+        },
+        {
+            "type": 1,
+            "heading": "App Interface",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835457/449415886-ac671139-9e84-43df-8b15-060223bd46be_nfhzx3.jpg",
+            "caption": "Hafiyyat — clean and minimal steganography interface"
+        },
+        {
+            "type": 0,
+            "heading": "Key Features",
+            "content": "**🔒 Invisible Security**\nHafiyyat combines steganography and encryption to hide data inside images in a way that is imperceptible to the human eye. Only authorized users with the correct passphrase can access the hidden content.\n\n**🔑 Passphrase Protection**\nUsers can optionally set a custom encryption key. The same key must be provided during extraction — only the person who hid the image can retrieve it. If no key is entered, the app automatically uses `melazgirt` as the default, ensuring that only Hafiyyat itself can decode the image without a passphrase.\n\n**🖼️ Full Color Image Support**\nEarly versions only supported grayscale images. Thanks to the lossless PNG compression pipeline added in v1.2.0, full-color RGB photographs can now be hidden inside other color photographs.\n\n**📱 Mobile-First and Lightweight**\nBuilt entirely with Flutter for mobile devices. Fast, clean, and user-friendly — runs smoothly even on lower-end hardware.\n\n**🔐 Encryption-Reinforced Durability**\nLSB steganography alone has inherent fragility. Hafiyyat addresses this by encrypting the secret image with AES-GCM before embedding, so data security relies not only on obscurity but on mathematical protection.\n\n**📂 Multi-Version Support**\nHafiyyat is an actively developed project with clearly separated versions, each optimized for different needs and capabilities.\n\n**🚀 Easy to Use**\nHide and extract operations each have a dedicated button. No technical knowledge required to use the app effectively."
+        },
+        {
+            "type": 0,
+            "heading": "App Demo Video",
+            "content": "Watch the full walkthrough of Hafiyyat's hide and extract process on YouTube:\n\n[![Watch on YouTube](https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835558/449424737-26fbd9a8-f047-4f64-b605-1dfbbe565d74_niory7.png)](https://youtu.be/92ibbBdBu1U?si=DHxsW89ki2gAXukP)\n\n👉 [Watch on YouTube](https://youtu.be/92ibbBdBu1U?si=DHxsW89ki2gAXukP)"
+        },
+        {
+            "type": 0,
+            "heading": "How It Works — Embedding Process",
+            "subheading": "7 steps from two images to one stego image",
+            "content": "**Step 1 — Select the Cover Image**\nThe user picks a color photograph that will serve as the container. It will look completely unchanged after the process — to any outside observer, it is just a normal photo.\n\n**Step 2 — Select the Secret Image (Host)**\nThe user picks the image to be hidden. This is the payload that will be invisibly embedded inside the cover image and subjected to compression and encryption.\n\n**Step 3 — Enter a Passphrase (Optional)**\nAn optional custom key is requested. If provided, the exact same key will be required during extraction — without it, the hidden image cannot be recovered. If left empty, the app automatically uses `melazgirt` as the default key, ensuring only Hafiyyat can decode the image.\n\n**Step 4 — PNG Lossless Compression**\nThe secret image is encoded in PNG format — a lossless compression method — to reduce its byte size before embedding. This maximizes how efficiently the cover image's pixel capacity is used.\n\n**Step 5 — SHA-256 Key Derivation**\nThe passphrase is never stored or embedded anywhere in the image. Instead, it is hashed with SHA-256 to produce a 256-bit digest. The first 16 bytes of this digest become the AES-GCM Initialization Vector (IV), and all 32 bytes become the AES encryption key. This derivation is deterministic — the same passphrase always produces the same key.\n\n**Step 6 — AES-GCM Encryption**\nThe PNG-compressed secret image bytes are encrypted using AES in Galois/Counter Mode (GCM). GCM is an authenticated encryption mode — it simultaneously encrypts the data and produces a message authentication tag, allowing tampering to be detected during decryption. This step ensures that even successful LSB extraction yields only unreadable ciphertext.\n\n**Step 7 — LSB Embedding**\nThe encrypted bytes are embedded into the cover image by replacing the least significant bit of each pixel's R, G, and B channel values in sequence. A pixel value changing from `11001010` to `11001011` is completely invisible to the human eye. The resulting stego image is visually identical to the original cover photograph."
+        },
+        {
+            "type": 1,
+            "heading": "Embedding Pipeline",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835482/449018354-f5cd0148-f30e-4630-b3f1-d0c2cd7695c5_czifzm.png",
+            "caption": "Visual overview of the full image embedding pipeline"
+        },
+        {
+            "type": 0,
+            "heading": "How It Works — Extraction Process",
+            "subheading": "Reversing the pipeline to recover the hidden image",
+            "content": "**Step 1 — Select the Stego Image**\nThe user picks the image that contains hidden data. To any outside observer it looks like an ordinary photograph — but inside it carries encrypted, compressed image data embedded at the bit level.\n\n**Step 2 — Enter the Passphrase**\nThe same passphrase used during embedding must be entered. If left empty, `melazgirt` is used as the default. An incorrect passphrase will cause AES-GCM authentication to fail, and the user will be shown an error.\n\n**Step 3 — SHA-256 Key Derivation**\nThe passphrase is hashed again with SHA-256 to deterministically reproduce the exact same AES key and IV that were used during encryption. The first 16 bytes become the IV and all 32 bytes become the key.\n\n**Step 4 — LSB Extraction**\nThe least significant bits of each pixel's R, G, and B channels are read in sequence to reconstruct the raw byte array. This produces the encrypted and compressed representation of the secret image.\n\n**Step 5 — AES-GCM Decryption**\nThe extracted bytes are decrypted using the derived key and IV. AES-GCM's authentication tag is verified — if the passphrase is wrong or the stego image has been modified even slightly, this verification fails and the user is shown an error message. No partial or corrupted output is produced.\n\n**Step 6 — PNG Decompression and Image Reconstruction**\nAfter successful decryption, the output is still raw compressed bytes. The PNG decode step converts these back into pixel data, fully reconstructing the original color image. The user can then view the recovered image or save it directly to their device gallery."
+        },
+        {
+            "type": 1,
+            "heading": "Extraction Pipeline",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835497/449018516-999a9015-2a27-4f1d-9d9d-4779b34541b3_owiscz.png",
+            "caption": "Visual overview of the full image extraction pipeline"
+        },
+        {
+            "type": 0,
+            "heading": "Security Design",
+            "subheading": "Two independent and complementary layers of protection",
+            "content": "Hafiyyat's security model is built on two independent layers that work together:\n\n**Layer 1 — Steganography (Security through obscurity)**\nThe hidden image is stored in the LSB positions of the cover image's pixels. The visual change is imperceptible — a pixel value changing by 1 in its lowest bit is invisible to the human eye. Without knowing there is hidden data, an observer has no reason to suspect the cover image at all.\n\n**Layer 2 — AES-GCM Encryption (Mathematical security)**\nEven if an attacker knows steganography was used and successfully extracts the raw LSB bytes, the data is encrypted with AES-GCM. This modern authenticated encryption mode simultaneously encrypts the data and produces a message authentication code (MAC). Any tampering with the stego image — even a single bit flip — causes the authentication tag to fail during decryption, protecting data integrity.\n\n**Key Derivation Design**\nThe passphrase is never stored anywhere in the image or on the device. SHA-256 deterministically transforms it into the encryption key and IV. The same passphrase always produces the same key — making decryption reproducible — while making brute force attacks computationally infeasible.\n\n**Default Key Behavior**\nIf no passphrase is provided, `melazgirt` is used automatically on both ends. This means the image can still only be decoded by someone using Hafiyyat with no passphrase — external tools attempting raw LSB extraction will receive encrypted, meaningless bytes with no way to proceed."
+        },
+        {
+            "type": 0,
+            "heading": "Technical Stack & Packages",
+            "subheading": "Flutter packages and their roles in the application",
+            "content": "The application was built with modularity and maintainability in mind, using well-established open-source Flutter packages:\n\n**`encrypt`** — AES-GCM encryption and decryption. GCM mode was chosen because it provides both encryption and message integrity verification in a single operation.\n\n**`crypto`** — SHA-256 hashing of the user's passphrase to derive a deterministic 256-bit AES key and IV. The same input always produces the same output, which is essential for reproducible decryption.\n\n**`image`** — Pixel-level image processing. Used to read and write RGB channel values during LSB embedding and extraction.\n\n**`image_picker`** — Allows the user to select images from the gallery or camera.\n\n**`media_store_plus`** — Saves generated images directly to the Android gallery, compliant with Scoped Storage rules on Android 10+.\n\n**`archive`** — Compression and decompression of image data for more efficient storage in the cover image.\n\n**`path_provider`** — Access to temporary and persistent directories in the device file system for intermediate file operations.\n\n**`permission_handler`** — Runtime permission management for gallery and file system access.\n\n**`shared_preferences`** — Stores small amounts of persistent user preferences and settings.\n\n**`share_plus`** — Enables sharing of processed images and files from within the app.\n\n**`async`, `vector_math`, `material_color_utilities`** — Supporting roles for performance, color operations, and background computation efficiency."
+        },
+        {
+            "type": 0,
+            "heading": "Performance & Architecture",
+            "subheading": "Flutter isolates for a fully non-blocking experience",
+            "content": "LSB embedding and extraction require iterating over every pixel of potentially large, high-resolution images. AES-GCM encryption and decryption add additional CPU-intensive work on top. Running these operations on the main UI thread would cause the application to freeze entirely for seconds at a time.\n\nHafiyyat addresses this by running all heavy operations inside **Flutter isolates** using the `compute()` function. Isolates in Flutter are fully independent execution environments with their own memory heap — they cannot block or interfere with the main UI thread. While processing runs in the background, the interface remains interactive and displays progress indicators to the user.\n\nThis architecture was introduced in v1.3.1 specifically to address UI freeze issues that had appeared in earlier versions when processing large color images. The fix involved restructuring the threading model for both the LSB operations and the file loading pipeline.\n\n**File System & Permission Management**\nHafiyyat follows strict privacy-conscious policies for file access:\n- On Android 10 and above, Scoped Storage rules are respected using `media_store_plus`.\n- Image creation, reading, and writing operations use `path_provider` with `TemporaryDirectory` and `ApplicationDocumentsDirectory`.\n- No file operations are performed without explicit gallery access permission from the user, managed by `permission_handler`.\n- Processed images are shared using `share_plus`."
+        },
+        {
+            "type": 0,
+            "heading": "Testing & Quality",
+            "content": "To improve code reliability and catch unexpected errors early, the following testing tools and strategies were applied:\n\n**`flutter_test` and `flutter_lints`** — Standard widget and unit tests for security and stability verification.\n\n**`leak_tracker` and `leak_tracker_flutter_testing`** — Memory leak detection and optimization during development.\n\n**`fake_async` and `vm_service`** — Testing time-dependent scenarios and analyzing how the app uses system resources at runtime."
+        },
+        {
+            "type": 0,
+            "heading": "Version History",
+            "subheading": "From grayscale prototype to encrypted full-color steganography",
+            "content": "**v1.0.0 — May 5, 2025 — First Stable Release**\nHafiyyat's first working version. A grayscale image could be hidden inside another grayscale image using basic LSB steganography. No encryption or data protection mechanisms were present. This version was a clean prototype of the core steganography concept.\n\n**v1.1.0 — May 10, 2025 — Encryption Added**\nAES-GCM encryption layer introduced. Hidden data is now encrypted before LSB embedding, adding mathematical security on top of steganography. The fundamental security step.\n\n**v1.2.0 — May 14, 2025 — Color Images & Compression**\nFull RGB color image support added. PNG lossless compression introduced before embedding to reduce payload size, allowing larger images to be hidden within the same cover capacity.\n\n**v1.3.0 — May 20, 2025 — Custom Passphrase Support**\nUsers can now set a custom encryption key. The key is hashed with SHA-256 to derive the AES key and IV. Without the correct passphrase, extraction is mathematically impossible.\n\n**v1.3.1 — May 28, 2025 — Stability Update (Latest)**\nAll heavy operations moved to Flutter isolates via `compute()`. UI freeze issues completely resolved. LSB processing, file loading, and decryption operations now run smoothly in the background without blocking the interface."
+        },
+        {
+            "type": 0,
+            "heading": "Installation",
+            "subheading": "Try Hafiyyat on your Android device",
+            "content": "**Option 1 — Download the APK (Recommended)**\n1. Download the latest release: [hafiyyat-v1.3.1.apk](https://github.com/yasir237/Hafiyyat/releases/download/v1.3.1/app-release.apk)\n2. On your Android device, go to Settings and enable **Install from unknown sources**.\n3. Open the downloaded APK file and follow the installation prompt.\n\n**Option 2 — Build from Source**\n1. Make sure Flutter is installed on your machine.\n2. Clone the repository:\n```\ngit clone https://github.com/yasir237/Hafiyyat\n```\n3. Install dependencies:\n```\nflutter pub get\n```\n4. Run on a connected device or emulator:\n```\nflutter run\n```\n\n> Requires Android 6.0 (API level 23) or higher. Before installing the APK, you may need to enable **Install from unknown sources** in your device settings."
+        }
+    ],
+    "challenges": [],
+    "solutions": [],
+    "results": [],
+    "testimonial": null
+}

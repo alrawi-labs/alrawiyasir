@@ -1,0 +1,1202 @@
+{
+    "id": "2",
+    "title": "Nesne Yönelimli Programlama (Object Oriented Programming)",
+    "subtitle": "Nesne Yönelimli Programlama (OOP)",
+    "category": "programming",
+    "link": "https://github.com/yasir237/java-programlama",
+    "date": "2024",
+    "readTime": "25 min",
+    "coverImage": "/images/programming-01.png",
+    "illustr_01": "/images/programming-01.png",
+    "illustr_02": "/images/programming-02.png",
+    "contentBlocks": [
+        {
+            "type": 0,
+            "heading": "Classes",
+            "content": "Daha önce `Scanner`, `ArrayList` ve `String` gibi classları kullanıyorduk. Ancak şimdi kendi classlarımızı biz yazmaya başlayacağız.\n\nBir sınıf oluştururken, başlangıçta hangi özelliklerin alacağını ve hangilerinin zorunlu veya isteğe bağlı olduğunu belirlememiz gerekiyor. Dışarıdan erişilebilir olması gereken özellikleri genellikle `public` olarak tanımlarız. Ancak, dışarıdan erişilmemesini istediğimiz özellikleri `private` olarak tanımlarız ve bu özelliklere sadece sınıfın içinden erişim sağlarız.\n\nBazı özelliklerin dışarıdan değiştirilebilmesini isteyebiliriz, ancak bu durumda bile, Kapsülleme mantığından faydalanarak özelliği `private` olarak tanımlarız ve `set`/`get` metotlarıyla erişim sağlarız.\n\n**Peki, neden bir değişkeni hemen `public` olarak tanımlayıp dışarıdan erişmesine izin verebilirken, bunu `private` olarak tanımlayıp `set` ve `get` metotları ile erişmeye açıyoruz?**\n\nAslında, her iki durumda da değişkene erişebiliriz. Ancak, bu yaklaşımlar arasında önemli bir fark var. Direkt olarak public olarak tanımlayıp atama yaparsak, hiçbir kısıtlama olmadan herhangi bir değer atanabilir ve bu güvenlik açısından risk oluşturabilir. Oysa ki, set metodu içinde değeri kontrol edip uygun kısıtlamaları sağladıktan sonra atanmasını sağlarız. Bu sayede, atama işlemi öncesinde veriyi kontrol edebilir ve gerekli güvenlik önlemlerini alabiliriz."
+        },
+        {
+            "type": 0,
+            "heading": "Örnek",
+            "content": "Bir zar düşünelim; bu zarın üst yüzü olduğunu ve her atışta rastgele bir değer alacağını biliyoruz. Ayrıca, elimizde hareket ettirerek istediğimiz değeri üst yüz yapabileceğimizi ve bu üst yüzün değerini görebileceğimizi varsayalım. Şimdi, bu zarı sınıflarla nasıl temsil edebiliriz?"
+        },
+        {
+            "type": 0,
+            "heading": "Tanımlama",
+            "content": "Bir zar dediği için ben zar için bir sınıf oluşturmam gerek demek:"
+        },
+        {
+            "type": 4,
+            "heading": "Tanımlama",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "class zar{\n\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Özellikleri Tanımlama",
+            "content": "Üst yüzü için bir değişken tanımlamanın gerekliliğini hemen anlarız. Ancak, ek olarak 'MAX' adında bir değişken daha tanımlarsak işlemleri kolaylaştırırız. Bu 'MAX' değişkeninin sabit bir değeri olmalı, yani 6. Böylece, üst yüzün alabileceği maksimum değerin 6 olmasını sağlarız. Aynı zamanda bu değişkenler `private` olmalılar ki dışarıdan erişilmez olsunlar."
+        },
+        {
+            "type": 4,
+            "heading": "Özellikleri Tanımlama",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "class zar{\n\tprivate final int MAX = 6;\n\tprivate int ustYuz;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Constructor ( Yapılandırıcı ) Metodu",
+            "content": "Peki, `zar` sınıfından bir nesne ilk oluşturulduğunda, `ustYuz` değişkeninin değerini kullanıcıdan zorunlu olarak mı alacağımızı yoksa isteğe bağlı mı olacağını düşünebiliriz. Ayrıca, bu değeri kullanıcıdan mı alacağımızı yoksa varsayılan bir değer mi atayacağımızı da belirlemeliyiz. Bu örnekte, `zar` sınıfından bir nesne ilk üretildiğinde `ustYuz` değişkeninin değerini varsayılan olarak 1 olarak atayacağım."
+        },
+        {
+            "type": 4,
+            "heading": "Constructor ( Yapılandırıcı ) Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public zar() {\n\t\tustYuz = 1;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Atama Metodu",
+            "content": "Atama metodu tanımlarken ilk bu metot bir değer mi döndürecek yoksa sadece işlem yapacak. Tanımlayacağımız metot sadece atama işlemini yapması gerektiği için onu `void` olarak tanımlayacağız."
+        },
+        {
+            "type": 4,
+            "heading": "Atama Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public void atama() {\n\tustYuz = (int) (Math.random() * MAX) + 1;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Math.random() Açıklaması",
+            "content": "`Math.random()` metodu 0 (dahil) ile 1 (hariç) arasında rastgele bir ondalık sayı üretir. `MAX` değişkenimizin değeri 6 ise `(Math.random() * MAX)` bu komut hiçbir zaman 6 üretemez çünkü 1 olamayacak ancak eğer ona `+ 1` yazarsak hem 6 değerini üretmiş olduk hem de 0 olma durumunu engellemiş oluruz."
+        },
+        {
+            "type": 0,
+            "heading": "Set Metodu",
+            "content": "Biz örnekte bu zarı elimizde hareket ettirerek istediğimiz değeri üst yüz yapabileceğimizi söylemiştir. işte onu istediğimiz değer atamak `set` demek oluyor.\n\nAncak elimizde hareket ettirdiğimizde sadece 1 ile 6 arasında üst yüzü yapabiliriz. Bu yüzden atama yaparken kontrol etmemiz gerek."
+        },
+        {
+            "type": 4,
+            "heading": "Set Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public void setUstYuzu(int ustYuz) {\n\tif (ustYuz <= MAX && ustYuz > 0)\n\t\tthis.ustYuz = ustYuz;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Get Metodu",
+            "content": "Aynı zamanda üst yüzünü görebildiğimizi de söylemiştik işte bu da `get` metodu üst yüzünü görmemizi sağlayacaktır.\n\n`getUstYuzu` metodu `ustYuzu` değerini getirir ancak ekrana yazdırmaz, üzerinde işlem yapmak için kullanılır."
+        },
+        {
+            "type": 4,
+            "heading": "Get Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public int getUstYuzu() {\n\treturn ustYuz;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "toString Metodu",
+            "content": "Sınıftan bir nesne oluşturduğumuzda ve bu nesneyi yazdırdığımızda, üst yüzünün değerini görmek istiyoruz. Bu nedenle, `toString()` metodunu kullanarak bu değeri yazdıracağız."
+        },
+        {
+            "type": 4,
+            "heading": "toString Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public String toString() {\n\tString sonuc = Integer.toString(ustYuz);\n\treturn sonuc;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "zar Sınıfı",
+            "content": "Yukarıda yazdığımız tüm kodları bir araya topladığımızda `zar` sınıfı bu şekilde olacaktır"
+        },
+        {
+            "type": 4,
+            "heading": "zar Sınıfı",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "zar Sınıfı",
+                    "code": "class zar {\n\tprivate final int MAX = 6;\n\tprivate int ustYuz;\n\n\tpublic zar() {\n\t\tustYuz = 1;\n\t}\n\n\tpublic void atama() {\n\t\tustYuz = (int) (Math.random() * MAX) + 1;\n\t}\n\n\tpublic void setUstYuzu(int ustYuz) {\n\t\tif (ustYuz <= MAX && ustYuz > 0)\n\t\t\tthis.ustYuz = ustYuz;\n\t}\n\n\tpublic int getUstYuzu() {\n\t\treturn ustYuz;\n\t}\n\n\tpublic String toString() {\n\t\tString sonuc = Integer.toString(ustYuz);\n\t\treturn sonuc;\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\t\tzar zar1, zar2; // zar sınıfınran 2 nesne türettik\n\t\tint toplam; // toplam zarların üst yüzünü saklamak için\n\t\tzar1 = new zar(); // bizinci zarı tanımladık\n\t\tzar2 = new zar(); // ikinci zarı tanımladık\n\t\tzar1.atama(); // birinci zarı attık\n\t\tzar2.atama(); // ikinci zarı attık\n\t\tSystem.out.println(\"Zar Bir: \" + zar1 + \", Zar İki: \" + zar2); // toString() metodundan yararlanarak onları yazdırabiliriz\n\t\tzar1.atama(); // birinci zarı tekrar attık\n\t\tzar2.setUstYuzu(4); // ikinci zarı elimiz ile üst yüzü 4 yaptık\n\t\tSystem.out.println(\"Zar Bir: \" + zar1 + \", Zar İki: \" + zar2); // toString() metodundan yararlanarak onları yazdırabiliriz\n\t\ttoplam = zar1.getUstYuzu() + zar2.getUstYuzu(); // get metodundan yararlanarak iki zarın üst yüzleri toplayabildik\n\t\tSystem.out.println(\"Toplam: \" + toplam); // toplamı yazdırabiliriz\n\t\tzar2.setUstYuzu(7); // setUstYuzu() metodunda yazdığımız kısıtlama dolayından 7 değeri atanamayacak ve 4 kalacaktır\n\t\tSystem.out.println(\"zar İki: \" + zar2);\n}"
+                },
+                {
+                    "label": "Kodun Tamamı",
+                    "code": "public class ornek{\n\n\tpublic static void main(String[] args) {\n\t\tzar zar1, zar2; // zar sınıfınran 2 nesne türettik\n        int toplam; // toplam zarların üst yüzünü saklamak için\n        zar1 = new zar(); // bizinci zarı tanımladık\n        zar2 = new zar(); // ikinci zarı tanımladık\n        zar1.atama(); // birinci zarı attık\n        zar2.atama(); // ikinci zarı attık\n        System.out.println(\"Zar Bir: \" + zar1 + \", Zar İki: \" + zar2); // toString() metodundan yararlanarak onları yazdırabiliriz\n        zar1.atama(); // birinci zarı tekrar attık\n        zar2.setUstYuzu(4); // ikinci zarı elimiz ile üst yüzü 4 yaptık\n        System.out.println(\"Zar Bir: \" + zar1 + \", Zar İki: \" + zar2); // toString() metodundan yararlanarak onları yazdırabiliriz\n        toplam = zar1.getUstYuzu() + zar2.getUstYuzu(); // get metodundan yararlanarak iki zarın üst yüzleri toplayabildik\n        System.out.println(\"Toplam: \" + toplam); // toplamı yazdırabiliriz\n        zar2.setUstYuzu(7); // setUstYuzu() metodunda yazdığımız kısıtlama dolayından 7 değeri atanamayacak ve 4 kalacaktır\n        System.out.println(\"zar İki: \" + zar2); // 4 olarak göreceğiz\n\t}\n}\n\nclass zar {\n\tprivate final int MAX = 6;\n\tprivate int ustYuz;\n\n\tpublic zar() {\n\t\tustYuz = 1;\n\t}\n\n\tpublic void atama() {\n\t\tustYuz = (int) (Math.random() * MAX) + 1;\n\t}\n\n\tpublic void setUstYuzu(int ustYuz) {\n\t\tif (ustYuz <= MAX && ustYuz > 0)\n\t\t\tthis.ustYuz = ustYuz;\n\t}\n\n\tpublic int getUstYuzu() {\n\t\treturn ustYuz;\n\t}\n\n\tpublic String toString() {\n\t\tString sonuc = Integer.toString(ustYuz);\n\t\treturn sonuc;\n\t}\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Sorular",
+            "content": "### Bir sınıf ile bir nesne arasındaki ilişki nedir?\n\nBir sınıf bir nesnenin tanımı, şablonu veya mavzolugudur. Bir nesne tarafından yönetilecek verileri tanımlar, ancak bunun için bellek alanı ayırmaz. Bir sınıftan birden çok nesne oluşturulabilir ve her bir nesnenin kendi örneğine ait veri kopyası vardır.\n\n### Özellikler nerede tanımlanır?\n\nÖzellikler: değişkenler ve metotlar Sınıf seviyesinde tanımlanır.\n\n### Yerel değişken nedir?\n\nYerel veri, bir metot içinde tanımlanır ve sadece o metotte erişilebilir.\n\n### Neden `ustYuz` değişkeni `private` olarak tanımlandı?\n\n`ustYuz` değişkenini `private` yapmamızın nedeni, sadece sınıfın sağladığı belirli metodlar aracılığıyla değiştirilmesine olanak tanımaktır. Bu şekilde, sınıfın içindeki belirlediğimiz kısıtlamalara uygun değerler atanabilir. Ancak, belirlenen kısıtlamaları sağlamayan bir değer atanmaya çalışırsa, bu atanma işlemi gerçekleştirilmez.\n\n### Neden `MAX` değişkeni sabit olarak tanımlandı?\n\nKapsülleme ihlal edilmemesi için `MAX` sabit bir değer olarak atanır; ayrıca, zarın en yüksek değeri 6'dır."
+        },
+        {
+            "type": 0,
+            "heading": "Kapsülleme",
+            "content": "Bir nesnenin iç detaylarının istemciye gizlenmesini sağlayan bir programlama prensibidir.\n\nBir siyah kutu gibi düşünebilirsiniz. İstemci, sadece nesnenin arayüz metotlarını çağırır ve bu metotlar, nesnenin iç verilerini yönetir. İstemcinin nesnenin iç yapısı hakkında hiçbir bilgisi olmaz, sadece nesnenin sağladığı hizmetlere erişir.\n\n### Üç Temel Görünürlük Belirteci\n\n- **`public`**: Tüm sınıflardan ve paketlerden erişilebilir ( her yerden ).\n- **`private`:** Sadece tanımlandığı sınıf içerisinden erişilebilir.\n- `protected`: Aynı paket içerisinden ve alt sınıflardan (inheritance) erişilebilir.\n\n**Eğer herhangi bir erişim belirteci belirtilmezse (yani belirteç belirtilmezse), bu durumda öğe `*default (package-private)*` olarak kabul edilir. Bu durumda, sadece aynı paketten erişim mümkündür. Erişim belirtecinin açıkça belirtilmediği durumlarda kullanılır.**\n\n- Sabitler **`public`** olarak tanımlanabilir, ancak değişkenlerin **`public`** olarak tanımlanması önerilmez.\n\n### Getter ve Setter\n\n- Erişimci metodlar `getter` olarak adlandırılır.\n- Mutatör metodlar `setter` olarak adlandırılır.\n\n> 💡 Bu metodlar, kapsülleme ilkesini korurken, sınıf dışından özel verilere güvenli bir şekilde erişim ve bu verilerin değiştirilmesini sağlar."
+        },
+        {
+            "type": 0,
+            "heading": "Otomatik Olarak Getter ve Setter Oluşturma",
+            "content": "Böyle **`x`** ve **`y`** alanlarına sahip bir sınıfımız olsun:"
+        },
+        {
+            "type": 4,
+            "heading": "Otomatik Olarak Getter ve Setter Oluşturma",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "class ClassName {\n\tprivate int x, y;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Getter ve Setter Oluşturma Adımları",
+            "content": "Onun **`getter`** ve **`setter`** metotlarını yazmak istersek, bunları **`Eclipse`** ayarlarından **otomatik** olarak oluşturabiliriz."
+        },
+        {
+            "type": 1,
+            "heading": "Eclipse - Source Menüsü",
+            "imageUrl": "https://github.com/user-attachments/assets/b9b2d535-8aeb-44b3-9f69-e1312a0c1ebc",
+            "caption": "Mouse ile sağ tıklayıp source -> Generate Getters and Setters … seçeneğini seçin"
+        },
+        {
+            "type": 1,
+            "heading": "Generate Getters and Setters Penceresi",
+            "imageUrl": "https://github.com/user-attachments/assets/4afc9b66-4ffa-4489-81cb-49a117552ead",
+            "caption": "Bu pencerede hangi değişkenler için getter ve setter metotlarını oluşturmak istediğinizi işaretleyin. Ardından Generate buttonuna tıklayarak oluşturmuş olursunuz."
+        },
+        {
+            "type": 0,
+            "heading": "Otomatik Olarak Constructor Oluşturma",
+            "content": "Bir sınıf için **`Eclipse`** ayarlarından **otomatik** olarak constructor oluşturabiliriz."
+        },
+        {
+            "type": 1,
+            "heading": "Eclipse - Constructor Menüsü",
+            "imageUrl": "https://github.com/user-attachments/assets/f43cfc80-0137-4a96-9576-8491980c77b3",
+            "caption": "Mouse ile sağ tıklayıp source -> Generate Constructor using Fields … seçeneğini seçin"
+        },
+        {
+            "type": 1,
+            "heading": "Generate Constructor Penceresi",
+            "imageUrl": "https://github.com/user-attachments/assets/8e011f13-87ba-404a-8d97-af5f2fcf8589",
+            "caption": "Bu pencerede, constructor içinde parametre olarak alınmasını istediğiniz değişkenleri işaretleyin. Ardından Generate buttonuna tıklayarak oluşturmuş olursunuz."
+        },
+        {
+            "type": 0,
+            "heading": "Yazılım Geliştiricisinin Yapması Gereken Faaliyetler",
+            "content": "## Program geliştirmenin dört temel faaliyeti\n\n- Gereksinimleri Belirleme\n- Tasarım Oluşturma\n- Kodları Uygulama\n- Uygulamanın Test Edilmesi\n\n**Gereksinimler:**\n\n- Yazılım gereksinimleri, bir programın gerçekleştirmesi gereken görevleri belirler.\n- Gereksinimler, ne yapılacağını, nasıl yapılacağını değil belirtir.\n- Genellikle başlangıçta bir gereksinim kümesi sağlanır, ancak bunlar eleştirilmeli ve genişletilmelidir.\n- Detaylı, belirsizliği olmayan ve eksiksiz gereksinimler belirlemek zor olabilir.\n- Gereksinimlere dikkatli bir şekilde dikkat etmek, genel proje sürecinde önemli zaman ve maliyet tasarrufu sağlayabilir.\n\n**Uygulama:**\n\n- Uygulama, bir tasarımın kaynak kodlara çevrilme sürecidir.\n- Acemi programcılar genellikle kod yazmanın yazılım geliştirmenin özü olduğunu düşünürler, ancak aslında bu en az iyi adım olmalıdır.\n- Hemen hemen tüm önemli kararlar gereksinimler ve tasarım aşamalarında alınır.\n- Uygulama, kodlama detaylarına, stil kılavuzlarına ve belgelendirmeye odaklanmalıdır.\n\n**Tasarım:**\n\n- Yazılım tasarımı, bir programın gereksinimlerini nasıl gerçekleştireceğini belirtir.\n- Bir yazılım tasarımı, çözümün nasıl yönetilebilir parçalara ayrılabileceğini ve her parçanın ne yapacağını belirtir.\n- Nesne yönelimli bir tasarım, hangi sınıfların ve nesnelerin gereksinim duyulduğunu belirler ve bunların nasıl etkileşimde bulunacaklarını belirtir.\n- Düşük seviyeli tasarım detayları, bireysel metotların görevlerini nasıl gerçekleştireceğini içerir.\n\n**Test Etme:**\n\n- Test etme, programın gereksinimlerde belirtilen tüm kısıtlar altında amaçlanan sorunu çözeceğinden emin olmaya çalışır.\n- Bir program hataları bulma amacıyla titizlikle test edilmelidir.\n- Hata ayıklama, bir sorunun nedenini belirleme ve düzeltme sürecidir."
+        },
+        {
+            "type": 0,
+            "heading": "Sınıflar ve Nesneleri Belirleme",
+            "content": "Nesne yönelimli tasarımın temel etkinliği, çözümü oluşturacak sınıfları ve nesneleri belirlemektir. Sınıflar genellikle bir sınıf kitabından (class library) gelir, önceki bir projeden yeniden kullanılır veya yeni yazılır. Potansiyel sınıfları belirlemenin bir yolu, gereksinimlerde tartışılan nesneleri belirlemektir. Nesneler genellikle isimlerdir ve bir nesnenin sağladığı hizmetler genellikle fiillerdir.\n\n### Örnek Bir Vaka Çalışması\n\n- Bir öğrenci dört ders alabilir. Öğrencinin adı, soyadı, kimlik numarası ve adres bilgileri bulunmaktadır. Öğrenci, bir kurs hakkında arkadaşlarına bilgi verebilir.\n- Öğrencinin üç başka öğrenci arkadaşı olabilir. Öğrenci, notları hakkında bilgi verebilir.\n- Öğretmen, 20 öğrenciye ders verir. Sınıfındaki öğrencilere not verir."
+        },
+        {
+            "type": 0,
+            "heading": "Bilgiler",
+            "content": "- Bir sınıfın, aynı davranışlara sahip nesnelerin bir grubunu temsil ettiğini hatırlayın.\n- Genellikle, nesneleri temsil eden sınıflara tekil isimler verilmelidir.\n- Örnekler: Para, Öğrenci, Mesaj\n- Bir sınıf, bir tane böyle bir nesnenin kavramını temsil eder.\n- İhtiyaca göre her nesnenin istediğimiz kadar örneğini oluşturabiliriz.\n\n---\n\n- Bazı durumlarda, bir şeyin bir sınıf olarak temsil edilip edilmeyeceğine karar vermek zor olabilir.\n- Örneğin, bir çalışanın adresi, bir dizi örnek değişkeni olarak mı yoksa bir Adres nesnesi olarak mı temsil edilmelidir?\n- Problemi ve detaylarını ne kadar inceleyip analiz ederseniz, bu konular o kadar açık hale gelir.\n- Bir sınıf çok karmaşık hale geldiğinde, genellikle sorumlulukları dağıtmak için birden fazla daha küçük sınıfa parçalanmalıdır.\n\n---\n\n- Doğru düzeyde ayrıntıya sahip sınıflar tanımlamak istiyoruz.\n- Örneğin, bir evdeki her tür cihaz için ayrı sınıflar oluşturmak gereksiz olabilir.\n- Daha genel bir Cihaz sınıfı tanımlamak, uygun örnek verileriyle yeterli olabilir.\n- Her şey çözülen problemle ilgili detaylara bağlıdır.\n\n---\n\n- İhtiyaç duyduğumuz sınıfları belirlemenin bir parçası, her bir sınıfa sorumluluk atama sürecidir.\n- Bir programın gerçekleştirmesi gereken her etkinlik, bir veya daha fazla yöntemle bir veya daha fazla sınıf tarafından temsil edilmelidir.\n- Genellikle yöntemlerin isimlerinde fiiller kullanırız.\n- Erken aşamalarda her sınıfın her yöntemini belirlemek gerekli değildir - ana sorumluluklarla başlayın ve tasarımı geliştirin."
+        },
+        {
+            "type": 0,
+            "heading": "Static Değişkenler ve Metotlar",
+            "content": "Static metotlar veya değişkenler sınıftan bir nesne türetmeden çağrılabilir. Sınıfın ismini kullanarak onlara erişilebilir.\n\nHepimiz `Math` sınıfını kullanmışızdır. onun içerdiği metotlara göz atarsak:\n\n1. **`abs(x)`**: Bir sayının mutlak değerini döndürür.\n2. **`sqrt(x)`**: Bir sayının karekökünü döndürür.\n3. **`pow(x, y)`**: Bir sayının belirli bir üs kuvvetini hesaplar.\n4. **`sin(x)`**, **`cos(x)`**, **`tan(x)`**: Bir açının sinüs, kosinüs ve tanjant değerlerini döndürür.\n5. **`max(x, y)`**, **`min(x, y)`**: İki sayıdan büyük veya küçük olanı döndürür.\n6. **`ceil(x)`**, **`floor(x)`**: Bir ondalıklı sayıyı yukarı veya aşağı yuvarlar.\n7. **`random()`**: 0 ile 1 arasında rastgele bir ondalıklı sayı üretir.\n\nAncak onları kullanırken `Math math = new Math()` diye bir satır **yazmıyoruz**. Hemen Bu şekilde kullanabiliriz."
+        },
+        {
+            "type": 4,
+            "heading": "Math.sqrt() Örneği",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "result = Math.sqrt(25); // output: 5"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "⭐ Önemli Açıklama ⭐",
+            "content": "**Sınıf içinde bir değişken tanımladığımızda ve bu sınıftan birden fazla nesne türettiğimizde, genellikle her nesne için ayrı bir değişken oluşur ve her nesne için farklı olabilir. Ancak, statik değişkenler tüm nesneler için aynıdır ve bir statik değişkenin değeri herhangi bir nesnede değiştirildiğinde, diğer tüm nesnelerde de değişir. Statik bir değişkenin bellek alanı, sınıf ilk kez referans alındığında oluşturulur.**"
+        },
+        {
+            "type": 0,
+            "heading": "Tanımlama",
+            "content": "Statik değişkenler bu şekilde tanımlanabilir:\n\nStatik metotlar bu şekilde tanımlanabilir, ve onu kullanmak istediğimizde `Helper.cube(4)` şeklinde kullanırız. **`Helper helper = new Helper();` yazmamıza gerek yoktur.**"
+        },
+        {
+            "type": 4,
+            "heading": "Tanımlama",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Statik Değişken",
+                    "code": "private static float price;"
+                },
+                {
+                    "label": "Statik Metot",
+                    "code": "public class Helper {\n\tpublic static int cube(int num) {\n\t\treturn num * num * num;\n\t}\n}"
+                },
+                {
+                    "label": "Kullanım",
+                    "code": "value = Helper.cube(4); // output: 64"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "⭐ Önemli Bilgi ⭐",
+            "content": "`araba` diye bir sınıfımız olsun, içinde `sahip` değişkeni, `hareket()` metodu olsun.\n\n`sahip` değişkeni normal bir değişken olduğu için her nesne için farklı değerler alabilmişken `hareket` metodu tüm nesneler için aynıdır ve bir nesneye bağlı olmadan doğrudan sınıf adıyla çağrılır. Dolayısıyla, `hareket` metodu içinde hangi nesnenin sahip değişkenine erişeceğini belirlemek mümkün değildir, bu da hata ile sonuçlanır."
+        },
+        {
+            "type": 4,
+            "heading": "⭐ Önemli Bilgi ⭐",
+            "codeBlocks": [
+                {
+                    "label": "Hatalı Kod",
+                    "code": "class araba{\n\tprivate String sahip;\n\tpublic static void hareket() {\n\t\tSystem.out.println(sahip);\n\t}\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Static Değişkenleri ve Metotları Kullanımı",
+            "content": "slogan diye bir sınıfımız olsun, bu sınıftan kaç nesne türetildiğini hesaplamak istiyorum, işte hesaplamak için statik değişkenleri kullanmam gerek.\n\nfark edersek `getAdet()` metodunu çağırdığımızda nesne adıyla değil sınıf adıyla çağırdık."
+        },
+        {
+            "type": 4,
+            "heading": "Slogan Örneği",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Slogan Sınıfı",
+                    "code": "class Slogan {\n\tprivate String ifade;\n\tprivate static int adet = 0;\n\n\t//----------------------------------------------------------------\n\t// Yapılandırıcı: Sloganı ayarlar ve oluşturulan örneklerin sayısını sayar.\n\t//----------------------------------------------------------------\n\tpublic Slogan(String str) {\n\t\tifade = str;\n\t\tadet++;\n\t}\n\n\t//----------------------------------------------------------------\n\t// Bu sloganı bir dize olarak döndürür.\n\t//----------------------------------------------------------------\n\tpublic String toString() {\n\t\treturn ifade;\n\t}\n\n\t//----------------------------------------------------------------\n\t// Bu sınıfın oluşturulan örneklerinin sayısını döndürür.\n\t//----------------------------------------------------------------\n\tpublic static int getAdet() {\n\t\treturn adet;\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\t\n\tSlogan slogan1 = new Slogan(\"Hello World\");\n\tSlogan slogan2 = new Slogan(\"Merhaba Dunya\");\n\t\n\tSystem.out.println(slogan1); // Hello World\n\tSystem.out.println(Slogan.getAdet()); // 2\n\tSlogan slogan3;\n\tSystem.out.println(Slogan.getAdet()); // 2\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Class Relationships (Sınıf İlişkileri)",
+            "content": "Bir yazılım sistemindeki sınıflar, birbirlerine çeşitli ilişki türlerine sahip olabilirler.\n\n## Java'da en yaygın üç ilişki türü\n\n- **Dependency(Bağımlılık)**: A uses B\n- **Aggregation(Birleşim)**: A has-a B\n- **Inheritance(Kalıtım)**: A is-a B"
+        },
+        {
+            "type": 0,
+            "heading": "Dependency Nedir?",
+            "content": "Bir sınıfın diğer bir sınıfa, genellikle onun metotlarını çağırarak, bir şekilde bağımlı olduğu durumdur. Bu ilişki, yazılım tasarımında yaygın olarak karşılaşılan bir durumdur. İyi bir tasarım, gereksiz karmaşıklığı önlerken doğru bağımlılıkları korur. Ayrıca, bazı durumlarda bir sınıf kendi içindeki nesneler arasında da bağımlılık gösterebilir. Bu durumda, sınıfın bir metodu, aynı sınıfın başka bir nesnesini parametre olarak kabul edebilir.\n\n### Örnek\n\nBir kesirli sayı düşünelim, onu başka kesirli bir sayı ile toplayabiliriz veya çarpabiliriz gibi dört işlem, aynı zamanda bir kesirli sayıyı sadeleştirebiliriz. tersini alabiliriz.\n\nKesirli sayıyı temsil eden bir sınıf oluşturalım ve kesirli bir sayı üzerinde yapılan tüm işlemleri gerçekleştirelim.\n\nAyrıca sınıfı oluştururken `Bağımlılık` ilişkisini kullanarak daha performanslı bir şekilde oluşturalım."
+        },
+        {
+            "type": 0,
+            "heading": "KesirSayi - Tanımlama",
+            "content": "İlk önce herhangi kesirli bir sayı iki temel özelliği var oda `pay` ve `payda` , onu tanımlama ile başlayalım."
+        },
+        {
+            "type": 4,
+            "heading": "KesirSayi - Tanımlama",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "class KesirSayi {\n\tprivate int pay, payda;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "KesirSayi - Constructor ( Yapılandırıcı ) Metodu",
+            "content": "Bir kesirli sayı oluştururken, kesrin pay ve paydasını belirtmek zorundayız ki kesirli bir sayı elde edelim. Bu değerleri sınıfı ilk oluşturduğumuz anda almalıyız. Ayrıca, payda değerinin 0 olamayacağını kontrol etmeliyiz.\n\n`sadelestir()` metodu kesirli bir sayı ilk oluşturulduğunda en sade halinin üzerinde işlem yapmayı sağlar. Başka bir metot yapılandırıcı metodun içinde kullanmak Bağımlılık prensibini kullanmış oldum ve işlemi tekrar yapmak yerine sadece bu metodu çağırarak performansı yükseltmiş olduk."
+        },
+        {
+            "type": 4,
+            "heading": "KesirSayi - Constructor ( Yapılandırıcı ) Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi(int pay, int payda) {\n\tif (payda == 0)\n\t\tpayda = 1;\n\n\tif (payda < 0) {\n\t\tpay = pay * -1;\n\t\tpayda = payda * -1;\n\t}\n\n\tthis.pay = pay;\n\tthis.payda = payda;\n\n\tsadelestir();\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Sadeleştir",
+            "content": "Bir kesrin sadeleştirilmesi, `pay` ve `payda` arasındaki en büyük ortak böleni bulup her ikisinin de bu değere bölünmesiyle gerçekleşir, böylece kesir en basit hâline getirilir.\n\nİki sayının arasında en büyük ortak böleni (`ebob`) bulmak için bu metodu kullanacağız. Bu algoritmaya `Euclid` algoritması denir.\n\nİşte pay ile payda arasındaki ebob bulduktan sonra sadece pay ve paydayı ortak bölen ile bölmemiz kalır.\n\npay sıfır olma durumunu maliyet açısından kontrol ettik, boşuna ebob metoduna gidip gereksiz işlem yapılmasın diye."
+        },
+        {
+            "type": 4,
+            "heading": "Sadeleştir",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "ebob",
+                    "code": "private int ebob(int sayi1, int sayi2) {\n\twhile (sayi2 != 0) {\n\t\tint temp = sayi2;\n\t\tsayi2 = sayi1 % sayi2;\n\t\tsayi1 = temp;\n\t}\n\treturn sayi1;\n}"
+                },
+                {
+                    "label": "sadelestir",
+                    "code": "\tprivate void sadelestir() {\n\t\tif (pay != 0) {\n\t\t\tint ortak = ebob(Math.abs(pay), payda);\n\t\t\tpay = pay / ortak;\n\t\t\tpayda = payda / ortak;\n\t\t}\n\t}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "KesirSayi - Kapsülleme",
+            "content": "`Pay` ve `payda` değerlerini sınıf içinde private olarak tanımladık, ancak bazı durumlarda bu değerlere erişmemiz gerekebilir. Bu nedenle, bu değerlere erişmek için bir erişimci metot (getter) tanımlamamız gerekir.\n\n`Pay` değerine erişmek için `getPay()` kullanılır.\n\n`Payda` değerine erişmek için `getPayda()` kullanılır."
+        },
+        {
+            "type": 4,
+            "heading": "KesirSayi - Kapsülleme",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public int getPay() {\n\treturn pay;\n}\n\npublic int getPayda() {\n\treturn payda;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Kesrin Tersi",
+            "content": "Kesrin tersi, orijinal kesrin pay ve paydasının yer değiştirmesi anlamına gelmez mi ? Yani, pay paydaya, payda ise paya yazılır. Bu işlemi basitçe şu şekilde ifade edebiliriz."
+        },
+        {
+            "type": 4,
+            "heading": "Kesrin Tersi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi tersi() {\n\treturn new KesirSayi(payda, pay);\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Toplama İşlemi",
+            "content": "Matematik derslerinden bildiğimiz gibi iki kesrin toplanması bu şekilde olur:\n\n$$\n\\cfrac{pay1}{payda1} + \\cfrac{pay2}{payda2} =\n\\cfrac{pay1*payda2 + pay2*payda1}{payda1*payda2}\n$$\n\nBurada eğer daha önce getter metotlarını tanımlamadıysak gelen kesrin payına ve paydasına erişemeyecektik. Bu noktada da fark edersek `Bağımlılık` vardır."
+        },
+        {
+            "type": 4,
+            "heading": "Toplama İşlemi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi topla(KesirSayi op2) {\n\tint pay1 = pay * op2.getPayda() + op2.getPay() * payda;\n\tint payda1 = payda * op2.getPayda();\n\treturn new KesirSayi(pay1, payda1);\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Çıkarma İşlemi",
+            "content": "Matematik derslerinden bildiğimiz gibi iki kesrin çıkarılması bu şekilde olur:\n\n$$\n\\cfrac{pay1}{payda1} - \\cfrac{pay2}{payda2} =\n\\cfrac{pay1*payda2 - pay2*payda1}{payda1*payda2}\n$$\n\nFark edersek toplamı işlemi ile farkı sadece ikinci kesrin payı ters işaretli olması. Bu nedenle biz toplama metodunu kullanarak çıkarma işlemini gerçekleştirebiliriz."
+        },
+        {
+            "type": 4,
+            "heading": "Çıkarma İşlemi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi cikar(KesirSayi op2) {\n\tKesirSayi k = new KesirSayi(op2.getPay() * -1, op2.getPayda());\n\treturn topla(k);\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Çarpma İşlemi",
+            "content": "Matematik derslerinden bildiğimiz gibi iki kesrin çarpılması bu şekilde olur:\n\n$$\n\\cfrac{pay1}{payda1} * \\cfrac{pay2}{payda2} =\n\\cfrac{pay1*pay2}{payda1*payda2}\n$$"
+        },
+        {
+            "type": 4,
+            "heading": "Çarpma İşlemi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi carp(KesirSayi op2) {\n\tint pay = this.pay * op2.getPay();\n\tint payda = this.payda * op2.getPayda();\n\treturn new KesirSayi(pay, payda);\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Bölme İşlemi",
+            "content": "Matematik derslerinden bildiğimiz gibi iki kesrin bölünmesi birinci kesri ikinci kesrin tersiyle çarpılmasıyla elde edilir.\n\n$$\n\\cfrac{pay1}{payda1} ÷ \\cfrac{pay2}{payda2} =\n\\cfrac{pay1}{payda1} * \\cfrac{payda2}{pay2}\n$$\n\nVe benim tersi alan, çarpma işlemi yapan metotlarım var, onları kullanarak bölme işlemi yeni kodlar yazmadan gerçekleştirebilirim."
+        },
+        {
+            "type": 4,
+            "heading": "Bölme İşlemi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public KesirSayi bol(KesirSayi op2) {\n\treturn carp(op2.tersi());\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Karşılaştırma İşlemi",
+            "content": "İki kesrin eşit olup olmadığını öğrenmek için payların ve paydaların eşitliğini kontrol edeceğiz.\n\nBir kesir için bir nesne ilk oluşturulduğunda sadeleştirdiğimiz için $\\cfrac{9}{12} = \\cfrac{3}{4}$ sadeleştirilmemiş olsa da doğru sonuç verecektir."
+        },
+        {
+            "type": 4,
+            "heading": "Karşılaştırma İşlemi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public boolean esitMi(KesirSayi op2) {\n\treturn (pay == op2.getPay() && payda == op2.getPayda());\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "toString Metodu",
+            "content": "Bir kesir için oluşturulan nesneyi yazdırınca kesrin ne olduğunu yazdıran metottur."
+        },
+        {
+            "type": 4,
+            "heading": "toString Metodu",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public String toString() {\n\tString sonuc;\n\tif (pay == 0)\n\t\tsonuc = \"0\";\n\telse if (payda == 1)\n\t\tsonuc = pay + \"\";\n\telse\n\t\tsonuc = pay + \"/\" + payda;\n\treturn sonuc;\n}"
+                }
+            ]
+        },
+        {
+            "type": 4,
+            "heading": "KesirSayi Sınıfın Tam Kodu",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "KesirSayi Sınıfı",
+                    "code": "class KesirSayi {\n\tprivate int pay, payda;\n\n\tpublic KesirSayi(int pay, int payda) {\n\t\tif (payda == 0)\n\t\t\tpayda = 1;\n\n\t\tif (payda < 0) {\n\t\t\tpay = pay * -1;\n\t\t\tpayda = payda * -1;\n\t\t}\n\n\t\tthis.pay = pay;\n\t\tthis.payda = payda;\n\n\t\tsadelestir();\n\t}\n\n\tpublic int getPay() {\n\t\treturn pay;\n\t}\n\n\tpublic int getPayda() {\n\t\treturn payda;\n\t}\n\n\tpublic KesirSayi tersi() {\n\t\treturn new KesirSayi(payda, pay);\n\t}\n\n\tpublic KesirSayi topla(KesirSayi op2) {\n\t\tint pay1 = pay * op2.getPayda() + op2.getPay() * payda;\n\t\tint payda1 = payda * op2.getPayda();\n\t\treturn new KesirSayi(pay1, payda1);\n\t}\n\n\tpublic KesirSayi cikar(KesirSayi op2) {\n\t\tKesirSayi k = new KesirSayi(op2.getPay() * -1, op2.getPayda());\n\t\treturn topla(k);\n\t}\n\n\tpublic KesirSayi carp(KesirSayi op2) {\n\t\tint pay = this.pay * op2.getPay();\n\t\tint payda = this.payda * op2.getPayda();\n\t\treturn new KesirSayi(pay, payda);\n\t}\n\n\tpublic KesirSayi bol(KesirSayi op2) {\n\t\treturn carp(op2.tersi());\n\t}\n\n\tpublic boolean esitMi(KesirSayi op2) {\n\t\treturn (pay == op2.getPay() && payda == op2.getPayda());\n\t}\n\n\tpublic String toString() {\n\t\tString sonuc;\n\t\tif (pay == 0)\n\t\t\tsonuc = \"0\";\n\t\telse if (payda == 1)\n\t\t\tsonuc = pay + \"\";\n\t\telse\n\t\t\tsonuc = pay + \"/\" + payda;\n\t\treturn sonuc;\n\t}\n\n\tprivate void sadelestir() {\n\t\tif (pay != 0) { \n\t\t\tint ortak = ebob(Math.abs(pay), payda);\n\t\t\tpay = pay / ortak;\n\t\t\tpayda = payda / ortak;\n\t\t}\n\t}\n\n\tprivate int ebob(int sayi1, int sayi2) {\n\t\twhile (sayi2 != 0) {\n\t\t\tint temp = sayi2;\n\t\t\tsayi2 = sayi1 % sayi2;\n\t\t\tsayi1 = temp;\n\t\t}\n\t\treturn sayi1;\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\t\tKesirSayi k1 = new KesirSayi(9, 12);\n\t\tKesirSayi k2 = new KesirSayi(3, 4);\n\t\tKesirSayi k3, k4, k5, k6, k7;\n\n\t\tSystem.out.println(\"Birinci kesir: \" + k1);\n\t\tSystem.out.println(\"Ikinci kesir: \" + k2);\n\n\t\tk3 = k1.topla(k2);\n\t\tk4 = k1.cikar(k2);\n\t\tk5 = k1.carp(k2);\n\t\tk6 = k1.bol(k2);\n\t\tk7 = k1.tersi();\n\n\t\tSystem.out.println(\"Toplam: \" + k3);\n\t\tSystem.out.println(\"Fark: \" + k4);\n\t\tSystem.out.println(\"Çarpım: \" + k5);\n\t\tSystem.out.println(\"Bölüm: \" + k6);\n\t\tSystem.out.println(\"Ters: \" + k7);\n\n\t\tSystem.out.println(\"K1 ve K2 \" + (k1.esitMi(k2) ? \"Eşittir\" : \"Eşit Değildir\"));\n\t}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Birinci kesir: 3/4\nIkinci kesir: 3/4\nToplam: 3/2\nFark: 0\nÇarpım: 9/16\nBölüm: 1\nTers: 4/3\nK1 ve K2 Eşittir"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Aggregation Nedir?",
+            "content": "Aggregation (Toplama veya Birleştirme) bir nesnenin diğer nesnelerden oluştuğu durumu ifade eder. Java'da, bu ilişki genellikle \"has-a\" (sahip olma) ilişkisi olarak adlandırılır. Yani bir nesne, diğer nesnelere sahip olabilir. İşte bazı örnekler:\n\n- Bir araba bir şasiye sahiptir.\n- Bir üniversite departmanlara sahiptir.\n- Bir departman eğitmenlere sahiptir.\n\n### Aggregation'ın Özellikleri\n\n1. **İlişki Türü**: Aggregation, iki nesne arasındaki bir tür bağımlılık ilişkisidir. Bir nesne diğerine bağımlıdır ve onu kullanarak işlevlerini yerine getirir.\n2. **Instance Verileri**: Birleştirilmiş bir nesne, başka nesnelere referanslar içerir. Bu referanslar, bir nesnenin diğer nesneleri içermesini sağlar.\n3. **Bağımlılık İlişkisi**: Aggregation, bir tür bağımlılık ilişkisidir. Birleştirilmiş nesne, içindeki diğer nesnelere bağımlıdır ve onların varlığına ihtiyaç duyar.\n\n### Java'da Aggregation\n\nAggregation, Java'da nesne kompozisyonu yoluyla gerçekleştirilir. Bu, bir sınıfın başka sınıflardan nesneleri instance verileri olarak içermesi anlamına gelir."
+        },
+        {
+            "type": 4,
+            "heading": "Aggregation - Kasa/Motor/Sanziman Örneği",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "class Kasa {\n    private Motor motor;\n    private Sanziman sanziman;\n    \n    public Kasa(Motor motor, Sanziman sanziman) {\n        this.motor = motor;\n        this.sanziman = sanziman;\n    }\n\n    // Diğer metotlar\n}\n\nclass Motor {\n    // Motor özellikleri ve metotları\n}\n\nclass Sanziman {\n    // Şanzıman özellikleri ve metotları\n}\n\npublic class Main {\n    public static void main(String[] args) {\n        Motor motor = new Motor();\n        Sanziman sanziman = new Sanziman();\n        Kasa araba = new Kasa(motor, sanziman);\n        \n        // Kasa nesnesi, Motor ve Sanziman nesnelerine sahiptir\n    }\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Aggregation'ın Avantajları",
+            "content": "1. **Kod Yeniden Kullanımı**: Nesneler arasındaki bu tür ilişkiler, kodun yeniden kullanılabilirliğini artırır. Farklı sınıflar arasında ortak nesneler kullanılabilir.\n2. **Bakım Kolaylığı**: Kodun bakımı ve yönetimi daha kolaydır, çünkü nesneler birbirlerinden bağımsız olarak geliştirilebilir ve test edilebilir.\n3. **Modülerlik**: Kodun modülerliği artar, bu da kodu daha anlaşılır ve yönetilebilir kılar.\n\n> 💡 Aggregation, yazılım tasarımında nesneler arasındaki ilişkileri daha etkili ve verimli bir şekilde modellemek için güçlü bir tekniktir. Bu ilişki türü, yazılımın esnekliğini ve genişletilebilirliğini artırır."
+        },
+        {
+            "type": 0,
+            "heading": "Aggregation Örneği: Öğrenci ve Adres Nesneleri",
+            "content": "**Aggregation** (Toplama veya Birleştirme) ilişkisi, bir nesnenin diğer nesnelerden oluştuğu durumu ifade eder. Aşağıda, bir Öğrenci nesnesinin Adres nesnelerinden oluştuğu bir örnek verilmektedir. Her öğrenci, iki adet adres bilgisine sahip olabilir: biri ev adresi, diğeri ise okul adresi."
+        },
+        {
+            "type": 4,
+            "heading": "Student / Address / StudentBody",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Student Sınıfı",
+                    "code": "class Student {\n\tprivate String isim;\n\tprivate String soyisim;\n\tprivate Address evAdresi;\n\tprivate Address okulAdresi;\n\n\tpublic Student(String isim, String soyisim, Address evAdresi, Address okulAdresi) {\n\t\tthis.isim = isim;\n\t\tthis.soyisim = soyisim;\n\t\tthis.evAdresi = evAdresi;\n\t\tthis.okulAdresi = okulAdresi;\n\t}\n\n\tpublic String toString() {\n\t\treturn isim + \" \" + soyisim + \"\\nEv Adresi: \" + evAdresi + \"\\nOkul Adresi: \" + okulAdresi;\n\t}\n}"
+                },
+                {
+                    "label": "Address Sınıfı",
+                    "code": "class Address {\n\tprivate String cadde;\n\tprivate String sehir;\n\tprivate String ilce;\n\tprivate long postaKodu;\n\n\tpublic Address(String cadde, String sehir, String ilce, long postaKodu) {\n\t\tthis.cadde = cadde;\n\t\tthis.sehir = sehir;\n\t\tthis.ilce = ilce;\n\t\tthis.postaKodu = postaKodu;\n\t}\n\n\tpublic String toString() {\n\t\treturn sehir + \", \" + ilce + \", \" + cadde + \", \" + postaKodu;\n\t}\n}"
+                },
+                {
+                    "label": "StudentBody Sınıfı",
+                    "code": "public class StudentBody {\n\tpublic static void main(String[] args) {\n\t\tAddress evAdresi = new Address(\"Yıldırım\", \"Kırıkkale\", \"Merkez\", 12345);\n\t\tAddress okulAdresi = new Address(\"Ana Yol\", \"Kırıkkale\", \"Yahişhan\", 12345);\n\n\t\tStudent ogrenci = new Student(\"Yasir\", \"Alrawi\", evAdresi, okulAdresi);\n\n\t\tSystem.out.println(ogrenci);\n\t}\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Aggregation - UML ve Açıklama",
+            "content": "### Açıklama\n\n- **Student Sınıfı**: Bu sınıf, bir öğrenciyi temsil eder. Öğrencinin isim, soyisim, ev adresi ve okul adresi bilgilerini tutar. Her bir öğrenci nesnesi, iki adet adres nesnesi içerir.\n- **Address Sınıfı**: Bu sınıf, bir adresi temsil eder. Adresin cadde, şehir, ilçe ve posta kodu bilgilerini tutar.\n- **StudentBody Sınıfı**: Bu sınıf, `main` metodu içeren sınıftır ve burada öğrenci ve adres nesneleri oluşturularak ilişkilendirilir. Sonrasında, öğrenci nesnesi ekrana yazdırılır.\n\n### Aggregation İlişkisinin Varlığı\n\nBu örnekte, aggregation ilişkisi net bir şekilde görülmektedir:\n\n- **Student** sınıfı, **Address** sınıfına ait nesneleri instance verileri olarak içerir. Her bir öğrenci nesnesi, iki adet adres nesnesine sahiptir. Bu, bir öğrencinin bir veya daha fazla adrese sahip olabileceği durumları modellemek için kullanılır.\n- Bu ilişki, bir nesnenin diğer nesnelerden oluştuğu durumu temsil eder ve Java'da aggregation ilişkisinin tipik bir örneğidir.\n\n### UML Diyagramı\n\n```mermaid\nclassDiagram\nStudent <-- StudentBody\nStudent *-- **Address** \n\nStudentBody: + main (args  String[]) void\n\nStudent : - String isim\nStudent : - String soyisim\nStudent : - Address evAdresi\nStudent : - Address okulAdresi\nStudent : + toString()\n\nAddress : - String sehir\nAddress : - String ilce\nAddress : - String cadde\nAddress : - long postaKodu\nAddress : + toString()\n```\n\n```mermaid\nclassDiagram\nStudent <-- StudentBody\nStudent *-- Address\n\nStudentBody: + main (args  String[]) void\n\nStudent : - String isim\nStudent : - String soyisim\nStudent : - Address evAdresi\nStudent : - Address okulAdresi\nStudent : + toString()\n\nAddress : - String sehir\nAddress : - String ilce\nAddress : - String cadde\nAddress : - long postaKodu\nAddress : + toString()\n```"
+        },
+        {
+            "type": 0,
+            "heading": "this Referansı",
+            "content": "- **`this`** referansı bir nesnenin kendisine referans vermesini sağlar.\n- Yani, bir metodun içinde kullanılan **`this`** referansı, metodun hangi nesne üzerinden çalıştırıldığını belirtir.\n- **`this`** referansının **`testMethod()`** isimli bir metot içinde kullanıldığını ve bu metodun şu şekilde çağrıldığını varsayalım:\n\n```java\nobj1.testMethod();\nobj2.testMethod();\n```\n\n- İlk çağrıda, **`this`** referansı **`obj1`**'i ifade eder; ikinci çağrıda ise **`obj2`**'yi ifade eder.\n\n**`this`** referansı, bir sınıfın örnek değişkenlerini aynı isimdeki metot parametrelerinden ayırt etmek için kullanılabilir. Örneğin:\n\n```java\npublic Account(String name, long acctNumber, double balance)\n{\n  this.name = name;\n  this.acctNumber = acctNumber;\n  this.balance = balance;\n}\n```"
+        },
+        {
+            "type": 4,
+            "heading": "this Referansı - Kod Örnekleri",
+            "codeBlocks": [
+                {
+                    "label": "Metot Çağrısı",
+                    "code": "obj1.testMethod();\nobj2.testMethod();"
+                },
+                {
+                    "label": "Constructor Örneği",
+                    "code": "public Account(String name, long acctNumber, double balance)\n{\n  this.name = name;\n  this.acctNumber = acctNumber;\n  this.balance = balance;\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "🟡 Inheritance (Kalıtım)",
+            "content": "Kalıtım, nesne yönelimli programlamanın temel bir prensibidir. Bu prensibe göre, bir sınıf, diğer bir sınıfın özelliklerini ve davranışlarını miras alabilir. Bu durum, yazılım geliştirme sürecinde kodun yeniden kullanılabilirliğini artırır ve programların daha düzenli ve anlaşılır olmasını sağlar.\n\n> 💡 Ancak gereksiz yerlerde kullanılması performansı olumsuz etkiler.\n\n### Temel Kavramları\n\n- **Kalıtım**, bir yazılım geliştiricisinin mevcut bir sınıftan yeni bir sınıf türetmesine olanak tanır.\n- Mevcut sınıfa **ebeveyn sınıf**, **üst sınıf** veya **temel sınıf** denir.\n- Türetilmiş sınıfa ise **çocuk sınıf** veya **alt sınıf** denir.\n- Yani, **çocuk sınıf**, **ebeveyn sınıf** tarafından tanımlanan metotları ve verileri miras alır.\n\nÖrnek olarak, \"**Hayvan**\" sınıfından türetilmiş olan \"**Kedi**\" ve \"**Köpek**\" sınıflarını düşünelim. Bu durumda, \"**Kedi**\" ve \"**Köpek**\" sınıfları, \"**Hayvan**\" sınıfının sahip olduğu özelliklere ve davranışlara sahip olacaktır. Ancak, aynı zamanda, bu sınıflar kendi özel davranışlarını da tanımlayabilirler.\n\n> 💡 Kalıtım, kod tekrarını azaltır ve programların bakımını kolaylaştırır. Ayrıca, sınıf hiyerarşileri oluşturarak kodun daha modüler ve genişletilebilir olmasını sağlar."
+        },
+        {
+            "type": 0,
+            "heading": "🕯️ Bilgi Köşesi",
+            "content": "Üç farklı sınıfımız olsun: **`Geliştirici`**, **`Muhasebeci`** ve **`Tedarikçi`**. Her bir sınıf, kendi özelliklerine sahip.\n\n```mermaid\nclassDiagram\n\nGelistirici: - String isim\nGelistirici: - String ePosta\nGelistirici: - String tel\nGelistirici: - String bolum\nGelistirici: - String adres\nGelistirici: - String dogumTarihi\nGelistirici: - String maas\nGelistirici: - String projeAdi\n\nMuhasebeci : - String isim\nMuhasebeci : - String ePosta\nMuhasebeci : - String tel\nMuhasebeci : - String bolum\nMuhasebeci : - String adres\nMuhasebeci : - String dogumTarihi\nMuhasebeci : - String maas\nMuhasebeci : - String GunlukStok\n\nTedarikci : - String isim\nTedarikci : - String ePosta\nTedarikci : - String tel\nTedarikci : - String bolum\nTedarikci : - String adres\nTedarikci : - String dogumTarihi\nTedarikci : - String maas\nTedarikci : - String sehir\n```\n\nFark edersek bu üç sınıf arasında 7 özellik **`ortaktır`**. Genelde bu kadar az olmaz, onlarca aynı özelliklere sahip bir sürü sınıfımız olur. İşte onları her bir sınıf için yazmak yerine **`genel bir sınıf içinde yazabiliriz`**. ve bu özelliklere ihtiyaç duyan her sınıf bu sınıftan miras alabilir.\n\n```mermaid\nclassDiagram\nCalisan <|-- Gelistirici \nCalisan <|-- Muhasebeci \nCalisan <|-- Tedarikci \n\nCalisan : - String isim\nCalisan : - String ePosta\nCalisan : - String tel\nCalisan : - String bolum\nCalisan : - String adres\nCalisan : - String dogumTarihi\nCalisan : - String maas\n\nGelistirici : - String projeAdi\n\nMuhasebeci : - String GunlukStok\n\nTedarikci : - String sehir\n```\n\nİşte böyle yaparak **`OOP`** özelliklerinden biri olan **`Reusability (Yeniden kullanılabilirlik)`** özelliğini kullanmış olduk.\n\n> 💡 Bir sınıf başka bir sınıftan miras alırsa **değişkenleri**, **metotları** ve **iç içe sınıfları(nested classes)** miras olarak almış olur.\n\n> 💡 Her bir sınıfa ait ayrı bir **constructor**'ı olduğunu biliyoruz ancak bir sınıf başka bir sınıftan miras alırsa ebeveynin **constructor**'ı miras **`alınmaz`** ancak **`çağırılabilir`**."
+        },
+        {
+            "type": 0,
+            "heading": "Kalıtım Türleri",
+            "content": "**`Single Inheritance`**\n\nKendi özelliklerine ve kalıtım aldığı sınıfın özelliklerine sahip olur.\n\n```mermaid\nclassDiagram\nA_class <|-- B_class\n```\n\n**`Multilevel Inheritance`**\n\nKendi özelliklerine ve kalıtım aldığı sınıfın özelliklerine sahip olur. Ayrıca kalıtım aldığı sınıf başka bir sınıftan kalıtım aldığı sınıfın özelliklerine de sahip olur.\n\n```mermaid\nclassDiagram\nA_class <|-- B_class \nB_class <|-- C_class\n```\n\n**`Hierarchical Inheritance`**\n\nBirden fazla sınıf aynı sınıftan kalıtım aldığı durum.\n\n```mermaid\nclassDiagram\nA_class <|-- B_class \nA_class <|-- C_class\n```\n\nAyrıca **`Multiple Inheritance`** türü var. Ancak **`Java`** onu doğrudan desteklemez, interfaces kullanarak güvenli bir şekilde sağlanabilir.\n\n```mermaid\nclassDiagram\nA_class <|-- C_class \nB_class <|-- C_class\n```\n\n> 💡 Java dili **`Multiple Inheritance`** desteklememesinin sebeplerinden biri aynı özellik hem A_class sınıfında hem de B_class mevcut ise işlem karmaşıklığı oluşmasıdır.\n\n> 💡 Ebeveyn sınıfındaki `private` özellikler, kalıtım yoluyla alt sınıflara `aktarılmaz`. Bu özelliklere erişmek için `setter` ve `getter` metotlarının kullanılması gerekmektedir."
+        },
+        {
+            "type": 0,
+            "heading": "Protected Erişim Belirleyicisi",
+            "content": "Bir sınıf içerisindeki `değişkenlere` ve `metotlara` dış alt sınıflardan erişebilmesini ama başka paketlerin erişmesini engellemek amacıyla kullanılan bir erişim belirleyicisi.\n\n- **Protected Değişkenler ve Metotlar**:\n    - Bir sınıf üyesi (değişken veya metot) **`protected`** olarak işaretlendiğinde, bu üye aynı sınıfın üyeleri, alt sınıfları ve aynı paketteki diğer sınıflar tarafından erişilebilir.\n    - Ancak bu üye, `paket dışındaki` herhangi bir sınıf tarafından `erişilemez`.\n- **Kullanım Alanları**:\n    - Alt sınıfların üst sınıfın özelliklerine erişmesini sağlar.\n    - Kalıtım durumlarında yardımcı olur.\n    - Aynı paketteki farklı sınıflar arasında paylaşım yapılmasına olanak tanır.\n\n### UML diyagramlarında Erişim Belirleyici Gösterimi\n\n> 💡 **`Private`** değişkenler ve metotlar, başlarında `-` (eksi) simgesi ile gösterilirler.\n\n> 💡 **`Protected`** değişkenler ve metotlar, başlarında **`#`** (kare) simgesi ile gösterilirler.\n\n> 💡 **`Public`** değişkenler ve metotlar, başlarında `+` (artı) simgesi ile gösterilir.\n\n> 💡 **`Default(package-private)`** değişkenler ve metotlar, başlarında `~` (Yaklaşık) simgesi ile gösterilir.\n\n### Erişim Belirleyicisi Tablosu\n\n| Erişim Belirleyicisi | Aynı Sınıf İçinde | Aynı Paket İçinde | Paket Dışı Ama Alt Sınıf | Paket Dışı |\n| --- | --- | --- | --- | --- |\n| **Private** | ✅ | ❌ | ❌ | ❌ |\n| **Default(package-private)** | ✅ | ✅ | ❌ | ❌ |\n| **Protected** | ✅ | ✅ | ✅ | ❌ |\n| **Public** | ✅ | ✅ | ✅ | ✅ |"
+        },
+        {
+            "type": 0,
+            "heading": "🕎 Subclasses (Alt Sınıflar)",
+            "content": "**Kalıtım İlişkileri**: UML sınıf diyagramlarında kalıtım ilişkileri, **ebeveyn sınıfa işaret eden, dolu olmayan üçgen uçlu bir ok** ile gösterilir.\n\n```mermaid\nclassDiagram\nVehicle <|-- Car\n```\n\n**Doğru Kalıtım**: Doğru kalıtım, bir **is-a (bir tür)** ilişki oluşturur. Bu, çocuk sınıfın, ebeveyn sınıfın daha spesifik bir versiyonu olduğu anlamına gelir. Örneğin, \"**Car**\" (**Araba**), \"**Vehicle**\" (**Araç**) sınıfının daha spesifik bir türüdür.\n\n> 💡 Car is Vehicle : Araba bir araçtır\n\n### Kullanım Şekli\n\nJava'da bir sınıfı başka bir sınıftan türetmek için **`extends`** anahtar kelimesi kullanılır. Bu, yeni sınıfın mevcut bir sınıfın özelliklerini ve yöntemlerini miras almasını sağlar."
+        },
+        {
+            "type": 4,
+            "heading": "Kullanım Şekli",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public class Araba extends Arac {\n    // Sınıf içeriği\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Örnek - Kitap / Sözlük / Kelime",
+            "content": "Kelime diye bir sınıfın diyagramı bu şekilde olsun:\n\n```mermaid\nclassDiagram\nSozluk <-- Kelime\nKitap <|-- Sozluk \n\nKitap : # int sayfaSayisi\nKitap : + setSayfa() void\nKitap : + getSayfa() int\n\nKelime: +main(args String[]) void\n\nSozluk : - tanimlar int\nSozluk : + oranHesapla() double\nSozluk : + setTanim() void\nSozluk : + getTanim() int\n```"
+        },
+        {
+            "type": 4,
+            "heading": "Kitap / Sözlük / Kelime",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Kitap Sınıfı",
+                    "code": "class Kitap {\n\tprotected int sayfaSayisi = 1500;\n\n\t// ---------------------------------------------------------------\n\t// Sayfa sayisi mutator.\n\t// ---------------------------------------------------------------\n\tpublic void setSayfa(int numSayfa) {\n\t\tsayfaSayisi = numSayfa;\n\t}\n\n\t// ---------------------------------------------------------------\n\t// Sayfa sayisi accessor.\n\t// ---------------------------------------------------------------\n\tpublic int getSayfa() {\n\t\treturn sayfaSayisi;\n\t}\n}"
+                },
+                {
+                    "label": "Sözlük Sınıfı",
+                    "code": "class Sozluk extends Kitap {\n\tprivate int tanimlar = 52500;\n\n\t// ----------------------------------------------------------------\n\t// Hem yerel hem de kalıtılan değerleri kullanarak bir mesaj yazdırır.\n\t// ----------------------------------------------------------------\n\tpublic double oranHesapla() {\n\t\treturn (double) tanimlar / sayfaSayisi;\n\t}\n\n\t// ---------------------------------------------------------------\n\t// Tanimlar mutator.\n\t// ---------------------------------------------------------------\n\tpublic void setTanim(int numTanimlar) {\n\t\ttanimlar = numTanimlar;\n\t}\n\n\t// ---------------------------------------------------------------\n\t// Tanimlar accessor.\n\t// ---------------------------------------------------------------\n\tpublic int getTanim() {\n\t\treturn tanimlar;\n\t}\n}"
+                },
+                {
+                    "label": "Kelime Sınıfı",
+                    "code": "public class Kelime {\n\n\tpublic static void main(String[] args) {\n\t\tSozluk webster = new Sozluk();\n\t\tSystem.out.println(\"Sayfa sayisi: \" + webster.getSayfa());\n\t\tSystem.out.println(\"Tanim sayisi: \" + webster.getTanim());\n\t\tSystem.out.println(\"Sayfa basina tanim sayisi: \" + webster.oranHesapla());\n\t}\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Sayfa sayisi: 1500\nTanim sayisi: 52500\nSayfa basina tanim sayisi: 35.0"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Super() Metodu",
+            "content": "Bir alt-sınıf, `super()` metodunu kullanarak, üst sınıfının bir nesnesini üretebilir ve onun değişkenlerine değer atayabilir. `Sozluk` sınıfında `Kelime` sınıfına ait anlık değişkenleri kullanarak nesne ürettik. Üst-sınıfın iç-değişkenleri `private` olmadığı sürece, bunu yapmak mümkündür. Ama, üst-sınıfın değişkenleri `private` damgalı olduğunda, alt-sınıftaki kodlar, onlara erişemeyecektir. Çoğunlukla, üst-sınıfın öğelerinin `private` olmasını isteriz. Böylece üst-sınıfın yapısını diğer sınıflardan saklarız. Buna `encapsulation` denir. Bu durumlarda, üst-sınıfın öğelerine erişmenin yolu `super()` metodunu kullanmaktır.\n\nEğer `Kitap` sınıfına **`constructor`** metodunu eklersek ve içinde sayfa sayısı bilgisini alırsak, **`Sozluk`** sınıfında hata oluşacaktır, çünkü kendisinden bir nesne üretmek için sayfa sayısı bilgisi zorunlu olmuştur. Bu nedenle **`Sozluk`** sınıfı için de bir **`constructor`** tanımlamamız lazım. Ve içinde sayfa sayısı bilgisini almamız gerek, ardından **`super()`** metoduna parametre olarak geçirmemiz gerek.\n\nVe **`Sozluk`** sınıfı için bir **`constructor`** tanımladığımız için, **`Sozluk`**'tan bir nesne türettiğimizde zorunlu olarak hem sayfa sayısı hem tanımlar bilgisini girmemiz şart olmuştur."
+        },
+        {
+            "type": 4,
+            "heading": "Super() Metodu ile Kitap / Sözlük / Kelime",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Kitap Sınıfı",
+                    "code": "class Kitap {\n\tprotected int sayfaSayisi;\n\t\n\tpublic Kitap(int sayfaSayisi) {\n\t\tthis.sayfaSayisi = sayfaSayisi;\n\t}\n\n\tpublic void setSayfa(int numSayfa) {\n\t\tsayfaSayisi = numSayfa;\n\t}\n\n\tpublic int getSayfa() {\n\t\treturn sayfaSayisi;\n\t}\n}"
+                },
+                {
+                    "label": "Sözlük Sınıfı",
+                    "code": "class Sozluk extends Kitap {\n\tprivate int tanimlar;\n\n\tpublic Sozluk(int sayfaSayisi, int tanimlar) {\n\t\tsuper(sayfaSayisi);\n\t\tthis.tanimlar = tanimlar;\n\t}\n\n\tpublic double oranHesapla() {\n\t\treturn (double) tanimlar / sayfaSayisi;\n\t}\n\n\tpublic void setTanim(int numTanimlar) {\n\t\ttanimlar = numTanimlar;\n\t}\n\n\tpublic int getTanim() {\n\t\treturn tanimlar;\n\t}\n}"
+                },
+                {
+                    "label": "Kelime Sınıfı",
+                    "code": "public class temp {\n\n\tpublic static void main(String[] args) {\n\t\tSozluk webster = new Sozluk(1500, 52500);\n\t\tSystem.out.println(\"Sayfa sayisi: \" + webster.getSayfa());\n\t\tSystem.out.println(\"Tanim sayisi: \" + webster.getTanim());\n\t\tSystem.out.println(\"Sayfa basina tanim sayisi: \" + webster.oranHesapla());\n\t}\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Sayfa sayisi: 1500\nTanim sayisi: 52500\nSayfa basina tanim sayisi: 35.0"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "🕯️ Bilgi Köşesi - Constructor Çalışma Mekanizması",
+            "content": "**`Constructor`** çalışma mekanizmasını anlamak için **`MobileGeliştirici`**, **`Geliştirici`** ve **`Calisan`** sınıfları ele alalım ve hiç bir özellik tanımlamadan **`constructor`** üzerinde duralım. Bu üç sınıf **`Multilevel Inheritance`** olarak kalıtım almış.\n\n```mermaid\nclassDiagram\nCalisan <|-- Gelistirici \nGelistirici <|-- MobileGelistirici\n```\n\nHer sınıf içinde sadece **`constructor`** tanımlayalım.\n\n**`MobileGelistirici`** sınıfından bir nesne türettiğimizde, yalnızca **`MobileGelistirici`** sınıfındaki **`constructor`**'ın çalışmasını bekleriz. Ancak, **`MobileGelistirici`** sınıfı **`Geliştirici`** sınıfından, **`Geliştirici`** sınıfı da **`Calisan`** sınıfından kalıtım aldığı için, tüm üst sınıf **`constructor`**'ları da çağrılacaktır."
+        },
+        {
+            "type": 4,
+            "heading": "Constructor Zinciri - Version 1",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Calisan Sınıfı",
+                    "code": "class Calisan{\n\tpublic Calisan() {\n\t\tSystem.out.println(\"Çalışan Sınıfındaki Constructorda Parametre Yoktur!\");\n\t}\n}"
+                },
+                {
+                    "label": "Gelistirici Sınıfı",
+                    "code": "class Gelistirici extends Calisan{\n\tpublic Gelistirici() {\n\t\tSystem.out.println(\"Geliştirici Sınıfındaki Constructorda Parametre Yoktur!\");\n\t}\n}"
+                },
+                {
+                    "label": "MobileGelistirici Sınıfı",
+                    "code": "class MobileGelistirici extends Gelistirici{\n\tpublic MobileGelistirici() {\n\t\tSystem.out.println(\"MobileGeliştirici Sınıfındaki Constructorda Parametre Yoktur!\");\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tMobileGelistirici mobileGelistirici = new MobileGelistirici();\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Çalışan Sınıfındaki Constructorda Parametre Yoktur!\nGeliştirici Sınıfındaki Constructorda Parametre Yoktur!\nMobileGeliştirici Sınıfındaki Constructorda Parametre Yoktur!"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Constructor Zinciri - Version 2",
+            "content": "Peki sınıfları başka bir şekilde yazalım, bir sınıfta birden fazla **`constructor`** tanımlayalım.\n\nBu sefer **`Geliştirici`** sınıfından bir nesne türettik ve parametre olarak \"Yasir\" ismini geçirdik, **`Geliştirici`** sınıfındaki **`constructor`** parametre aldığı için ilk tanımladığımız **`constructor`** çalışmadı. Ancak fark edersek **`this.isim = isim;`** satırını iki defa yazdık, hem üst sınıfında hem de alt sınıfında, bir sınıfa onlarca parametre geçirileceğini düşünün, bu çok büyük performans kaybına sebep olur.\n\nBu yüzden **`super()`** metodunu kullanarak aldığımız parametreyi üst sınıfına taşıyabiliriz."
+        },
+        {
+            "type": 4,
+            "heading": "Constructor Zinciri - Version 2",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Calisan Sınıfı",
+                    "code": "class Calisan {\n\tprotected String isim;\n\n\tpublic Calisan() {\n\t\tSystem.out.println(\"Çalışan Sınıfındaki Constructor Çalıştı!\");\n\t}\n\n\tpublic Calisan(String isim) {\n\t\tthis.isim = isim;\n\t}\n}"
+                },
+                {
+                    "label": "Gelistirici Sınıfı",
+                    "code": "class Gelistirici extends Calisan {\n\tpublic Gelistirici() {\n\t\tSystem.out.println(\"Geliştirici Sınıfındaki Constructor Çalıştı!\");\n\t}\n\t\n\tpublic Gelistirici(String isim) {\n\t\tthis.isim = isim;\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tGelistirici gelistirici = new Gelistirici(\"Yasir\");\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Çalışan Sınıfındaki Constructorda Parametre Yoktur!"
+                }
+            ]
+        },
+        {
+            "type": 4,
+            "heading": "Constructor Zinciri - Version 3 (super() ile)",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Calisan Sınıfı",
+                    "code": "class Calisan {\n\tprivate String isim;\n\n\tpublic Calisan() {\n\t\tSystem.out.println(\"Çalışan Sınıfındaki Constructor Çalıştı!\");\n\t}\n\n\tpublic Calisan(String isim) {\n\t\tthis.isim = isim;\n\t}\n}"
+                },
+                {
+                    "label": "Gelistirici Sınıfı",
+                    "code": "class Gelistirici extends Calisan {\n\tpublic Gelistirici() {\n\t\tSystem.out.println(\"Geliştirici Sınıfındaki Constructor Çalıştı!\");\n\t}\n\t\n\tpublic Gelistirici(String isim) {\n\t\tsuper(isim);\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tGelistirici gelistirici = new Gelistirici(\"Yasir\");\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": ""
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "🟡 Polymorphism (Çok Biçimlilik)",
+            "content": "Polymorphism, nesne yönelimli programlamada, aynı işlemin farklı nesneler üzerinde farklı şekillerde gerçekleştirilebilmesini sağlayan bir kavramdır.\n\n## Avantajları\n\n- **Esneklik:** Kodunuzu daha esnek ve genişletilebilir hale getirir.\n- **Bakım Kolaylığı:** Farklı sınıflarda aynı metodu kullanarak kodun bakımını kolaylaştırır.\n- **Kod Tekrarını Azaltma:** Ortak bir arayüz veya üst sınıf kullanarak kod tekrarını azaltır.\n\n## Türleri\n\n- **Metot Overloading:** Aynı sınıf içinde, aynı isimde fakat farklı parametre listelerine sahip metotların tanımlanması.\n- **Metot Overriding:** Bir alt sınıfın, üst sınıfından miras aldığı bir metodu yeniden tanımlayarak, ihtiyaçlarına göre uyarlaması."
+        },
+        {
+            "type": 0,
+            "heading": "Overloading (Aşırı Yükleme)",
+            "content": "Aynı sınıf içinde aynı isimde fakat farklı parametre listelerine sahip metotlar tanımlanabilir. Bu metotlar aynı ismi taşısa da, farklı parametreler ile çağrıldıklarında farklı işlevler gerçekleştirirler.\n\nYukarıdaki kodda, `siparis1()` metodu restoran içinden bir siparişin verildiği durumu, siparis2() metodu restoran dışından bir siparişin verildiği durumu, ve `siparis3()` metodu ise restoran dışından birinin indirim kuponu kullanarak sipariş verdiği durumu ifade etmektedir.\n\nAncak bu 3 metodu tanımlamak yerine **`Polymorphism`** kavramından yararlanarak tek bir isim altında `siparis()` olarak tanımlayarak, gönderilen parametrelere göre hangi durum olduğunu tespit edilir ve ona göre işlem yapılır.\n\n> 💡 Bu işlem, `System.out.println()` metodunu hatırlatıyor. Bu metot, bir dize `String`, tamsayı `integer` veya ondalık sayı `double` gibi çeşitli veri türlerini kabul eder ve bunları ekrana yazdırır."
+        },
+        {
+            "type": 4,
+            "heading": "Overloading - Restoran Örneği",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Overloading Olmadan",
+                    "code": "class Restoran {\n\tpublic float siparis1(float toplamFiyat) {\n\t\treturn toplamFiyat;\n\t}\n\n\tpublic float siparis2(float toplamFiyat, float kargoUcreti) {\n\t\treturn toplamFiyat + kargoUcreti;\n\t}\n\n\tpublic float siparis3(float toplamFiyat, float kargoUcreti, String kupon) {\n\t\tfloat oran = getOranByKupon(kupon);\n\t\tfloat indirim = toplamFiyat * oran;\n\t\treturn toplamFiyat + kargoUcreti - indirim;\n\t}\n\n\tprivate float getOranByKupon(String kupon) {\n\t\treturn 0.6f; // Bu metotta veritabanına bağlanıp bu kupon için uygulanacak indirim\n\t\t\t\t\t// oranını belirlediğimizi düşünelim\n\t}\n}"
+                },
+                {
+                    "label": "Overloading ile",
+                    "code": "public class Ornek {\n\n\tpublic static void main(String[] args) {\n\t\tRestoran restoran = new Restoran();\n\t\tSystem.out.println(restoran.siparis(100)); // 100\n\t\tSystem.out.println(restoran.siparis(100, 50)); // 100 + 50 = 150\n\t\tSystem.out.println(restoran.siparis(100, 50, \"Free Palestine\")); \n\t\t\t\t\t\t  // 100 + 50 - (100 - (100 * 0.6)) = 100 + 50 - 60 = 90\n\t}\n\n}\n\nclass Restoran {\n\tpublic float siparis(float toplamFiyat) {\n\t\treturn toplamFiyat;\n\t}\n\n\tpublic float siparis(float toplamFiyat, float kargoUcreti) {\n\t\treturn toplamFiyat + kargoUcreti;\n\t}\n\n\tpublic float siparis(float toplamFiyat, float kargoUcreti, String kupon) {\n\t\tfloat oran = getOranByKupon(kupon);\n\t\tfloat indirim = toplamFiyat * oran;\n\t\treturn toplamFiyat + kargoUcreti - indirim;\n\t}\n\n\tprivate float getOranByKupon(String kupon) {\n\t\treturn 0.6f; // Bu metotta veritabanına bağlanıp bu kupon için uygulanacak indirim\n\t\t\t\t\t// oranını belirlediğimizi düşünelim\n\t}\n}"
+                },
+                {
+                    "label": "Banka Örneği",
+                    "code": "public class Banka {\n\n    // Müşteri ismi alan yazdir metodu\n    public void yazdir(String isim) {\n        System.out.println(\"Müşteri İsmi: \" + isim);\n    }\n\n    // Müşteri ID'si alan yazdir metodu\n    public void yazdir(int id) {\n        System.out.println(\"Müşteri ID: \" + id);\n    }\n\n    // Hem müşteri ismi hem de ID'si alan yazdir metodu\n    public void yazdir(String isim, int id) {\n        System.out.println(\"Müşteri İsmi: \" + isim + \", Müşteri ID: \" + id);\n    }\n\n    public static void main(String[] args) {\n        Banka banka = new Banka();\n\n        // Farklı yazdir metodları çağrılıyor\n        banka.yazdir(\"Ali\"); // Müşteri İsmi: Ali\n        banka.yazdir(12345); // Müşteri ID: 12345\n        banka.yazdir(\"Ayşe\", 67890); // Müşteri İsmi: Ayşe, Müşteri ID: 67890\n    }\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Overriding (Geçersiz Kılma)",
+            "content": "Alt sınıflar, üst sınıflarından `miras aldıkları` metotları kendi ihtiyaçlarına göre yeniden tanımlayabilirler. Bu sayede, aynı isimdeki metotlar farklı sınıflarda farklı işlevsellikler sağlayabilir.\n\nÇalışanların maaşlarını yönetmek için bir sistem düşünelim, üst sınıf olarak **`Employee`** sınıfı olsun. Çalışanların türleri var **`Salaried Employee (Aylık Çalışan)`**, **`Daily Employee (Günlük Çalışan)`** ve **`Hourly Employee (Saatlik Çalışan)`**. Her biri üst sınıfından miras alıyor. işte her birinin de maaşı ayrı hesaplanması gerek çünkü bazıları bounsları var veya bazıları saat bazında maaşı hesaplanır. Bu yüzden sınıftan sınıfa **`getSalary()`** metodu değişmelidir.\n\n```mermaid\nclassDiagram\nEmployee<|-- SalariedEmployee \nEmployee<|-- DailyEmployee\nEmployee<|-- HourlyEmployee\n\nEmployee : - String name\nEmployee : - String adress\nEmployee : - String department\nEmployee : - String email\nEmployee : - float salary\nEmployee : + getSalary()\n\nSalariedEmployee : - float bouns\nSalariedEmployee : + getBouns()\nSalariedEmployee : + getSalary()\n\nDailyEmployee : - float workDayPrice\nDailyEmployee : - int dailyRate\nDailyEmployee : + getSalary()\n\nHourlyEmployee : - float workDayPrice\nHourlyEmployee : - int hourlyRate\nHourlyEmployee : + getSalary()\n```"
+        },
+        {
+            "type": 4,
+            "heading": "Employee Sistem - İlk Versiyon",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Employee",
+                    "code": "class Employee {\n\tprivate String name, department;\n\tprivate float salary;\n\n\tpublic Employee(String name, String department, float salary) {\n\t\tthis.name = name;\n\t\tthis.department = department;\n\t\tthis.salary = salary;\n\t}\n\n\tpublic float getSalary() {\n\t\treturn salary;\n\t}\n}"
+                },
+                {
+                    "label": "SalariedEmployee",
+                    "code": "class SalariedEmployee extends Employee {\n\tprivate float bouns;\n\n\tpublic SalariedEmployee(float bouns, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.bouns = bouns;\n\t}\n\t\n\tpublic float getBouns() {\n\t\treturn bouns;\n\t}\n}"
+                },
+                {
+                    "label": "DailyEmployee",
+                    "code": "class DailyEmployee extends Employee {\n\tprivate float workDayPrice;\n\tprivate int dailyRate;\n\n\tpublic DailyEmployee(float workDayPrice, int dailyRate, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.workDayPrice = workDayPrice;\n\t\tthis.dailyRate = dailyRate;\n\n}"
+                },
+                {
+                    "label": "HourlyEmployee",
+                    "code": "class HourlyEmployee extends Employee {\n\tprivate float workDayPrice;\n\tprivate int hourlyRate;\n\n\tpublic HourlyEmployee(float workDayPrice, int hourlyRate, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.workDayPrice = workDayPrice;\n\t\tthis.hourlyRate = hourlyRate;\n\t\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tEmployee e1 = new Employee(\"Yasir\", \"Siber Güvenlik Uzmanı\", 900000);\n\tSystem.out.println(\"Yasir Salary: \" + e1.getSalary()); // salary\n\n\tSalariedEmployee e2 = new SalariedEmployee(200, \"Vasim\", \"Yapay Zeka Uzmanı\", 900000);\n\tSystem.out.println(\"Vasim Salary: \" + e2.getSalary()); // salary + bouns\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Yasir Salary: 900000.0\nVasim Salary: 900000.0"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Overriding - getSalary() Düzeltmesi",
+            "content": "İki maaş aynı olduğunu görüyoruz ancak **`Vasim'in`** 200 bounsı eklenmesi gerekiyordu. Bu yüzden **`SalariedEmployee`** sınıfı için `getSalary()` metodu farklı işlemler yapması gerek, sadece maaş döndürmeyecek bounsı da ekleyecektir. Yani **`SalariedEmployee`** sınıfından bir nesne türetildiğinde ve `getSalary()` metodu çağırdığımda **`Employee`** sınıfına ait metot değil, **`SalariedEmployee`** sınıfına metot çağırılması gerek.\n\n> 💡 `@Override` ifadesi, bir metodun ezildiğini belirtir. Bu ifade, derleyicinin metot imzasını kontrol etmesini sağlar ve ezme işleminin doğru yapıldığını garanti eder. Yazmazsak çalışır mı ? **`Evet`** çalışır\n\n> 💡 Eğer üst sınıfta `getSalary()` metodu yoksa ve alt sınıfında `getSalary()` metodu tanımlayıp üstüne `@Override` ifadesini yazarsak üst sınıfındaki ezilecek metodu bulamadığı için `compiler` hata verecektir.\n\n> 📢 Her bir sınıf için `Getter` ve `Setter` metotlarını tanımlamayı unutmayalım, burada kod kalabalığı olmasın diye tanımlamadım."
+        },
+        {
+            "type": 4,
+            "heading": "Override getSalary()",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "SalariedEmployee",
+                    "code": "class SalariedEmployee extends Employee {\n\tprivate float bouns;\n\n\tpublic SalariedEmployee(float bouns, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.bouns = bouns;\n\t}\n\t\n\tpublic float getBouns() {\n\t\treturn bouns;\n\t}\n\n\t@Override\n\tpublic float getSalary() {\n\t\treturn super.getSalary() + bouns;\n\t}\n}"
+                },
+                {
+                    "label": "DailyEmployee",
+                    "code": "class DailyEmployee extends Employee {\n\tprivate float workDayPrice;\n\tprivate int dailyRate;\n\n\tpublic DailyEmployee(float workDayPrice, int dailyRate, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.workDayPrice = workDayPrice;\n\t\tthis.dailyRate = dailyRate;\n\t}\n\t\n\t@Override\n\tpublic float getSalary() {\n\t\treturn workDayPrice * dailyRate;\n\t}\n}"
+                },
+                {
+                    "label": "HourlyEmployee",
+                    "code": "class HourlyEmployee extends Employee {\n\tprivate float workDayPrice;\n\tprivate int hourlyRate;\n\n\tpublic HourlyEmployee(float workDayPrice, int hourlyRate, String name, String department, float salary) {\n\t\tsuper(name, department, salary);\n\t\tthis.workDayPrice = workDayPrice;\n\t\tthis.hourlyRate = hourlyRate;\n\t}\n\t\n\t@Override\n\tpublic float getSalary() {\n\t\treturn workDayPrice * hourlyRate;\n\t}\t\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Yasir Salary: 900000.0\nVasim Salary: 900200.0"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Upcasting",
+            "content": "> 💡 upcasting alt sınıftan oluşturulmuş bir nesneyi üst sınıftan oluşturulmuş bir nesneye çevirmek\n\nYani **`upcasting`** özelliğini kullanarak biz sadece **`Employee`** sınıfından bir nesne türetebiliriz ardından birden fazla alt sınıflarından atama yapabiliriz `overloading` yaparak yeni bir değer alabiliyor.\n\nAncak upcasting özelliğini kullanarak her zaman aynı işlemleri yapamayız. Üst sınıftan bir nesne tanımlayıp alt sınıflardan türettiğimizde alt sınıfta bulunup üst sınıfta bulunmayan private metotlara erişemeyiz. Fakat `override` yapılmışsa alt sınıfın metodunu çalıştırır.\n\nAlt sınıflara ait metotları kullanmak için referansı uygun şekilde dönüştürülmesi gerek.\n\n> 💡 **cast() yöntemi,** bir veri türünü başka bir veri türüne dönüştürmek için kullanılır.\n\n> ⭐ Önemli Bilgi: upcasting durumlarda `static` metotlara override yapılmaz"
+        },
+        {
+            "type": 4,
+            "heading": "Upcasting Örneği",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Main - Upcasting",
+                    "code": "public static void main(String[] args) {\n\tEmployee e1;\n\t\n\te1 =new Employee(\"Yasir\", \"Siber Güvenlik Uzmanı\", 900000);\n\tSystem.out.println(\"Yasir Salary: \" + e1.getSalary()); // salary\n\n\te1 = new SalariedEmployee(200, \"Vasim\", \"Yapay Zeka Uzmanı\", 900000);\n\tSystem.out.println(\"Vasim Salary: \" + e1.getSalary()); // salary + bouns\n\n\te1 = new DailyEmployee(30, 29000, \"Elif\", \"Görüntü İşleme Uzmanı\", 0);\n\tSystem.out.println(\"Elif  Salary: \" + e1.getSalary()); // workDayPrice * dailyRate\n\n\te1 = new HourlyEmployee(250,3300, \"Motaz\", \"Derin Öğrenme Uzmanı\", 0);\n\tSystem.out.println(\"Motaz Salary: \" + e1.getSalary()); // workDayPrice * hourlyRate\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Yasir Salary: 900000.0\nVasim Salary: 900200.0\nElif  Salary: 870000.0\nMotaz Salary: 825000.0"
+                },
+                {
+                    "label": "Cast Örneği",
+                    "code": "public static void main(String[] args) {\n\tEmployee e1 = new Employee(\"Yasir\", \"Siber Güvenlik Uzmanı\", 900000);\n\tSystem.out.println(\"Yasir Salary: \" + e1.getSalary()); // Yasir Salary: 900000\n\n\tEmployee e2 = new SalariedEmployee(200, \"Vasim\", \"Yapay Zeka Uzmanı\", 900000);\n\tSystem.out.println(\"Vasim Bouns: \" + ((SalariedEmployee)e2).getBouns()); // Vasim Bouns: 200\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "❤️‍🔥 Aggregation ❤️‍🔥",
+            "content": "- Alt nesne bağımsız bir yaşam döngüsüne sahiptir.\n- Has-A ilişkisi.\n- Zayıf sahiplik (weak ownership). Alt nesne, üst nesneden bağımsız olarak var olabilir.\n- UML diyagramlarında, boş bir elmas sembolü ile temsil edilir.\n\n```mermaid\nclassDiagram\nClass1 o-- Class2\n```"
+        },
+        {
+            "type": 0,
+            "heading": "❤️‍🔥 Composition ❤️‍🔥",
+            "content": "- Alt nesne üst nesne ile aynı yaşam döngüsüne sahiptir.\n- Part-Of ilişkisi.\n- Güçlü sahiplik (strong ownership). Alt nesne, üst nesne olmadan var olamaz.\n- UML diyagramlarında, dolu bir elmas sembolü ile temsil edilir.\n\n```mermaid\nclassDiagram\nClass1 *-- Class2\n```"
+        },
+        {
+            "type": 0,
+            "heading": "Aggregation & Composition - Örnek",
+            "content": "Bu UML diyagramını kodlayın:\n\n```mermaid\nclassDiagram\nEmployee *-- PersonallInformation\nEmployee o-- Department\n\nEmployee: - int id\nEmployee: - float salary\nEmployee: - PersonallInformation personalInfo\nEmployee: - Department dept\n\nPersonallInformation: - firstName String\nPersonallInformation: - lastName String\nPersonallInformation: - accountNumber String\nPersonallInformation: - yearOdBirth int\nPersonallInformation: + PersonallInformation()\nPersonallInformation: + toString() String\n\nDepartment: - deptNo int\nDepartment: - deptName String\nDepartment: + Department()\nDepartment: + toString() String\n```\n\nBu UML diyagramında kalıtım yoktur, ancak `PersonalInformation` sınıfı `Employee` sınıfı için vazgeçilmezdir, `olmazsa olmazdır`. Sonuçta, bir çalışan isimsiz olamaz, değil mi? İşte bu tür ilişkiye `part-of` denir. Bir diğer yandan, `Department` sınıfı için bir çalışan **null atama** yaparak hiç departmana sahip olmayabilir, bir departmana sahip olabilir veya **ArrayList** kullanarak birden fazla departmana dahil edebiliriz. Bu ilişkiye ise `has-a` denir."
+        },
+        {
+            "type": 4,
+            "heading": "Employee / PersonalInformation / Department",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Employee Sınıfı",
+                    "code": "class Employee {\n\tprivate int id;\n\tprivate float salary;\n\tprivate PersonalInformation personalInfo; // Composition Relationship\n\tprivate Department dept; // Aggregation Relationship\n\n\tpublic Employee(int id, float salary, String firstName, String lastName, String accountNumber, int yearOfBirth,\n\t\t\tDepartment dept) {\n\t\tthis.id = id;\n\t\tthis.salary = salary;\n\t\tthis.personalInfo = new PersonalInformation(firstName, lastName, accountNumber, yearOfBirth);\n\t\tthis.dept = dept;\n\t}\n\n\t@Override\n\tpublic String toString() {\n\t\treturn \"Employee [id=\" + id + \", salary=\" + salary + \", personalInfo=\" + personalInfo + \", dept=\" + dept + \"]\";\n\t}\n}"
+                },
+                {
+                    "label": "PersonalInformation Sınıfı",
+                    "code": "class PersonalInformation {\n\tprivate String firstName, lastName, accountNumber;\n\tprivate int yearOfBirth;\n\n\tpublic PersonalInformation(String firstName, String lastName, String accountNumber, int yearOfBirth) {\n\t\tsuper();\n\t\tthis.firstName = firstName;\n\t\tthis.lastName = lastName;\n\t\tthis.accountNumber = accountNumber;\n\t\tthis.yearOfBirth = yearOfBirth;\n\t}\n\n\t@Override\n\tpublic String toString() {\n\t\treturn \"PersonalInformation [firstName=\" + firstName + \", lastName=\" + lastName + \", accountNumber=\"\n\t\t\t\t+ accountNumber + \", yearOfBirth=\" + yearOfBirth + \"]\";\n\t}\n}"
+                },
+                {
+                    "label": "Department Sınıfı",
+                    "code": "class Department {\n\tprivate int deptNo;\n\tprivate String deptName;\n\n\tpublic Department(int deptNo, String deptName) {\n\t\tsuper();\n\t\tthis.deptNo = deptNo;\n\t\tthis.deptName = deptName;\n\t}\n\n\t@Override\n\tpublic String toString() {\n\t\treturn \"Department [deptNo=\" + deptNo + \", deptName=\" + deptName + \"]\";\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\n\tDepartment dept1 = new Department(123, \"Cybersecurity\");\n\n\tEmployee emp1 = new Employee(1, 900000, \"Yasir\", \"Alrawi\", \"00\", 2001, dept1);\n\tEmployee emp2 = new Employee(2, 900000, \"Motaz\", \"Alrawi\", \"01\", 2003, dept1);\n\n\tSystem.out.println(emp1);\n\tSystem.out.println(emp2);\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "Employee [id=1, salary=900000.0, personalInfo=PersonalInformation [firstName=Yasir, lastName=Alrawi, accountNumber=00, yearOfBirth=2001], dept=Department [deptNo=123, deptName=Cybersecurity]]\nEmployee [id=2, salary=900000.0, personalInfo=PersonalInformation [firstName=Motaz, lastName=Alrawi, accountNumber=01, yearOfBirth=2003], dept=Department [deptNo=123, deptName=Cybersecurity]]"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Composition vs Aggregation - Soru",
+            "content": "**❓ Koda dikkatlice bakın ve `PersonalInformation` sınıfını neden main metodunda doğrudan tanımlamadığımızı, aynı zamanda `Department` sınıfını neden tanımladığımızı anlamaya çalışın.**\n\n**✅ Cevap:**\n\nÖncelikle **`PersonalInformation`** sınıfı ile `Employee` arasındaki ilişki `Composition` olduğunu fark etmiş olmalıyız. Bu yüzden eğer bu şekilde tanımlarsam:\n\n```java\nPersonalInformation personalInfo = new PersonalInformation (\"Yasir\", \"Alrawi\", \"00\", 2001);\nEmployee emp1 = new Employee(1, 900000, personalInfo, dept1);\n```\n\nCompiler kod segmentini çalıştırdığında, `Employee` nesnesi okunduktan sonra hafızadan silinecektir. Ancak, aynı zamanda **`PersonalInformation`** nesnesinin de silinmesi gerekir. Aksi takdirde bir çalışanın kişisel bilgileri başka bir çalışan için kullanılabilir. Bu yüzden **`PersonalInformation`** nesnesi, başka bir `Employee` nesnesi için kullanılamaz. İşte bu nedenle **`PersonalInformation part of Employee`**.\n\nAncak **`Department`** sınıfı ile `Employee` sınıfı arasındaki ilişki `Aggregation` ilişkisi olduğu için birden fazla çalışan aynı departmana sahip olabildiği için `Employee` nesnesi hafızadan silindiği zaman **`Department`** nesnesi kalabilir. ve başka çalışan için kullanılabilir. çünkü `Employee has a Department`."
+        },
+        {
+            "type": 0,
+            "heading": "🟡 Abstraction",
+            "content": "### 🟡 Abstract Class\n\n### 🟡 Interface"
+        },
+        {
+            "type": 0,
+            "heading": "🟡 Abstract Class (Soyut Sınıf)",
+            "content": "Bir **`abstract`** class, bir sınıf hiyerarşisinde genel bir kavramı temsil eden yer tutucu bir sınıftır. **\"abstract\"** anahtar kelimesi ile tanımlanan sınıflardır. Sınıfın içinde soyut **`abstract`** metotlar veya normal fonksiyonlar tanımlanabilir. Soyut sınıflardan **\"new\"** anahtar kelimesi ile bir nesne oluşturulamaz.\n\n## Özellikleri\n\n- Bir **`abstract`** class, soyut **`abstract`** ve somut **`concrete`** metotları içerebilir.\n- Bir **`abstract`** class, doğrudan örneklenemez; yani, soyut sınıflardan **'new'** anahtar kelimesi ile nesne oluşturamazsınız ve bu tür sınıflar yalnızca başka sınıflar tarafından miras alınarak kullanılabilir.\n- Soyut metotlar, **`abstract`** class içinde tanımlanır, ancak **`somut`** bir implementasyonları yoktur. Bunun yerine, alt sınıflar tarafından override edilmeleri gerekir.\n- **`Abstract`** class, genellikle alt sınıflar arasında ortak özellikleri paylaşmak için kullanılır.\n- **`Abstract`** class'ın kendisi soyut bir sınıf olabilir, yani içinde soyut metotlar bulunan bir sınıf. Bu durumda, alt sınıflar soyut metotları uygulamak zorundadır.\n- Kurucu metot **`constructor`** ve **`statik`** metotlar tanımlanabilir.\n- `Final` olarak tanımlanmış metotları içerebilir, bu metotlar alt sınıflarda ezilemez (override edilemez).\n- UML diyagramında **`abstract`** sınıfları göstermek için sınıfın adı **`*italik*`** olarak veya üstüne **`<<abstract>>`** yazılır.\n\n## Söz Dizimi\n\n```java\nabstract class className{ }\n```\n\nBir abstract class hem abstract metotlar hem de non-abstract metotlar içerebilir:"
+        },
+        {
+            "type": 4,
+            "heading": "Abstract Class Söz Dizimi",
+            "codeBlocks": [
+                {
+                    "label": "Java",
+                    "code": "public abstract class className{\n\t\n\tabstract void metot1(); // abstract metot\n\t\n\tvoid metot2() {} // non-abstract metot\n\t\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Abstract Class - Örnek",
+            "content": "Bir otomobil üretim firması, araçlarını yönetmesi için bir sistem kurmak istiyor:\n\n- Tekerlek Sayısı\n- Uzunluk\n- Ağırlık\n\nAyrıca, bu araçların aşağıdaki hizmetleri sunabildiğinden emin olmalıdır:\n\n- Otomatik Sürüş\n- Akış Hizmetleri\n- Park Sensörü\n\nBildiğimiz gibi araba türleri çoktur **Hatchback, SUV, Sedan vs..** araba türleri vardır, işte üretilen tüm türler için bu yukarıda tanımladığımız özellikler ve hizmetler olması gerek.\n\nBu sistemi kuran programcıların bu özellikleri ve hizmetleri dahil etmek zorunda bırakılabilmesi için abstract olarak tanımlamamız gerek.\n\nYani bu özellikler ve hizmetler tanımlanacağı her class içinde bulunmaları gerek.\n\n### UML Diyagramı\n\n```mermaid\nclassDiagram\n\n*Car* <|-- Hatchback\n*Car* <|-- SUV\n\n<<Abstract>> Car\nCar : - height float\nCar : - weight float\nCar : - numberOfWheels\nCar : + autoPilot() void\nCar : + streamingServices() void\nCar : + parkingSernsors() void\n\nHatchback : - yearOfMade int\nHatchback : + autoPilot() void*\nHatchback : + streamingServices() void*\nHatchback : + parkingSernsors() void*\n\nSUV : - model String\nSUV : + autoPilot() void*\nSUV : + streamingServices() void*\nSUV : + parkingSernsors() void*\n```\n\nGenelde sadece 2 tür araba üzerinde örnek verelim ancak uygulayacağımız işlemler tanımlanacağı her araba türü temsil eden sınıfın içinde tanımlanması gerekecektir.\n\nEbeveyn sınıfı tanımlarken, **`abstract`** anahtar kelimesini kullanarak bu sınıfı soyut hale getiriyoruz. Bu sınıf içinde istediğimiz özellikleri tanımlıyoruz. Ayrıca, soyut metotları tanımlayarak, bu metotların içerisindeki davranışları belirtiyoruz. Ancak bu metotların gerçek bir implementasyonu olmaz, sadece imza olarak bırakılır.\n\n**`Hatchback`** sınıfını tanımladığımızda, **`Car`** sınıfından kalıtım alacaktır. Bu durumda, **`Car`** sınıfında **`abstract`** olarak tanımlanan metotları **`Hatchback`** sınıfının içinde gerçek bir implementasyon ile tanımlamamız gerekecektir."
+        },
+        {
+            "type": 4,
+            "heading": "Car / Hatchback / SUV",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Car Sınıfı",
+                    "code": "abstract class Car {\n\tprivate float height ;\n\tprivate float weight;\n\tprivate int numberOfWheels;\n\n\tpublic float getHeight () {\n\t\treturn height ;\n\t}\n\n\tpublic void setHeight (float height ) {\n\t\tthis.height  = height ;\n\t}\n\n\tpublic float getWeight() {\n\t\treturn weight;\n\t}\n\n\tpublic void setWeight(float weight) {\n\t\tthis.weight = weight;\n\t}\n\n\tpublic int getNumberOfWheels() {\n\t\treturn numberOfWheels;\n\t}\n\n\tpublic void setNumberOfWheels(int numberOfWheels) {\n\t\tthis.numberOfWheels = numberOfWheels;\n\t}\n\n\tabstract void autoPilot();\n\n\tabstract void streamingServices();\n\n\tabstract void parkingSernsors();\n}"
+                },
+                {
+                    "label": "Hatchback Sınıfı",
+                    "code": "class Hatchback extends Car {\n\n\tprivate int yearOfMade;\n\n\tpublic Hatchback(int yearOfMade) {\n\t\tthis.yearOfMade = yearOfMade;\n\t}\n\n\tpublic int getYearOfMade() {\n\t\treturn yearOfMade;\n\t}\n\n\tpublic void setYearOfMade(int yearOfMade) {\n\t\tthis.yearOfMade = yearOfMade;\n\t}\n\n\t@Override\n\tvoid autoPilot() {\n\t\tSystem.out.println(\"Hatchback autoPilot\");\n\t}\n\n\t@Override\n\tvoid streamingServices() {\n\t\tSystem.out.println(\"Hatchback streamingServices\");\n\t}\n\n\t@Override\n\tvoid parkingSernsors() {\n\t\tSystem.out.println(\"Hatchback parkingSernsors\");\n\t}\n}"
+                },
+                {
+                    "label": "SUV Sınıfı",
+                    "code": "class SUV extends Car {\n\n\tprivate String model;\n\n\tpublic SUV(String model) {\n\t\tthis.model = model;\n\t}\n\n\tpublic String getModel() {\n\t\treturn model;\n\t}\n\n\tpublic void setModel(String model) {\n\t\tthis.model = model;\n\t}\n\n\t@Override\n\tvoid autoPilot() {\n\t\tSystem.out.println(\"SUV autoPilot\");\n\t}\n\n\t@Override\n\tvoid streamingServices() {\n\t\tSystem.out.println(\"SUV streamingServices\");\n\t}\n\n\t@Override\n\tvoid parkingSernsors() {\n\t\tSystem.out.println(\"SUV parkingSernsors\");\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\t\tHatchback car1 = new Hatchback(2024);\n\t\tSUV car2 = new SUV(\"Egea Cross\");\n\n\t\tcar1.autoPilot();\n\t\tcar2.parkingSernsors();\n\t}"
+                },
+                {
+                    "label": "Çıktısı",
+                    "code": "Hatchback autoPilot\nSUV parkingSernsors"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Abstract and Polymorphism",
+            "content": "Yukarıdaki sistemi için Main sınıfında her bir araç türüne ait sınıfı için bir metot tanımlamak istiyorum. Bu metot ilgili araç türünün sınıfından bir nesne parametre olarak alacaktır."
+        },
+        {
+            "type": 4,
+            "heading": "Abstract and Polymorphism",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Ayrı Metotlar",
+                    "code": "public class Main {\n\n\tstatic void fun1(SUV suv) {\n\t\tsuv.autoPilot();\n\t\tSystem.out.println(\"Ağırlık: \" + suv.getWeight());\n\t}\n\n\tstatic void fun2(Hatchback hatchback) {\n\t\thatchback.autoPilot();\n\t\tSystem.out.println(\"Ağırlık: \" + hatchback.getWeight());\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tSUV suv = new SUV(\"Egea Cross\", 5.2f, 3200, 4);\n\t\tfun1(suv);\n\n\t\tHatchback hatchback = new Hatchback(4, 4.9f, 3500, 4);\n\t\tfun2(hatchback);\n\t}\n}"
+                },
+                {
+                    "label": "Tek Metot",
+                    "code": "public class Main {\n\n\tstatic void fun(Car car) {\n\t\tcar.autoPilot();\n\t\tSystem.out.println(\"Ağırlık: \" + car.getWeight());\n\t}\n\n\tpublic static void main(String[] args) {\n\t\tSUV suv = new SUV(\"Egea Cross\", 5.2f, 3200, 4);\n\t\tfun(suv);\n\n\t\tHatchback hatchback = new Hatchback(4, 4.9f, 3500, 4);\n\t\tfun(hatchback);\n\t}\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "SUV autoPilot\nAğırlık: 3200.0\nHackback autoPilot\nAğırlık: 3500.0"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "🕯️ Bilgi Köşesi - Abstract Constructor",
+            "content": "Daha önce dediğimiz gibi biz genelde **`abstract`** bir sınıftan bir nesne türetemeyiz, türetmeye çalıştığımızda hata alacağız:\n\n```java\n // HATALI KOD \nCar car = new Car(); // error \"Cannot instantiate the type Car\"\n```\n\nAncak **`Car`** sınıfı içinde bir `constructor` tanımlayabiliriz, Peki madem biz ondan bir nesne türetemeyeceğiz neden tanımlamaya ihtiyaç duyuyoruz ?\n\nYani biz bunu yapamıyoruz değil mi ?\n\n```java\n // HATALI KOD \nCar car = new Car(\"Red\", 123); // error \"Cannot instantiate the type Car\"\n```\n\nPeki biz **`Car`** sınıfından kalıtım alan sınıflardan bir nesne ürettiğimizde, `height` bilgisini yalnızca `setHeight()` metodunu kullanarak atayabiliyorduk. Ancak, `height` bilgisinin zorunlu olarak atanmasını istiyoruz ve **`Car`** sınıfından bir nesne türetemeyeceğimize göre alt sınıflardan nesne türettiğimizde zorunlu olarak atanmasını sağlamamız gerek. Örneğin, `SUV` sınıfından bir nesne oluşturduğumuzda, `height` bilgisinin atanması zorunlu olmalıdır. Bunu sağlamak için, `height` bilgisini `SUV` sınıfının `constructor`'ında alabiliriz. **`SUV`** sınıfın içindeki `constructor`'ı bu şekilde yazabiliriz:\n\n```java\npublic SUV(String model, float height, float weight, int numberOfWheels) {\n\tthis.model = model;\n\tthis.setHeight(height);\n\tthis.setWeight(weight);\n\tthis.setNumberOfWheels(numberOfWheels);\n}\n```\n\nBu şekilde **`SUV`** sınıfından bir nesne türettiğimizde **`Car`** özelliklerini zorunlu kıldık. **Bu yaklaşım doğru mu ?**\n\n**Çalışır ancak doğru değildir.**\n\nİşte `can alıcı` noktaya geldik, **`Car`** sınıfından nesne türetemiyoruz doğru ancak içinde bir `constructor` tanımlamaya ihtiyaç duyuyoruz. Çünkü alt sınıflarda setter metotlarını kullanmak yerinde daha performanslı olan `super()` metodunu kullanacağız.\n\nKalıtım alan alt sınıflardan üst-sınıf değişkenlerine atama yapmak için **`super()`** metodunu kullandığımızı öğrendik.\n\nDemek ki **`Car`** sınıfın içinde `constructor` tanımlayarak zorunlu alınması gereken özellikleri `constructor` içinde alabiliriz. ardından alt sınıflarda `super()` metodunu kullanarak kolay bir şekilde atama işlemini gerçekleştirmiş oluruz."
+        },
+        {
+            "type": 4,
+            "heading": "Car Constructor ile SUV",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "Car Constructor",
+                    "code": "\tpublic Car(float height , float weight, int numberOfWheels) {\n\t\tthis.height  = height ;\n\t\tthis.weight = weight;\n\t\tthis.numberOfWheels = numberOfWheels;\n\t}"
+                },
+                {
+                    "label": "SUV Constructor",
+                    "code": "public SUV(String model, float height, float weight, int numberOfWheels) {\n\tsuper(height,weight,numberOfWheels);\n\tthis.model = model;\n}"
+                },
+                {
+                    "label": "Kullanım",
+                    "code": "\tSUV car2 = new SUV(\"Egea Cross\", 5.2f, 3200, 4);"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "⭕ SORU: Üst sınıfın constructor parametrelerini göndermeden alt sınıflardan nesne üretmek için ne yapılır?",
+            "content": "**✅ Cevap:**\n\n**`Car`** sınıfın içinde boş bir `constructor` ekleyerek yapılır, yani hem parametresiz hem de parametre alan `constructor` tanımlanacaktır:\n\n```java\npublic Car() {\n\n}\n\npublic Car(float height, float weight, int numberOfWheels) {\n\tthis.height = height;\n\tthis.weight = weight;\n\tthis.numberOfWheels = numberOfWheels;\n}\n```\n\nBöylece alt sınıflardan bir nesne türettiğimizde **`Car`** özelliklerine atamayı isteğe bağlı haline getirmiş olduk.\n\n**Örneğin: `SUV`** sınıfından nesne türettiğimizde **`Car`** parametrelerini göndermek istemiyorum. Bu durumda **`SUV`** sınıfın constructor'ı bu şekilde tanımlayabiliriz:\n\n```java\n\tpublic SUV(String model) {\n\t\tthis.model = model;\n\t}\n```\n\nBu durumda **`SUV`** sınıfından bir nesne türettiğimizde bu şekilde türetebileceğiz:\n\n```java\n\tSUV car2 = new SUV(\"Egea Cross\");\n```"
+        },
+        {
+            "type": 0,
+            "heading": "⭕ SORU: Üst sınıfın constructor parametrelerinin isteğe bağlı olmasını istiyorum",
+            "content": "Bazı nesneler oluştururken bu parametreleri göndermek istiyorum, bazılarında ise göndermemek istiyorum. Yani bu şekilde iki tanımlama nasıl yapabilirim ?\n\n```java\n\tSUV car2 = new SUV(\"Egea Cross\");\n```\n\n```java\n\tSUV car2 = new SUV(\"Egea Cross\", 5.2f, 3200, 4);\n```\n\n**✅ Cevap:**\n\nÖnceki soruda açıklandığı gibi, üst sınıfta parametresiz bir `constructor` tanımlanmalıdır. Ardından, alt sınıfta hem parametresiz hem de üst sınıfın parametrelerini alan iki constructor tanımlanmalıdır.\n\n**`Car`** içinde boş `constructor` tanımlanması:\n\n```java\npublic Car() {\n\n}\n\npublic Car(float height, float weight, int numberOfWheels) {\n\tthis.height = height;\n\tthis.weight = weight;\n\tthis.numberOfWheels = numberOfWheels;\n}\n```\n\n**`SUV`** içinde iki `constructor` tanımlanması:\n\n```java\npublic SUV(String model) {\n\tthis.model = model;\n}\n\t\npublic SUV(String model, float height, float weight, int numberOfWheels) {\n\tsuper(height, weight, numberOfWheels);\n\tthis.model = model;\n}\n```\n\n> 💡 model **`SUV`** sınıfına ait olduğu için almaması doğru olmaz ancak çalışır.\n\nBu şekilde, nesne yönelimli programlamanın temel prensiplerinden biri olan **Polymorphism** uygulamış oluyoruz."
+        },
+        {
+            "type": 0,
+            "heading": "Dikkat Edilmesi Noktalar",
+            "content": "- **`abstract`** anahtar kelimesi değişkenler için yazılmaz. Çünkü sadece **`abstract`** sınıf ve **`abstract`** metot var, **`abstract`** değişken yoktur.\n- **`abstract`** anahtar kelimesi statik metotlar için yazılmaz.\n- **`abstract`** anahtar kelimesi `constructor` için yazılmaz.\n- **`Abstract`** metotlar, alt sınıflar tarafından erişilip implementasyonlarının yazılması için tanımlanır. Bu nedenle, **`abstract`** metotlar private olarak tanımlanamaz.\n- public, protected ve package-private ile tanımlanabilir.\n- private hariç erişim belirleyiciler ile tanımlarken hem erişim belirleyici anahtarın öncesi hem sonrası yazılır, fark etmez:\n\n```java\npublic abstract void autoPilot();\n```\n\n```java\nabstract public void autoPilot();\n```\n\n- **`Abstract`** sınıfta bir metot erişim belirleyici ile tanımlandığında, alt sınıflarda bu metodun implementasyonunu yazarken aynı erişim belirleyici ile tanımlanması gerek.\n\n> ⭐ **Önemli Bilgi:** Abstract olarak tanımlanan metotlar statik olarak tanımlanmaz ancak abstract sınıf içinde statik metotlar tanımlanabilir."
+        },
+        {
+            "type": 0,
+            "heading": "Örnek - Yasir ve Elif",
+            "content": "Yukarıdaki sistemde, otomobil üretim firmasının kurmak istediği sistem üzerinde **`Yasir`** ve **`Elif`** çalışacaktır. Görev dağılımını yaptılar: **`Yasir`** , her sınıf için **`autoPilot()`** metodunu yazacak; **`Elif`** ise **`streamingServices()`** ve **`parkingSensors()`** metotlarını yazmaktan sorumlu olacaktır."
+        },
+        {
+            "type": 4,
+            "heading": "Yasir ve Elif - Görev Dağılımı",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "HatchbackYasir - Hatalı",
+                    "code": " // HATALI KOD \n // Multiple markers at this line\n //- The type HatchbackYasir must implement the inherited abstract method Car.parkingSernsors()\n //\t- The type HatchbackYasir must implement the inherited abstract method Car.streamingServices()\n\nclass HatchbackYasir extends Car{\n\tprivate int yearOfMade;\n\t\n\t@Override\n\tpublic void autoPilot() {\n\t\tSystem.out.println(\"Hatchback Yasir autoPilot\");\n\t}\n}"
+                },
+                {
+                    "label": "HatchbackYasir - Abstract",
+                    "code": "abstract class HatchbackYasir extends Car {\n\tprivate int yearOfMade;\n\n\t@Override\n\tpublic void autoPilot() {\n\t\tSystem.out.println(\"Hatchback Yasir autoPilot\");\n\t}\n\n\tabstract void streamingServices();\n\n\tabstract void parkingSernsors();\n}"
+                },
+                {
+                    "label": "HatchbackElif",
+                    "code": "class HatchbackElif extends HatchbackYasir {\n\n\t@Override\n\tvoid streamingServices() {\n\t\tSystem.out.println(\"Hatchback Elif streamingServices\");\n\t}\n\n\t@Override\n\tvoid parkingSernsors() {\n\t\tSystem.out.println(\"Hatchback Elif parkingSernsors\");\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tHatchbackElif h = new HatchbackElif();\n\th.autoPilot();\n\th.streamingServices();\n\th.parkingSernsors();\n}"
+                },
+                {
+                    "label": "Çıktısı",
+                    "code": "Hatchback Yasir autoPilot\nHatchback Elif streamingServices\nHatchback Elif parkingSernsors"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "🟡 Interface (Arayüz)",
+            "content": "Java'da soyutlamayı gerçekleştirmenin bir diğer yolu **`interface`** tanımlamaktır. **`interface`**ler, abstract sınıflara kıyasla daha yüksek bir soyutlama düzeyine sahiptir.\n\n## Interface Özellikleri\n\n- Bir sınıf birden fazla **`interface`** ile implement (çağırılabilir) edilebilir.\n- **`interface`** , anlık değişken içermezler. Bu yüzden **`interface`** üzerinde tanımlanan değişkenler, **`interface`** ile türetilen sınıflar tarafından değiştirilemezler.\n- İçindeki metotları ve değişkenleri tanımlarken sadece public ve default erişim belirleyici kullanabiliriz.\n- **`interface`** sınıfını kullanarak nesne üretemeyiz.\n- **`interface`** içinde constructor yazılamaz.\n- Tanımlamak için **`interface`** anahtar kelimesi kullanılır.\n\n```java\npublic interface InterfaceName {\n  // method signatures and field\n}\n```\n\n- **`interface`** üzerinde tanımlanan metotlar gövdesizdir. Bu yapısı ile abstract metotlara benzerlik gösterir.\n- Bazı durumlarda statik metotlar gövdesiyle beraber **`interface`** içinde tanımlanabilir.\n\n```java\nstatic void move(){\n\t// whatever\n}\n```\n\n- **`interface`** içinde tanımlananlar bu şekilde yazılırsa bile:\n\n```java\nint maxSpeed = 250;\nvoid move();\n```\n\ncompiler bu şekilde görür:\n\n```java\npublic static final int maxSpeed = 250;\npublic abstract void move();\n```\n\nYani değişkenler statik ve sabit, metotlar ise abstract'tır. Ve her ikisi de public görecektir.\n\n- bir değişken tanımlayıp ona değer vermeden geçilmez, hata verir çünkü otomatik olarak `final` olarak tanımlanır:\n\n```java\n // HATALI KOD \nint x; // The blank final field x may not have been initialized\n```\n\nBu yüzden değişken tanımlarken kesinlikle ona bir değer atanması gerek:\n\n```java\n // DOĞRU KOD \nint x = 5;\n```\n\n- **`interface`** implement edilir.\n\n```mermaid\nclassDiagram\nAbstract_Class <|-- Class : extends\n```\n\n```mermaid\nclassDiagram\nInterface <|.. Class : implements\n```\n\n```mermaid\nclassDiagram\nInterface <|-- lnterface : extends\n```\n\n- **`interface`**'lerin gövdeleri, implemente edilecek sınıfın içinde yazılır.\n\n**`interface`** tanımlamalarını oluştururken içinde yalnızca metot imzaları yazılır:\n\n```java\npublic interface InterfaceName {\n  void method1();\n  void method2();\n  void method3();\n}\n```\n\nArdından bu interface'i implemente edecek sınıfın içinde yazılır:\n\n```java\npublic class ClassName implements InterfaceName {\n\n\t@Override\n\tpublic void method1() {\n\t\t// do same thing\n\t}\n\n\t@Override\n\tpublic void method2() {\n\t\t// do same thing\n\t}\n\n\t@Override\n\tpublic void method3() {\n\t\t// do same thing\n\t}\n}\n```\n\n- Tanımladığımız **`interface`** 'i, birden fazla sınıf implemente ederek kullanabilir.\n\n```java\npublic class ClassName implements InterfaceName1, InterfaceName2{\n  // method signatures and field\n}\n```\n\n- Bir sınıf hem **`interface`** implemente edebilir hem de aynı zamanda başka bir sınıftan kalıtım alabilir:\n\n```java\npublic public class ClassName1 extends ClassName2 implements InterfaceName{\n  // method signatures and field\n}\n```\n\n- **`interface`** biden fazla **`interface`**'ten kalıtım alabilir.\n\n```java\npublic interface interface1 extends interface2, interface3 {\n  // method signatures and field\n}\n```\n\n- Bir sınıf bir **`interface`**'i implemente ettiği zaman onun içindeki imzaları için ve eğer bu **`interface`** başka bir **`interface`**ten kalıtım aldıysa, aldığı tüm **`interface`**'lerin imzaları için de metotlar tanımlaması gerek.\n\n```mermaid\nclassDiagram\nInterface1 <|.. Class : implements\nInterface2 <|-- Interface1: extends\nInterface3 <|-- Interface1: extends\n\nInterface1 : imza1()\nInterface1 : imza2()\n\nInterface2 : imza3()\nInterface2 : imza4()\n\nInterface3 : imza5()\nInterface3 : imza6()\n```\n\n```java\npublic interface interface1 extends interface2, interface3 {\n\tvoid imza1();\n\tvoid imza2();\n}\npublic interface interface2 {\n\tvoid imza3();\n\tvoid imza4();\n}\npublic interface interface3 {\n\tvoid imza5();\n\tvoid imza6();\n}\npublic class Class implements interface1{\n\tpublic void imza1() {}\n\tpublic void imza2() {}\n\tpublic void imza3() {}\n\tpublic void imza4() {}\n\tpublic void imza5() {}\n\tpublic void imza6() {}\n}\n```"
+        },
+        {
+            "type": 0,
+            "heading": "Interface - Örnek",
+            "content": "Bir otomatik sürüş teknolojisi geliştiren araba firması, kendi kendine hareket edebilen arabalar için bir sistem kurmak istiyor. Bu arabalar, yapay zeka kullanarak konumlarını belirleyebiliyor ve verilen enlem (lat) ve boylam (lot) katsayılarıyla hareket edebiliyor. Sistem için gerekli **`interface`**'ler ve sınıflar aşağıdaki UML diyagramında belirtilmiştir.\n\n```mermaid\nclassDiagram\nselfDrivable<|.. Car\nmovable <|.. Car\n\n<<interface>>selfDrivable\n<<interface>>movable\n\nCar : - x int\nCar : - y int\nCar : + getX() int\nCar : + setX(int) void\nCar : + getY() int\nCar : + setY(int) void\nCar : + Car()\nCar : + Car(int, int)\n\nselfDrivable : + destination(String) void\nselfDrivable : + drive() void\n\nmovable : + moveUp() void\nmovable : + moveDown() void\nmovable : + moveLeft() void\nmovable : + moveRight() void\n```\n\nİlk önce **`interface`**'leri tanımlayalım."
+        },
+        {
+            "type": 4,
+            "heading": "selfDrivable / movable / Car",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "selfDrivable Interface",
+                    "code": "interface selfDrivable {\n\tvoid destination(String d); // string olarak lat ve lot bilgilerini alacaktır\n\tvoid drive(); // araba hareket etmek için kullanılacaktır\n}"
+                },
+                {
+                    "label": "movable Interface",
+                    "code": "interface movable {\n\tvoid moveUp(); // yukarıya hareket et\n\tvoid moveDown(); // aşağı hareket et\n\tvoid moveLeft(); // sola hareket et\n\tvoid moveRight(); // sağa hareket et\n}"
+                },
+                {
+                    "label": "Car Sınıfı",
+                    "code": "class Car implements movable, selfDrivable {\n\tprivate int x, y;\n\n\tpublic Car() {\n\n\t}\n\n\tpublic Car(int x, int y) {\n\t\tthis.x = x;\n\t\tthis.y = y;\n\t}\n\n\t@Override\n\tpublic void moveUp() {\n\t\ty--;\n\t}\n\n\t@Override\n\tpublic void moveDown() {\n\t\ty++;\n\t}\n\n\t@Override\n\tpublic void moveLeft() {\n\t\tx--;\n\t}\n\n\t@Override\n\tpublic void moveRight() {\n\t\tx++;\n\t}\n\n\t@Override\n\tpublic void destination(String d) {\n\t\tSystem.out.println(\"Destination = \" + d);\n\t}\n\n\t@Override\n\tpublic void drive() {\n\t\tSystem.out.println(\"Dirve\");\n\t}\n\n\tpublic int getX() {\n\t\treturn x;\n\t}\n\n\tpublic void setX(int x) {\n\t\tthis.x = x;\n\t}\n\n\tpublic int getY() {\n\t\treturn y;\n\t}\n\n\tpublic void setY(int y) {\n\t\tthis.y = y;\n\t}\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tCar car = new Car();\n\tcar.destination(\"39.878805935007165,33.44799553728058\");\n}"
+                },
+                {
+                    "label": "Çıktısı",
+                    "code": "Destination = 39.878805935007165,33.44799553728058"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Interface ile Upcasting",
+            "content": "Peki eğer `Car` ile değil `selfDrivable` **`interface`** kullanarak `Car` nesnesini oluşturursak ne olur:\n\n```java\npublic static void main(String[] args) {\n\tselfDrivable car = new Car();\n\tcar.destination(\"39.878805935007165,33.44799553728058\");\n}\n```\n\nDoğru bir şekilde çalışır ancak dikkatlice bakarsak eğer `selfDrivable` **`interface`**'i kullanarak nesne oluşturursak diğer **`interface`**'lere ait metotları kullanamayız.\n\n```java\n\tpublic static void main(String[] args) {\n\t\tselfDrivable car = new Car();\n\t\tcar.moveDown(); //The method moveDown() is undefined for the type selfDrivable\n\t}\n```\n\nBu sorunu çözmek için daha önce bahsettiğimiz cast yöntemini kullanmamız gerek:\n\n```java\npublic static void main(String[] args) {\n\tselfDrivable car = new Car();\n\t((Car)car).moveDown();\n}\n```"
+        },
+        {
+            "type": 4,
+            "heading": "Interface ile Upcasting - Kod Örnekleri",
+            "codeBlocks": [
+                {
+                    "label": "selfDrivable ile Nesne Oluşturma",
+                    "code": "public static void main(String[] args) {\n\tselfDrivable car = new Car();\n\tcar.destination(\"39.878805935007165,33.44799553728058\");\n}"
+                },
+                {
+                    "label": "Hatalı Kullanım",
+                    "code": "public static void main(String[] args) {\n\tselfDrivable car = new Car();\n\tcar.moveDown(); //The method moveDown() is undefined for the type selfDrivable\n}"
+                },
+                {
+                    "label": "Cast ile Çözüm",
+                    "code": "public static void main(String[] args) {\n\tselfDrivable car = new Car();\n\t((Car)car).moveDown();\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Ufak Bilgi",
+            "content": "Biz bu sınıfta `x` değişkenine hiçbir değer atamadık, atamadan `moveRight()` metodunda arttırdık. Peki bu hata mı verecek, doğru mu çalışacak. Gelin yazdıralım bakalım (:\n\n```java\n@Override\npublic void moveRight() {\n\tx++;\n\tSystem.out.println(x);\n}\n```\n\n`Car` sınıfındaki metodu bu şekilde yazdıktan sonra main metodunda kullanalım:\n\n```java\npublic static void main(String[] args) {\n\tselfDrivable car = new Car();\n\t((Car)car).moveRight();\n}\n```\n\nÇıktısı:\n\n```java\n1\n```\n\nÇıktısı 1 olmasının sebebi ise biz ona bir değer atamadık ancak kendisi `local` bir değişken olduğu için varsayılan değer 0. `moveRight()` metodunda arttırdığımız için 1 olmuştur."
+        },
+        {
+            "type": 4,
+            "heading": "Ufak Bilgi - Kod Örnekleri",
+            "codeBlocks": [
+                {
+                    "label": "moveRight() Güncelleme",
+                    "code": "@Override\npublic void moveRight() {\n\tx++;\n\tSystem.out.println(x);\n}"
+                },
+                {
+                    "label": "Main Metodu",
+                    "code": "public static void main(String[] args) {\n\tselfDrivable car = new Car();\n\t((Car)car).moveRight();\n}"
+                },
+                {
+                    "label": "Çıktı",
+                    "code": "1"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Örnek Proje: Öğrenci Sistemi",
+            "content": "Dosya okuma/yazma ve sınıf kullanımını bir arada gösteren bir öğrenci yönetim sistemi örneği. Öğrenci bilgileri bir `.txt` dosyasında saklanır. Okuma, yazma, güncelleme, silme ve listeleme işlemleri yapılabilir."
+        },
+        {
+            "type": 4,
+            "heading": "Öğrenci Sistemi",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "ogrenciSistemi",
+                    "code": "package github;\n\nimport java.io.*;\nimport java.util.Scanner;\nimport java.util.ArrayList;\n\npublic class ogrenciSistemi {\n\n\tpublic static ArrayList<Ogrenci> ogrencileriDosyadanGetir(String yol) throws IOException {\n\n\t\tFile dosya = new File(yol);\n\n\t\tif (!dosya.exists()) {\n\t\t\ttry {\n\t\t\t\tdosya.createNewFile();\n\t\t\t\tSystem.out.println(\"Dosya yeni oluşturuldu: \" + dosya.getName());\n\t\t\t} catch (IOException e) {\n\t\t\t\tSystem.out.println(\"Dosya oluşturulurken bir hata oluştu.\");\n\t\t\t\te.printStackTrace();\n\t\t\t}\n\t\t}\n\n\t\tScanner scan1 = new Scanner(dosya);\n\t\tscan1.useDelimiter(\"\\n\");\n\n\t\tArrayList<Ogrenci> ogrenciler = new ArrayList<Ogrenci>();\n\n\t\twhile (scan1.hasNext()) {\n\t\t\tString[] satir = scan1.next().split(\":\");\n\t\t\tOgrenci ogrenci = new Ogrenci(satir[0], satir[1], Integer.valueOf(satir[2].trim()));\n\t\t\togrenciler.add(ogrenci);\n\t\t}\n\n\t\treturn ogrenciler;\n\t}\n\n\tpublic static void ogrencileriKaydet(ArrayList<Ogrenci> ogrenciler, String yol) {\n\t\ttry {\n\t\t\tFileWriter dosyaYazici = new FileWriter(yol);\n\t\t\tBufferedWriter yaz = new BufferedWriter(dosyaYazici);\n\t\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\t\tyaz.write(ogrenci.getAdSoyad() + \":\" + ogrenci.getOgNo() + \":\" + ogrenci.getSinif());\n\t\t\t\tyaz.newLine();\n\t\t\t}\n\t\t\tyaz.close();\n\t\t} catch (IOException e) {\n\t\t\tSystem.out.println(\"Dosyaya yazma hatası: \" + e.getMessage());\n\t\t}\n\t}\n\n\tpublic static int islemAl() {\n\t\tScanner scan2 = new Scanner(System.in);\n\t\tSystem.out.print(\"--- İşlemler ---\\nOkuma: 1\\nYazma: 2\\nGüncelleme: 3\\nSilme: 4\\nTüm Kayıtlar: 5\\nçıkış: 0\\nişlem: \");\n\t\treturn scan2.nextInt();\n\t}\n\n\tpublic static void ogrenciOkuma(ArrayList<Ogrenci> ogrenciler) {\n\t\tScanner scan = new Scanner(System.in);\n\t\tSystem.out.print(\"Bilgilerini okumak istediğiniz öğrencinin numarası: \");\n\t\tString ogNo = scan.nextLine();\n\t\tint index = -1;\n\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\tif (ogrenci.getOgNo().equals(ogNo)) {\n\t\t\t\tindex = ogrenciler.indexOf(ogrenci);\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (index == -1) {\n\t\t\tSystem.out.println(\"Öğrenci Bulunamadı!\");\n\t\t\treturn;\n\t\t}\n\t\tSystem.out.println(\"\\nÖğrencinin Bilgileri:\");\n\t\tSystem.out.println(ogrenciler.get(index) + \"\\n\");\n\t}\n\n\tpublic static void ogrenciYazma(ArrayList<Ogrenci> ogrenciler) {\n\t\tScanner scan = new Scanner(System.in);\n\t\tSystem.out.print(\"Eklemek istediğiniz öğrencinin bilgileri\\nÖğrenci Numarası: \");\n\t\tString ogNo = scan.nextLine();\n\t\tint index = -1;\n\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\tif (ogrenci.getOgNo().equals(ogNo)) {\n\t\t\t\tindex = ogrenciler.indexOf(ogrenci);\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (index != -1) {\n\t\t\tSystem.out.println(\"Öğrenci numarası sistemde mevcuttur!\\n\" + ogrenciler.get(index));\n\t\t\treturn;\n\t\t}\n\t\tSystem.out.print(\"Adı Soyadı: \");\n\t\tString adSoyad = scan.nextLine();\n\t\tSystem.out.print(\"Sınıfı: \");\n\t\tint sinif = scan.nextInt();\n\t\tOgrenci ogrenci = new Ogrenci(adSoyad, ogNo, sinif);\n\t\togrenciler.add(ogrenci);\n\t\tSystem.out.println(\"Öğrenci başarıyla eklenmiştir\");\n\t}\n\n\tpublic static void ogrenciGuncelleme(ArrayList<Ogrenci> ogrenciler) {\n\t\tScanner scan = new Scanner(System.in);\n\t\tSystem.out.print(\"Güncellemek istediğiniz öğrencinin numarası: \");\n\t\tString ogNo = scan.nextLine();\n\t\tint index = -1;\n\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\tif (ogrenci.getOgNo().endsWith(ogNo)) {\n\t\t\t\tindex = ogrenciler.indexOf(ogrenci);\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (index == -1) {\n\t\t\tSystem.out.println(\"Öğrenci Bulunamadı!\");\n\t\t\treturn;\n\t\t}\n\t\tOgrenci ogrenci = ogrenciler.get(index);\n\t\tSystem.out.println(\"\\nÖğrencinin Bilgileri\\n\" + ogrenci + \"\\n\");\n\t\tSystem.out.println(\"Bilgisi eskisi gibi bırakmak istediğiniz bilgiye -1 giriniz\");\n\t\tSystem.out.print(\"Öğrenci Numarası: \");\n\t\tString yeniOgNo = scan.nextLine();\n\t\tif (!yeniOgNo.equals(\"-1\")) {\n\t\t\togrenci.setOgNo(yeniOgNo);\n\t\t}\n\t\tSystem.out.print(\"Adı Soyadı: \");\n\t\tString yeniAdSoyad = scan.nextLine();\n\t\tif (!yeniAdSoyad.equals(\"-1\")) {\n\t\t\togrenci.setAdSoyad(yeniAdSoyad);\n\t\t}\n\t\tSystem.out.print(\"Sinif: \");\n\t\tint yeniSinif = scan.nextInt();\n\t\tif (yeniSinif != -1) {\n\t\t\togrenci.setSinif(yeniSinif);\n\t\t}\n\t\togrenciler.set(index, ogrenci);\n\t\tSystem.out.println(\"Öğrenci Bilgileri başarıyla güncellenmiştir\");\n\t}\n\n\tpublic static void ogrenciSilme(ArrayList<Ogrenci> ogrenciler) {\n\t\tScanner scan = new Scanner(System.in);\n\t\tSystem.out.print(\"Silmek istediğiniz öğrencinin numarası: \");\n\t\tString ogNo = scan.nextLine();\n\t\tint index = -1;\n\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\tif (ogrenci.getOgNo().equals(ogNo)) {\n\t\t\t\tindex = ogrenciler.indexOf(ogrenci);\n\t\t\t\tbreak;\n\t\t\t}\n\t\t}\n\t\tif (index == -1) {\n\t\t\tSystem.out.println(\"Öğrenci Bulunamadı!\");\n\t\t\treturn;\n\t\t}\n\t\togrenciler.remove(index);\n\t\tSystem.out.println(\"Öğrenci başarıyla silinmiştir\");\n\t}\n\n\tpublic static void tumKayitlar(ArrayList<Ogrenci> ogrenciler) {\n\t\tSystem.out.println(\"Sistemdeki tüm öğrencilerin bilgileri\");\n\t\tfor (Ogrenci ogrenci : ogrenciler) {\n\t\t\tSystem.out.println(ogrenci + \"\\n---------\");\n\t\t}\n\t}\n\n\tpublic static void main(String[] args) throws IOException {\n\t\tfinal String YOL = \"ogrenciler.txt\";\n\t\tArrayList<Ogrenci> ogrenciler = ogrencileriDosyadanGetir(YOL);\n\t\tint islem = islemAl();\n\t\twhile (islem != 0) {\n\t\t\tif (islem == 1) {\n\t\t\t\togrenciOkuma(ogrenciler);\n\t\t\t} else if (islem == 2) {\n\t\t\t\togrenciYazma(ogrenciler);\n\t\t\t\togrencileriKaydet(ogrenciler, YOL);\n\t\t\t} else if (islem == 3) {\n\t\t\t\togrenciGuncelleme(ogrenciler);\n\t\t\t\togrencileriKaydet(ogrenciler, YOL);\n\t\t\t} else if (islem == 4) {\n\t\t\t\togrenciSilme(ogrenciler);\n\t\t\t\togrencileriKaydet(ogrenciler, YOL);\n\t\t\t} else if (islem == 5) {\n\t\t\t\ttumKayitlar(ogrenciler);\n\t\t\t} else {\n\t\t\t\tSystem.out.println(\"Yanlış Seçim\");\n\t\t\t}\n\t\t\tislem = islemAl();\n\t\t}\n\t}\n}"
+                },
+                {
+                    "label": "Ogrenci Sınıfı",
+                    "code": "class Ogrenci {\n\n\tprivate String adSoyad;\n\tprivate String ogNo;\n\tprivate int sinif;\n\n\tpublic Ogrenci(String adSoyad, String ogNo, int sinif) {\n\t\tthis.ogNo = ogNo;\n\t\tthis.adSoyad = adSoyad;\n\t\tthis.sinif = sinif;\n\t}\n\n\tpublic String getOgNo() {\n\t\treturn ogNo;\n\t}\n\n\tpublic String getAdSoyad() {\n\t\treturn adSoyad;\n\t}\n\n\tpublic int getSinif() {\n\t\treturn sinif;\n\t}\n\n\tpublic void setOgNo(String ogNo) {\n\t\tthis.ogNo = ogNo;\n\t}\n\n\tpublic void setAdSoyad(String adSoyad) {\n\t\tthis.adSoyad = adSoyad;\n\t}\n\n\tpublic void setSinif(int sinif) {\n\t\tthis.sinif = sinif;\n\t}\n\n\tpublic String toString() {\n\t\treturn \"Öğrenci Numarası: \" + ogNo + \"\\n\" + \"Adı Soyadı: \" + adSoyad + \"\\n\" + \"Sınıf: \" + sinif;\n\t}\n}"
+                }
+            ]
+        },
+        {
+            "type": 0,
+            "heading": "Örnek Kodlar: Temel Java Konuları",
+            "content": "Karşılaştırma operatörleri, döngüler, ArrayList, Switch, Iterator ve Dialog box kullanımını bir arada gösteren örnek bir Java dosyası."
+        },
+        {
+            "type": 4,
+            "heading": "Temel Java Örnekleri",
+            "defaultTab": 0,
+            "codeBlocks": [
+                {
+                    "label": "ornekler (main)",
+                    "code": "package github;\n\nimport java.util.Scanner;\nimport java.text.DecimalFormat;\nimport java.text.NumberFormat;\nimport java.util.Locale;\nimport java.io.*;\nimport java.util.ArrayList;\nimport java.util.Iterator;\nimport javax.swing.*;\n\npublic class ornekler {\n\n\tpublic static void main(String[] args) throws IOException {\n\n\t\t// == vs equals()\n\t\t// == bellek adreslerini, equals() içerikleri karşılaştırır\n\n\t\tfinal float TOLERANCE = 0.000001f;\n\t\tfloat f1 = 0.1f + 0.2f;\n\t\tfloat f2 = 0.3f;\n\t\tif (Math.abs(f1 - f2) < TOLERANCE)\n\t\t\tSystem.out.println(\"Essentially equal\");\n\n\t\tString name1 = \"Yasir\";\n\t\tString name2 = \"Alrawi\";\n\n\t\tif (name1.equals(name2))\n\t\t\tSystem.out.println(\"eşittir\");\n\n\t\tint result = name1.compareTo(name2);\n\t\tif (result < 0)\n\t\t\tSystem.out.println(name1 + \" comes first\");\n\t\telse if (result == 0)\n\t\t\tSystem.out.println(\"Same name\");\n\t\telse\n\t\t\tSystem.out.println(name2 + \" comes first\");\n\n\t\t// while döngüsü\n\t\tint count = 1;\n\t\twhile (count <= 5) {\n\t\t\tSystem.out.println(count);\n\t\t\tcount++;\n\t\t}\n\n\t\t// ?: operatörü\n\t\tint x = 10;\n\t\tint y = (x > 5) ? 1 : 0;\n\n\t\tdeneme();\n\t\tGUI();\n\t}\n}"
+                },
+                {
+                    "label": "GUI",
+                    "code": "public static void GUI() {\n\tString numStr, result;\n\tint num, again;\n\n\tdo {\n\t\tnumStr = JOptionPane.showInputDialog(\"Enter an integer\");\n\t\tnum = Integer.parseInt(numStr);\n\n\t\tresult = \"That number is \" + ((num % 2 == 0) ? \"even\" : \"odd\");\n\n\t\tJOptionPane.showMessageDialog(null, result);\n\t\tagain = JOptionPane.showConfirmDialog(null, \"Do Another?\");\n\t} while (again == JOptionPane.YES_OPTION);\n}"
+                },
+                {
+                    "label": "ArrayList & Iterator",
+                    "code": "public static void forEachKullanımı() {\n\tArrayList<String> liste = new ArrayList<>();\n\tliste.add(\"A\");\n\tliste.add(\"B\");\n\tliste.add(\"C\");\n\n\t// for-each döngüsü\n\tfor (String eleman : liste) {\n\t\tSystem.out.println(eleman);\n\t}\n\n\t// for döngüsü\n\tfor (int i = 0; i < liste.size(); i++) {\n\t\tString eleman = liste.get(i);\n\t\tSystem.out.println(eleman);\n\t}\n\n\t// Iterator ile\n\tIterator<String> iterator = liste.iterator();\n\twhile (iterator.hasNext()) {\n\t\tString eleman = iterator.next();\n\t\tSystem.out.println(eleman);\n\t}\n}"
+                },
+                {
+                    "label": "Switch",
+                    "code": "public static void switchKullanımı() {\n\tScanner scanner = new Scanner(System.in);\n\tSystem.out.print(\"Lütfen bir ay numarası girin (1-12): \");\n\tint month = scanner.nextInt();\n\tString monthString;\n\n\tswitch (month) {\n\t\tcase 1: monthString = \"Ocak\"; break;\n\t\tcase 2: monthString = \"Şubat\"; break;\n\t\tcase 3: monthString = \"Mart\"; break;\n\t\tcase 4: monthString = \"Nisan\"; break;\n\t\tcase 5: monthString = \"Mayıs\"; break;\n\t\tcase 6: monthString = \"Haziran\"; break;\n\t\tcase 7: monthString = \"Temmuz\"; break;\n\t\tcase 8: monthString = \"Ağustos\"; break;\n\t\tcase 9: monthString = \"Eylül\"; break;\n\t\tcase 10: monthString = \"Ekim\"; break;\n\t\tcase 11: monthString = \"Kasım\"; break;\n\t\tcase 12: monthString = \"Aralık\"; break;\n\t\tdefault: monthString = \"Geçersiz ay\"; break;\n\t}\n\tSystem.out.println(\"Ay: \" + monthString);\n\tscanner.close();\n}"
+                },
+                {
+                    "label": "Polindrome",
+                    "code": "public static void polindormeBenim() {\n\tScanner scan = new Scanner(System.in);\n\tSystem.out.print(\"kontrol etmek istediğin cümleyi gir: \");\n\tString st = scan.nextLine();\n\n\tint length = st.length(), p = 0;\n\tfor (int i = 0; i < length / 2; i++) {\n\t\tif (st.charAt(i) != st.charAt(length - i - 1)) {\n\t\t\tp = 1;\n\t\t\tbreak;\n\t\t}\n\t}\n\tSystem.out.println(p == 0 ? \"polindrom\" : \"değil\");\n}\n\npublic static void polindormeHoca() {\n\tString word, reverse = \"\";\n\tScanner scan = new Scanner(System.in);\n\tSystem.out.print(\"Kontrol etmek istediğiniz cümleyi girdiniz: \");\n\tword = scan.nextLine();\n\n\tfor (int i = word.length() - 1; i >= 0; i--)\n\t\treverse += word.charAt(i);\n\n\tSystem.out.println(word.equals(reverse) ? \"Polindromedur\" : \"Polindorme Değildir\");\n}"
+                },
+                {
+                    "label": "Diğer Metotlar",
+                    "code": "public static void basamakToplamı() {\n\tScanner scan = new Scanner(System.in);\n\tSystem.out.print(\"Sayınızı giriniz: \");\n\tint num = scan.nextInt();\n\tint total = 0;\n\twhile (num > 0) {\n\t\ttotal += num % 10;\n\t\tnum /= 10;\n\t}\n\tSystem.out.println(\"Toplam: \" + total);\n}\n\npublic static void getDivisors() {\n\tScanner scan = new Scanner(System.in);\n\tSystem.out.print(\"Enter the integer number: \");\n\tint num = scan.nextInt();\n\tif (num == 0) {\n\t\tSystem.out.println(\"0 Sayınını bir böleni yoktur!\");\n\t\treturn;\n\t}\n\tSystem.out.print(\"Divisors of \" + num + \": 1 \");\n\tfor (int i = 2; i <= num / 2; i++)\n\t\tif (num % i == 0) System.out.print(i + \" \");\n\tSystem.out.println(num);\n}\n\npublic static void average() {\n\tint sum = 0, value, count = 0;\n\tScanner scan = new Scanner(System.in);\n\tSystem.out.print(\"Enter The Value: \");\n\tvalue = scan.nextInt();\n\twhile (value != 0) {\n\t\tcount++;\n\t\tsum += value;\n\t\tSystem.out.print(\"Enter The Value (0 to quit): \");\n\t\tvalue = scan.nextInt();\n\t}\n\tif (count == 0)\n\t\tSystem.out.println(\"No value were entered!\");\n\telse {\n\t\tdouble average = (double) sum / count;\n\t\tDecimalFormat df = new DecimalFormat(\"0.###\");\n\t\tSystem.out.println(\"The average is \" + df.format(average));\n\t}\n}"
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,139 @@
+{
+  "id": 900,
+  "title": "Hesap Makinesi",
+  "subtitle": "Scientific Calculator with Themes & History — First Year CS Project",
+  "isFeatured": true,
+  "description": "A scientific calculator desktop application built with C# and Windows Forms in 2021, during the first year of computer engineering studies. Features 23 functions including trigonometry, logarithms, factorial and exponentiation, plus calculation history, light/dark theme persistence, and a modern UI powered by the Guna UI library.",
+  "longDescription": "Hesap Makinesi is a Windows Forms calculator application developed in 2021 as a first-year computer engineering project. Built with C# and the Guna UI library for a polished, modern interface, the app extends far beyond basic arithmetic into a full scientific calculator.\n\nScientific operations include square root, exponentiation, cube, factorial, logarithm (log10 and ln), natural exponentiation (exp), reciprocal (1/x), absolute value (|x|), 10^x, the constants π and e, and trigonometric functions (sin, cos, tan, cot). Standard utility buttons cover CE/C for clearing, backspace for last-character deletion, and decimal/sign toggling.\n\nThe app saves a history of all performed calculations and displays them in a clean, accessible panel. The light/dark theme preference is persisted across sessions — when the user closes and reopens the app, their last selected theme is remembered and restored automatically.",
+  "category": ["Desktop"],
+  "tags": [
+    "C#",
+    "Windows Forms",
+    "Guna UI",
+    ".NET",
+    "Calculator",
+    "Scientific",
+    "Desktop App",
+    "First Year Project"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835618/438292636-44f0e4f9-3707-4319-93bc-4e36f6e3e510_gxhmwf.png",
+  "techLogos": ["csharp", "dotnet", "windows"],
+  "date": "2021",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Desktop Developer",
+  "demoLink": "https://github.com/yasir237/hesap-makinesi/releases/tag/v0.0.1",
+  "githubLink": "https://github.com/yasir237/hesap-makinesi",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "C# & Windows Forms",
+      "description": "Core language and UI framework used to build the desktop calculator application."
+    },
+    {
+      "name": "Guna UI Library",
+      "description": "Third-party .NET UI component library providing modern, aesthetic design components and theme support."
+    },
+    {
+      "name": "Scientific Math Functions",
+      "description": "Full set of scientific operations: square root, cube, exponentiation, factorial, log, ln, exp, reciprocal, absolute value, 10^x, trigonometric functions, and mathematical constants π and e."
+    },
+    {
+      "name": "Calculation History",
+      "description": "Session-based history panel that logs and displays all performed calculations."
+    },
+    {
+      "name": "Persistent Theme System",
+      "description": "Light and dark mode toggle whose preference is saved and restored across application sessions."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "A First-Year Project That Goes Beyond the Basics",
+      "content": "Hesap Makinesi was developed in 2021 during the first year of computer engineering studies. What started as a calculator project grew into a full-featured scientific calculator with a polished UI, persistent theme support, and calculation history.\n\nThe project was built entirely in C# using Windows Forms, with the Guna UI library providing a modern visual layer. It was an early hands-on exploration of event-driven programming, UI design, and mathematical function implementation — and a demonstration that even a beginner project can be taken seriously."
+    },
+    {
+      "type": 1,
+      "heading": "Application Interface",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835644/350933958-86c3f767-c0fe-4d66-9ac9-730d7fa6a886_o9mouk.png",
+      "caption": "Hesap Makinesi — full interface overview"
+    },
+    {
+      "type": 0,
+      "heading": "Light Mode",
+      "subheading": "Clean and user-friendly default theme",
+      "content": "When the application launches, the user is greeted with a clean and user-friendly light mode interface. The Guna UI library gives the layout a modern feel that goes well beyond the default Windows Forms aesthetic."
+    },
+    {
+      "type": 1,
+      "heading": "Light Mode — Main View",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835662/350923383-9b10226a-15d0-4b32-a34d-5e6688107886_hyy4qd.jpg",
+      "caption": "Light mode — default theme on launch"
+    },
+    {
+      "type": 1,
+      "heading": "Light Mode — Scientific Panel",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835678/350980363-b1fb994e-ee00-400a-867c-868e8b71f0d8_zdjcfz.png",
+      "caption": "Light mode with scientific functions panel open"
+    },
+    {
+      "type": 0,
+      "heading": "Dark Mode",
+      "subheading": "Eye-friendly theme with persistent preference",
+      "content": "Dark mode provides a comfortable experience for users who prefer lower brightness. When dark mode is activated, **the preference is saved and persists across sessions** — when the user closes and reopens the application, the dark theme is restored automatically without any manual input."
+    },
+    {
+      "type": 1,
+      "heading": "Dark Mode — Main View",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835694/350980552-a5e2aa92-da5f-4ab1-a2f6-53871a0a793c_pdyfov.png",
+      "caption": "Dark mode — theme preference is remembered between sessions"
+    },
+    {
+      "type": 1,
+      "heading": "Dark Mode — Scientific Panel",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835730/350980691-332cd571-131c-475d-9552-9a48279f89a5_ncsopg.png",
+      "caption": "Dark mode with scientific functions panel open"
+    },
+    {
+      "type": 0,
+      "heading": "Scientific Operations",
+      "subheading": "Advanced mathematical functions beyond basic arithmetic",
+      "content": "The calculator is not limited to the four basic operations. A dedicated scientific panel provides access to advanced mathematical functions for more complex calculations."
+    },
+    {
+      "type": 1,
+      "heading": "Scientific Functions — View 1",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835746/350982203-eca1e2cb-d759-4384-bf96-31952de1d8fe_m19zan.png",
+      "caption": "Scientific operations panel — trigonometry, logarithms, and more"
+    },
+    {
+      "type": 1,
+      "heading": "Scientific Functions — View 2",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835797/350982048-0868fef0-6f06-491e-a7b9-15666f5e72af_n0zokr.png",
+      "caption": "Scientific panel — additional operations and constants"
+    },
+    {
+      "type": 0,
+      "heading": "Full Feature List",
+      "content": "**🔢 Numeric Input (0–9)** — Full numeric keypad for number entry. Each button appends a digit to the current input.\n\n**🧼 CE / C Buttons** — CE clears the last entry (removes the last digit or operation). C resets the entire calculation and clears the display.\n\n**➕ Arithmetic Operations (+, −, ×, ÷, %)** — Addition, subtraction, multiplication, division, and percentage calculations.\n\n**= Equals** — Completes the calculation and displays the result.\n\n**√ Square Root** — Calculates the square root of the current number.\n\n**xʸ Exponentiation** — Raises a number to a specified power. Example: 2^3 = 8.\n\n**x³ Cube** — Calculates the cube of the current number. Example: 2³ = 8.\n\n**n! Factorial** — Calculates the factorial of the current number. Example: 5! = 120.\n\n**π (Pi)** — Inserts the mathematical constant π (3.14159...) into the calculation.\n\n**e (Euler's Number)** — Inserts Euler's number (2.71828...) into the calculation.\n\n**log Logarithm** — Calculates the base-10 logarithm of the current number.\n\n**ln Natural Logarithm** — Calculates the natural logarithm (base e) of the current number.\n\n**10ˣ** — Calculates 10 raised to the power of the current number. Example: 10² = 100.\n\n**exp** — Calculates the exponential function (e raised to the power of the current number). Example: exp(1) ≈ 2.71828.\n\n**|x| Absolute Value** — Returns the absolute (non-negative) value of the current number.\n\n**1/x Reciprocal** — Calculates the reciprocal of the current number. Example: 1/5 = 0.2.\n\n**sin, cos, tan, cot** — Trigonometric functions: sine, cosine, tangent, and cotangent of the current angle value.\n\n**+/− Sign Toggle** — Flips the sign of the current number between positive and negative.\n\n**, Decimal Point** — Adds a decimal separator to the current number.\n\n**⌫ Backspace** — Deletes the most recently entered digit or character from the display.\n\n**🎨 Theme Toggle** — Switches between light and dark themes. The selected theme is saved and persisted across sessions.\n\n**🕘 Calculation History** — All calculations performed during the session are logged and displayed in a dedicated history panel for easy review."
+    },
+    {
+      "type": 1,
+      "heading": "Download Page",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835797/350982048-0868fef0-6f06-491e-a7b9-15666f5e72af_n0zokr.png",
+      "caption": "Release page — download the ready-to-run executable"
+    },
+    {
+      "type": 0,
+      "heading": "Installation",
+      "subheading": "Download and run on Windows",
+      "content": "**Option 1 — Download the Release (Recommended)**\n1. Go to the [Releases page](https://github.com/yasir237/hesap-makinesi/releases/tag/v0.0.1) and download `Hesap.Makinesi.zip`.\n2. Extract the ZIP file.\n3. Run `HesapMakinesi.exe`.\n\n**Option 2 — Build from Source**\n1. Clone the repository:\n```\ngit clone https://github.com/yasir237/hesap-makinesi\n```\n2. Open the solution in Visual Studio.\n3. Restore NuGet packages (Guna UI).\n4. Build and run.\n\n> Requires Windows and .NET Framework."
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

@@ -1,0 +1,474 @@
+{
+  "id": "1",
+  "title": "LangChain ile RAG Pipeline",
+  "subtitle": "Mesaj yapısından vektör aramasına kadar sıfırdan uca",
+  "category": "LLM / RAG",
+  "date": "2026",
+  "readTime": "20 min",
+  "coverImage": "/images/design-01.png",
+  "illustr_01": "/images/design-01.png",
+  "illustr_02": "/images/design-02.png",
+  "link": "https://github.com/yasir237/rag-langchain-serisi",
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Bu Seri Ne Anlatıyor?",
+      "content": "RAG (Retrieval-Augmented Generation), bir LLM'e sormadan önce ilgili bilgiyi bulup ona göre cevap ürettirme yöntemidir. Bu seri, RAG'ı oluşturan her parçayı ayrı ayrı öğretir — teoride değil, çalışan kodla.\n\nHer adım bir sonrakine köprü kurar. Atlama."
+    },
+    {
+      "type": 0,
+      "heading": "Seri Haritası",
+      "content": "Seri 7 adımdan oluşur:\n\n1. Mesaj yapısı ve LLM bağlantısı\n2. PromptTemplate ile şablonlu prompt\n3. Çoklu zincir — zincirleri birbirine bağlama\n4. Metin bölme (chunking) + Embedding\n5. ChromaDB vektör store + benzerlik araması\n6. Function Calling — LLM'e dış fonksiyon tanıtma\n7. Serinin özeti ve öğrendiklerin"
+    },
+    {
+      "type": 0,
+      "heading": "Uçtan Uca Pipeline",
+      "content": "Kullanıcı sorusu gelir, ham metin `RecursiveCharacterTextSplitter` ile temiz chunk'lara bölünür. Her chunk Gemini Embedding ile 3072 boyutlu vektöre dönüştürülür ve ChromaDB'ye kaydedilir. Sorgu geldiğinde embed edilip Chroma'da aranır, en yakın k chunk bulunur. Bulunan chunk'lar + soru `PromptTemplate`'e verilir, Groq (Llama 3.3) kaynağa dayalı cevap üretir. Gerekirse Function Calling ile dış veri çeker."
+    },
+    {
+      "type": 0,
+      "heading": "Embedding Modeli Nasıl Seçilir?",
+      "content": "Kullanılabilecek embedding modelleri:\n\n- **paraphrase-multilingual-MiniLM** (HuggingFace) — 384 boyut, Türkçe çok iyi, ücretsiz ve local. İnternet olmadan veya hızlı prototip için idealdir.\n- **text-embedding-ada-002** (OpenAI) — 1536 boyut, Türkçe orta, ücretli. Büyük İngilizce veri setleri için uygundur.\n- **text-embedding-3-small** (OpenAI) — 1536 boyut, Türkçe iyi, ucuz. Production ve İngilizce ağırlıklı projeler için.\n- **embedding-001** (Google/Gemini) — 768 boyut, Türkçe iyi, ücretsiz limit. Hızlı başlangıç için.\n- **gemini-embedding-001** (Google/Gemini) — 3072 boyut, Türkçe iyi, ücretsiz limit. Öğrenme ve kaliteyi bir arada sunar.\n\n**Kural:** Türkçe metin kullanıyorsan OpenAI'ın avantajı kaybolur. Gemini veya HuggingFace multilingual modeller daha uygun seçimdir."
+    },
+    {
+      "type": 0,
+      "heading": "Vektör Store Nasıl Seçilir?",
+      "content": "**ChromaDB:** pip ile kurulum, sıfır config, kalıcı depolama opsiyonel, tamamen ücretsiz, LangChain entegrasyonu tek satır. Öğrenme için idealdir.\n\n**FAISS:** pip ile kurulum, kalıcı depolama yok, tamamen ücretsiz, LangChain entegrasyonu tek satır. Orta seviye seçenek.\n\n**Pinecone:** Bulut tabanlı, kayıt gerekir, kalıcı depolama var, ücretsiz limiti var. Öğrenme aşaması için erken.\n\n**Kural:** Öğrenme aşamasında ChromaDB. Production'a geçince ihtiyaca göre Pinecone veya FAISS."
+    },
+    {
+      "type": 0,
+      "heading": "Chunk Stratejisi — En Önemli Karar",
+      "content": "RAG'da en çok yapılan hata: embedding modeline odaklanıp chunk stratejisini geçiştirmek. Oysa en iyi embedding, kötü chunk'ı kurtaramaz.\n\n**Overlap altın kuralı:** `chunk_overlap = chunk_size * 0.20`\n\n- **%0 overlap** → cümleler kopuk, anlam kaybı\n- **%20 overlap** → bağlam korunur, tekrar minimum\n- **%50 overlap** → çok fazla tekrar, vektör store şişer\n\n**Separators sırası:** `[\"\\n\\n\", \"\\n\", \". \", \" \"]` — LangChain bu listeyi soldan sağa dener. Önce paragraftan kesmek ister, olmuyorsa satırdan, olmuyorsa cümleden. Böylece cümle asla ortadan kesilmez."
+    },
+    {
+      "type": 4,
+      "heading": "Chunk Stratejisi — Kod Örnekleri",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "label": "Optimal Chunk Size Bul",
+          "code": "def optimal_chunk_size_bul(metin):\n    cumleler = [c.strip() for c in metin.split(\".\") if len(c.strip()) > 10]\n    ortalama = sum(len(c) for c in cumleler) / len(cumleler)\n\n    print(f\"Ortalama cümle uzunluğu : {ortalama:.0f} karakter\")\n    print(f\"Önerilen chunk_size     : {ortalama * 2:.0f}  (2 cümle)\")\n    print(f\"Önerilen chunk_overlap  : {ortalama * 0.2:.0f} (chunk'ın %20'si)\")\n\noptimal_chunk_size_bul(metin)"
+        },
+        {
+          "label": "Chunk Kalitesi Test Et",
+          "code": "import numpy as np\nfrom langchain_text_splitters import RecursiveCharacterTextSplitter\nfrom langchain_google_genai import GoogleGenerativeAIEmbeddings\n\ndef chunk_kalitesi_test_et(metin, chunk_sizes=[50, 100, 200, 300]):\n    embeddings = GoogleGenerativeAIEmbeddings(model=\"models/gemini-embedding-001\")\n\n    for size in chunk_sizes:\n        splitter = RecursiveCharacterTextSplitter(\n            chunk_size=size,\n            chunk_overlap=int(size * 0.2),\n        )\n        chunks = splitter.create_documents([metin])\n        vektorler = np.array(embeddings.embed_documents(\n            [c.page_content for c in chunks]\n        ))\n\n        benzerlikler = []\n        for i in range(len(vektorler) - 1):\n            v1, v2 = vektorler[i], vektorler[i + 1]\n            b = np.dot(v1, v2) / (np.linalg.norm(v1) * np.linalg.norm(v2))\n            benzerlikler.append(b)\n\n        print(f\"chunk_size={size:3d} | \"\n              f\"chunk sayısı={len(chunks):2d} | \"\n              f\"ort. benzerlik={np.mean(benzerlikler):.3f}\")"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "Chunk Temizliği — Kaynakta Çöz",
+      "content": "Chunk'ları embed ettikten sonra temizlemeye çalışmak yerine LLM'e baştan temiz metin ürettir. Prompt'una tek satır ekle:\n\n> Başlık, bölüm adı veya markdown kullanma, düz metin yaz\n\nBu sayede **Anlatım**, **Özet** gibi başlıklar chunk'lara karışmaz. Sonradan regex ile temizlemeye gerek kalmaz."
+    },
+    {
+      "type": 0,
+      "heading": "Function Calling — Model Kendi Karar Verir",
+      "content": "LLM'e birden fazla fonksiyon tanıtırsan, soruya göre doğru olanı kendi seçer. Hatta aynı anda ikisini birden çağırabilir.\n\n**Kritik kural:** Model fonksiyonu çalıştırmaz — sadece hangisini çağırman gerektiğini söyler. Çalıştırmak sana kalır."
+    },
+    {
+      "type": 4,
+      "heading": "Function Calling — Kod Örneği",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "label": "Çoklu Fonksiyon Çağrısı",
+          "code": "# \"Ankara'dan Londra'ya uçuş ver, oradaki hava nasıl?\" sorusuna\n# model ikisini birden döndürür:\n[\n  {'name': 'FlightsSearch', 'args': {'origin': 'ESB', 'destination': 'LHR', 'date': '2026-12-15'}},\n  {'name': 'WeatherSearch', 'args': {'airport_code': 'LHR'}}\n]"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "Kurulum",
+      "content": "Gerekli kütüphaneler pip ile kurulabilir. API anahtarları Google Colab Secrets sekmesine eklenir:\n\n- `GROQ_API_KEY` → console.groq.com\n- `GOOGLE_API_KEY` → aistudio.google.com"
+    },
+    {
+      "type": 4,
+      "heading": "Kurulum Komutları",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "label": "pip install",
+          "code": "pip install langchain langchain-core langchain-groq\npip install langchain-text-splitters langchain-google-genai\npip install langchain-chroma chromadb pydantic"
+        }
+      ]
+    }
+  ],
+  "subPages": [
+    {
+      "id": "adim-1",
+      "title": "Adım 1 — Mesaj Yapısı ve LLM Bağlantısı",
+      "link": "https://github.com/yasir237/rag-langchain-1",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda LangChain'in mesaj yapısını ve bir LLM'e nasıl bağlanılacağını öğrenirsin. `SystemMessage`, `HumanMessage` ve `AIMessage` arasındaki farkı kavrar, ilk chain'ini çalıştırırsın."
+        },
+        {
+          "type": 0,
+          "heading": "Temel Kavramlar",
+          "content": "**SystemMessage:** Modele davranış talimatı verir. Konuşmanın başında bir kez gönderilir.\n\n**HumanMessage:** Kullanıcının gönderdiği mesajı temsil eder.\n\n**AIMessage:** Modelin ürettiği cevabı temsil eder. Geçmiş konuşma geçmişini tutmak için kullanılır."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "Bir LLM modeline düz metin göndermek yeterli değil. Modelin kim olduğunu, ne yapması gerektiğini ve kullanıcının ne sorduğunu ayrı ayrı tanımlamak gerekiyor."
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "LangChain'in mesaj yapısı bu sorunu çözüyor. Üç mesaj tipiyle modele net bir bağlam veriyorsun — bu yapı, RAG sistemlerinin, agent'ların ve çok turlu sohbetlerin temelidir."
+        },
+        {
+          "type": 0,
+          "heading": "Mesaj Mimarisi",
+          "content": "```\nKullanıcı sorusu\n      │\n      ▼\n┌─────────────────────────────────┐\n│         LangChain Zinciri       │\n│                                 │\n│  SystemMessage  →  Kim olduğu   │\n│  HumanMessage   →  Ne sorduğu   │\n│  AIMessage      →  Cevap + geçmiş│\n└─────────────────────────────────┘\n      │\n      ▼\n  Groq API (Llama 3.1 8B)\n      │\n      ▼\n   Cevap\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Mesaj Tipleri",
+          "content": "**SystemMessage:** Modele kim olduğunu ve nasıl davranacağını söyler.\n\n**HumanMessage:** Kullanıcının sorusunu taşır.\n\n**AIMessage:** Modelin ürettiği cevabı temsil eder — chat geçmişi bununla kurulur."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain langchain-core\npip install langchain-groq\n```\n\n**API Anahtarı:** Google Colab Secrets sekmesine `GROQ_API_KEY` ekle. Groq API anahtarı almak için → https://console.groq.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "İlk LLM Bağlantısı",
+              "code": "from langchain_groq import ChatGroq\nfrom langchain_core.messages import SystemMessage, HumanMessage\n\nmodel = ChatGroq(model=\"llama-3.3-70b-versatile\")\n\nmesajlar = [\n    SystemMessage(content=\"Sen yardımcı bir asistansın.\"),\n    HumanMessage(content=\"Merhaba, nasılsın?\")\n]\n\ncevap = model.invoke(mesajlar)\nprint(cevap.content)"
+            },
+            {
+              "label": "Kullanım",
+              "code": "from langchain_core.messages import HumanMessage, SystemMessage\nfrom langchain_groq import ChatGroq\n\nchat = ChatGroq(model=\"llama-3.1-8b-instant\", temperature=0)\n\nmessages = [\n    SystemMessage(content=\"You are an expert data scientist\"),\n    HumanMessage(content=\"Write a Python script that trains a neural network\")\n]\n\nresponse = chat.invoke(messages)\nprint(response.content)"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 1. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı ← *bu repo*\n- **Adım 2:** PromptTemplate ile şablonlu prompt\n- **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama\n- **Adım 4:** Metin bölme ve embedding\n- **Adım 5:** Vektör store ve benzerlik araması\n- **Adım 6:** Function Calling\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    },
+    {
+      "id": "adim-2",
+      "title": "Adım 2 — PromptTemplate ile Şablonlu Prompt",
+      "link": "https://github.com/yasir237/rag-langchain-2",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda LangChain'in `PromptTemplate` yapısını kullanarak dinamik prompt oluşturmayı ve Groq üzerinde Llama 3.1 modeline göndermeyi öğrenirsin."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "Her seferinde aynı prompt'u elle yazmak hata yaratır ve ölçeklenmez. Onlarca farklı kavramı modele açıklatmak istediğinde her seferinde yeni bir string mi yazacaksın?"
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "LangChain'in `PromptTemplate` yapısı, prompt'u bir şablona dönüştürür. Değişken kısmı soyutlarsın — model her çağrıda aynı kaliteyi tutturur. Bu yapı, RAG pipeline'larında belge içeriğini dinamik olarak prompt'a enjekte etmenin temelidir."
+        },
+        {
+          "type": 0,
+          "heading": "Zincir Mimarisi",
+          "content": "```\nGirdi (concept: \"autoencoder\")\n        │\n        ▼\n┌─────────────────────────────────┐\n│         LangChain Zinciri       │\n│                                 │\n│  PromptTemplate  →  Şablon doldurma  │\n│  ChatGroq        →  Model çağrısı    │\n└─────────────────────────────────┘\n        │\n        ▼\n  Groq API (Llama 3.1 8B)\n        │\n        ▼\n     Cevap\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Bileşenler",
+          "content": "**PromptTemplate:** Değişken içeren prompt şablonunu tanımlar.\n\n**input_variables:** Şablona dışarıdan geçirilecek parametreleri belirtir.\n\n**`chain = prompt | chat`:** LangChain Expression Language (LCEL) ile zincir kurar.\n\n**`chain.invoke(...)`:** Zinciri çalıştırır ve cevabı döndürür."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain langchain-core langchain-groq\n```\n\n**API Anahtarı:** Google Colab Secrets sekmesine `GROQ_API_KEY` ekle. Groq API anahtarı almak için → https://console.groq.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "Kullanım",
+              "code": "from langchain_core.prompts import PromptTemplate\nfrom langchain_groq import ChatGroq\n\ntemplate = \"\"\"\nYou are an expert data scientist with an expertise in building deep learning models.\nExplain the concept of {concept} in a couple of lines\n\"\"\"\n\nprompt = PromptTemplate(\n    input_variables=[\"concept\"],\n    template=template,\n)\n\nchat = ChatGroq(model=\"llama-3.1-8b-instant\", temperature=0)\n\nchain = prompt | chat\n\nresponse = chain.invoke({\"concept\": \"autoencoder\"})\nprint(response.content)"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 2. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı\n- ✅ **Adım 2:** PromptTemplate ile şablonlu prompt ← *bu repo*\n- **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama\n- **Adım 4:** Metin bölme ve embedding\n- **Adım 5:** Vektör store ve benzerlik araması\n- **Adım 6:** Function Calling\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    },
+    {
+      "id": "adim-3",
+      "title": "Adım 3 — Çoklu Zincir Kurma ve Zincirleri Bağlama",
+      "link": "https://github.com/yasir237/rag-langchain-3",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda birden fazla `PromptTemplate`'i LCEL ile sıralı zincire bağlamayı ve çıktıları birbirine taşımayı öğrenirsin."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "Tek bir prompt çoğu zaman yetmez. Bir model çıktısını alıp başka bir modele farklı bir görevle göndermek istediğinde ne yapacaksın? Her zinciri elle mi çalıştıracaksın, çıktıyı elle mi kopyalayacaksın?"
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "LangChain'in `RunnableLambda` ve `RunnablePassthrough` yapıları, zincirler arasındaki veri akışını otomatikleştirir. Bir zincirin çıktısı, bir sonrakinin girdisine dönüşür — sen sadece akışı tanımlarsın. Bu yapı, RAG pipeline'larında belge → işleme → yanıt döngüsünün temelidir."
+        },
+        {
+          "type": 0,
+          "heading": "Zincir Mimarisi",
+          "content": "```\nGirdi (concept: \"autoencoder\")\n        │\n        ▼\n┌───────────────────────────────────────┐\n│             chain_one                 │\n│  PromptTemplate  →  Teknik açıklama   │\n│  ChatGroq        →  Uzman dili        │\n└───────────────────────────────────────┘\n        │  AIMessage.content (ml_concept)\n        ├─────────────────────┐\n        ▼                     ▼\n┌───────────────┐   ┌───────────────────────────────────────┐\n│   chain_two   │   │             chain_three               │\n│  Çocuk dili   │   │  PromptTemplate  →  Özetleme          │\n│  Basit anlatım│   │  ChatGroq        →  Teknik TL;DR      │\n└───────────────┘   └───────────────────────────────────────┘\n        │                     │\n        ▼                     ▼\n   \"anlatim\"               \"ozet\"\n        │                     │\n        └──────────┬──────────┘\n                   ▼\n       {\"anlatim\": …, \"ozet\": …}\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Bileşenler",
+          "content": "**RunnableLambda:** Zincir çıktısını bir sonraki zincirin beklediği formata çevirir.\n\n**RunnablePassthrough.assign:** Mevcut veriyi koruyarak yeni bir alan ekler.\n\n**chain_one → chain_two:** Teknik açıklama → çocuğa basit anlatım.\n\n**chain_one → chain_three:** Teknik açıklama → kısa teknik özet (TL;DR).\n\n**`overall_chain.invoke(...)`:** Tüm akışı tek çağrıyla başlatır."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain langchain-core langchain-groq\n```\n\n**API Anahtarı:** Google Colab Secrets sekmesine `GROQ_API_KEY` ekle. Groq API anahtarı almak için → https://console.groq.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "Kullanım",
+              "code": "from langchain_core.prompts import PromptTemplate\nfrom langchain_core.runnables import RunnableLambda, RunnablePassthrough\nfrom langchain_groq import ChatGroq\n\nchat = ChatGroq(model=\"llama-3.1-8b-instant\", temperature=0)\n\nchain_one   = prompt_one | chat\nchain_two   = prompt_two | chat\nchain_three = prompt_three | chat\n\noverall_chain = (\n    chain_one\n    | RunnableLambda(lambda x: {\"ml_concept\": x.content})\n    | RunnablePassthrough.assign(\n        child_explanation=lambda x: chain_two.invoke({\"ml_concept\": x[\"ml_concept\"]}).content\n    )\n    | RunnableLambda(lambda x: {\n        \"st_concept\": x[\"ml_concept\"],          # chain_one çıktısı → teknik özet için\n        \"anlatim\": x[\"child_explanation\"]       # chain_two çıktısı → çocuğa anlatım\n    })\n    | RunnablePassthrough.assign(\n        ozet=lambda x: chain_three.invoke({\"st_concept\": x[\"st_concept\"]}).content\n    )\n)\n\nresponse = overall_chain.invoke({\"concept\": \"autoencoder\"})\nprint(response[\"anlatim\"])   # Çocuğa basit anlatım (chain_two)\nprint(response[\"ozet\"])      # Teknik TL;DR        (chain_one → chain_three)"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 3. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı\n- ✅ **Adım 2:** PromptTemplate ile şablonlu prompt\n- ✅ **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama ← *bu repo*\n- **Adım 4:** Metin bölme ve embedding\n- **Adım 5:** Vektör store ve benzerlik araması\n- **Adım 6:** Function Calling\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    },
+    {
+      "id": "adim-4",
+      "title": "Adım 4 — Metin Bölme ve Embedding",
+      "link": "https://github.com/yasir237/rag-langchain-4",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda üretilen açıklamayı anlamlı chunk'lara bölmeyi ve Gemini ile vektöre çevirmeyi öğrenirsin."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "LLM'in ürettiği uzun metni olduğu gibi vektör store'a atarsan anlam kaybı olur. Model tüm metne tek bir vektör üretir — bu vektör hiçbir şeyi tam temsil etmez. Üstelik farklı konu bloklarını birbirinden ayırt edemez."
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "Metni önce anlamlı parçalara (chunk) bölmek, ardından her parçayı ayrı ayrı embed etmek gerekir. Böylece vektör store'da her chunk kendi anlamını taşır ve arama sırasında doğru parça bulunur. Bu adım, RAG pipeline'ının retrieval kısmının kalitesini doğrudan belirler."
+        },
+        {
+          "type": 0,
+          "heading": "Pipeline Mimarisi",
+          "content": "```\nLLM Çıktısı (response3 — uzun Türkçe metin)\n        │\n        ▼\n┌───────────────────────────────────────┐\n│           Ön İşleme                   │\n│  Markdown başlıkları temizlenir       │\n│  Duplicate chunk'lar kaldırılır       │\n│  Çok kısa / anlamsız parçalar atılır  │\n└───────────────────────────────────────┘\n        │\n        ▼\n┌───────────────────────────────────────┐\n│     RecursiveCharacterTextSplitter    │\n│  chunk_size=300                       │\n│  chunk_overlap=50                     │\n│  separators=[\"\\n\\n\", \"\\n\", \". \", \" \"] │\n└───────────────────────────────────────┘\n        │  ~6-8 anlamlı chunk\n        ▼\n┌───────────────────────────────────────┐\n│      GoogleGenerativeAIEmbeddings     │\n│  model: gemini-embedding-001          │\n│  boyut: 3072                          │\n└───────────────────────────────────────┘\n        │\n        ▼\n  Her chunk → 3072 boyutlu vektör\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Bileşenler",
+          "content": "**RecursiveCharacterTextSplitter:** Metni önce paragrafa, sonra cümleye, sonra boşluğa göre böler.\n\n**chunk_size:** Her parçanın maksimum karakter sayısı.\n\n**chunk_overlap:** Parçalar arasında tekrar eden karakter sayısı — bağlam kopmasın diye.\n\n**separators:** Bölme öncelik sırası — cümle ortasından kesmeyi engeller.\n\n**embed_query:** Tek bir metni vektöre çevirir.\n\n**embed_documents:** Birden fazla chunk'ı toplu embed eder."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain langchain-core langchain-groq\npip install langchain-text-splitters langchain-google-genai\n```\n\n**API Anahtarları** — Google Colab Secrets sekmesine ekle:\n\n- `GROQ_API_KEY` → https://console.groq.com\n- `GOOGLE_API_KEY` → https://aistudio.google.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "Kullanım",
+              "code": "import re\nfrom langchain_text_splitters import RecursiveCharacterTextSplitter\nfrom langchain_google_genai import GoogleGenerativeAIEmbeddings\n\n# 1. Metni temizle\ndef metni_temizle(metin):\n    metin = re.sub(r'\\*\\*.*?\\*\\*\\n?', '', metin)  # Markdown başlıklarını kaldır\n    metin = re.sub(r'\\n{3,}', '\\n\\n', metin)\n    return metin.strip()\n\ntemiz_metin = metni_temizle(explanation)\n\n# 2. Chunk'lara böl\ntext_splitter = RecursiveCharacterTextSplitter(\n    chunk_size=300,\n    chunk_overlap=50,\n    separators=[\"\\n\\n\", \"\\n\", \". \", \" \"],\n)\ntexts = text_splitter.create_documents([temiz_metin])\n\n# 3. Anlamsız chunk'ları temizle\ntexts = [\n    t for t in texts\n    if len(t.page_content.strip()) > 30\n    and not t.page_content.strip().startswith(\".\")\n    and not t.page_content.strip().endswith(\":\")\n]\n\n# 4. Duplicate chunk'ları kaldır\nbenzersiz, gorülen = [], set()\nfor chunk in texts:\n    anahtar = chunk.page_content[:50].strip()\n    if anahtar not in gorülen:\n        gorülen.add(anahtar)\n        benzersiz.append(chunk)\ntexts = benzersiz\n\n# 5. Embed et\nembeddings = GoogleGenerativeAIEmbeddings(model=\"models/gemini-embedding-001\")\n\nquery_result = embeddings.embed_query(texts[0].page_content)\nprint(f\"Vektör boyutu: {len(query_result)}\")  # 3072\n\nall_embeddings = embeddings.embed_documents([t.page_content for t in texts])"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Neden Gemini Embedding?",
+          "content": "**HuggingFace MiniLM:** Vektör boyutu 384, Türkçe desteği çok iyi, ücretsiz, local model indirir.\n\n**OpenAI ada-002:** Vektör boyutu 1536, Türkçe desteği orta, ücretli, API key yeter.\n\n**Gemini Embedding:** Vektör boyutu 3072, Türkçe desteği iyi, ücretsiz limit, API key yeter.\n\nÖğrenme aşaması için Gemini; ücretsiz, kurulumu kolay ve 3072 boyutlu vektörüyle yüksek kaliteli bir seçim."
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 4. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı\n- ✅ **Adım 2:** PromptTemplate ile şablonlu prompt\n- ✅ **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama\n- ✅ **Adım 4:** Metin bölme ve embedding ← *bu repo*\n- **Adım 5:** Vektör store ve benzerlik araması\n- **Adım 6:** Function Calling\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    },
+    {
+      "id": "adim-5",
+      "title": "Adım 5 — Vektör Store ve Benzerlik Araması",
+      "link": "https://github.com/yasir237/rag-langchain-5",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda chunk'ları ChromaDB'ye atmayı ve doğal dil sorusuyla en alakalı içeriği bulmayı öğrenirsin."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "Chunk'ları embed ettin, elinde vektörler var — ama ne yapacaksın? Her soru geldiğinde tüm vektörlerle tek tek karşılaştırma yapmak hem yavaş hem ölçeklenmez. Üstelik \"hangi chunk bu soruya en yakın?\" sorusuna programatik olarak nasıl cevap vereceksin?"
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "ChromaDB, vektörleri saklar ve bir sorgu geldiğinde cosine similarity ile en yakın chunk'ları anında bulur. Tek bir `similarity_search()` çağrısı yeterli — sen sadece soruyu yazarsın, Chroma ilgili içeriği getirir. Bu adım RAG pipeline'ının retrieval motorudur."
+        },
+        {
+          "type": 0,
+          "heading": "Pipeline Mimarisi",
+          "content": "```\nÖnceki adımdan gelen temiz chunk'lar + Gemini vektörleri\n        │\n        ▼\n┌───────────────────────────────────────┐\n│            ChromaDB                   │\n│  Chroma.from_documents(texts,         │\n│                        embeddings)    │\n│                                       │\n│  Her chunk → vektör olarak saklanır   │\n└───────────────────────────────────────┘\n        │\n        ▼\n  Kullanıcı sorusu: \"Autoencoder nasıl çalışır?\"\n        │\n        ▼\n┌───────────────────────────────────────┐\n│         similarity_search()           │\n│                                       │\n│  1. Soruyu embed et (Gemini)          │\n│  2. Tüm chunk vektörleriyle karşılaştır│\n│  3. En yakın k chunk'ı döndür         │\n└───────────────────────────────────────┘\n        │\n        ▼\n  En alakalı chunk'lar → bir sonraki adımda LLM'e gidecek\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Bileşenler",
+          "content": "**`Chroma.from_documents()`:** Chunk'ları ve vektörleri tek seferde store'a yükler.\n\n**`similarity_search(query, k)`:** Soruya en yakın k chunk'ı cosine similarity ile bulur.\n\n**k parametresi:** Kaç chunk döneceğini belirler — küçük veri setinde 2-3 yeterli.\n\n**`doc.page_content`:** Bulunan chunk'ın ham metnine erişim."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain langchain-core langchain-groq\npip install langchain-text-splitters langchain-google-genai\npip install langchain-chroma chromadb\n```\n\n**API Anahtarları** — Google Colab Secrets sekmesine ekle:\n\n- `GROQ_API_KEY` → https://console.groq.com\n- `GOOGLE_API_KEY` → https://aistudio.google.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "Kullanım",
+              "code": "from langchain_chroma import Chroma\n\n# Chunk'ları vektör store'a yükle\n# texts     → önceki adımdan gelen Document listesi\n# embeddings → Gemini embedding modeli\ndb = Chroma.from_documents(texts, embeddings)\n\n# Doğal dil sorusuyla arama yap\nquery = \"Autoencoder nasıl çalışır?\"\ndocs = db.similarity_search(query, k=2)\n\n# Sonuçları göster\nprint(f\"Sorulan soru: {query}\")\nprint(f\"Bulunan chunk sayısı: {len(docs)}\")\n\nfor i, doc in enumerate(docs):\n    print(f\"\\n--- En alakalı chunk {i+1} ---\")\n    print(doc.page_content)"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Neden ChromaDB?",
+          "content": "**ChromaDB:** Kurulum pip ile sıfır config, kalıcı depolama opsiyonel, tamamen ücretsiz, öğrenme için ideal.\n\n**FAISS:** Kurulum pip ile, kalıcı depolama yok, tamamen ücretsiz, öğrenme için orta.\n\n**Pinecone:** Bulut tabanlı kayıt gerekir, kalıcı depolama var, ücretsiz limit var, öğrenme için karmaşık.\n\nÖğrenme aşaması için ChromaDB; kurulumu en kolay, LangChain entegrasyonu tek satır."
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 5. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı\n- ✅ **Adım 2:** PromptTemplate ile şablonlu prompt\n- ✅ **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama\n- ✅ **Adım 4:** Metin bölme ve embedding\n- ✅ **Adım 5:** Vektör store ve benzerlik araması ← *bu repo*\n- **Adım 6:** Function Calling\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    },
+    {
+      "id": "adim-6",
+      "title": "Adım 6 — Function Calling",
+      "link": "https://github.com/yasir237/rag-langchain-6",
+      "contentBlocks": [
+        {
+          "type": 0,
+          "heading": "Ne Öğrenirsin?",
+          "content": "Bu adımda LLM'e dış fonksiyon tanıtmayı ve soruya göre doğru fonksiyonu otomatik seçtirmeyi öğrenirsin."
+        },
+        {
+          "type": 0,
+          "heading": "Problem",
+          "content": "LLM'e \"İstanbul'da hava nasıl?\" dersen tahmin eder. Gerçek veriyi bilmez. Peki modele gerçek bir fonksiyon çağırtmak istersen ne yapacaksın?"
+        },
+        {
+          "type": 0,
+          "heading": "Çözüm",
+          "content": "Function Calling ile LLM'e hangi fonksiyonların var olduğunu tanıtırsın. Model soruyu okur, hangi fonksiyonu hangi parametrelerle çağırması gerektiğine kendi karar verir ve sana söyler. Sen fonksiyonu çalıştırıp sonucu ona geri verirsin. Birden fazla fonksiyon tanıtırsan model soruya göre doğru olanı seçer — hatta aynı anda ikisini birden çağırabilir."
+        },
+        {
+          "type": 0,
+          "heading": "Mimari",
+          "content": "```\nKullanıcı sorusu\n      │\n      ▼\n┌─────────────────────────────────────────────────────┐\n│              Function Calling Akışı                 │\n│                                                     │\n│  1. Pydantic BaseModel ile fonksiyon şeması tanımla │\n│                        │                            │\n│                        ▼                            │\n│  2. llm.bind_tools([...]) ile modele tanıt          │\n│                        │                            │\n│                        ▼                            │\n│  3. Soru gelir → model hangi fonksiyon? karar verir │\n│                        │                            │\n│                        ▼                            │\n│  4. tool_calls → fonksiyon adı + parametreler döner │\n│                        │                            │\n│                        ▼                            │\n│  5. Sen fonksiyonu çalıştırırsın, sonucu geri verirsin│\n└─────────────────────────────────────────────────────┘\n```"
+        },
+        {
+          "type": 0,
+          "heading": "Bileşenler",
+          "content": "**BaseModel:** Fonksiyonun şemasını tanımlar — hangi parametreler, hangi tipler.\n\n**`Field(description=...)`:** Her parametreyi LLM'e açıklar — model bunu okuyarak ne dolduracağını anlar.\n\n**`llm.bind_tools([...])`:** Modele fonksiyonları tanıtır.\n\n**tool_calls:** Modelin döndürdüğü karar — hangi fonksiyon, hangi argümanlar.\n\n**`prompt | llm_with_tools`:** LCEL zinciri — prompt şablonu + araçlı model."
+        },
+        {
+          "type": 0,
+          "heading": "Kurulum",
+          "content": "```bash\npip install langchain-groq langchain-core pydantic\n```\n\n**API Anahtarı:** Google Colab Secrets sekmesine `GROQ_API_KEY` ekle. Groq API anahtarı almak için → https://console.groq.com"
+        },
+        {
+          "type": 4,
+          "heading": "Kod Örneği",
+          "defaultTab": 0,
+          "codeBlocks": [
+            {
+              "label": "Tek Fonksiyon",
+              "code": "from pydantic import BaseModel, Field\nfrom langchain_groq import ChatGroq\nfrom langchain_core.prompts import ChatPromptTemplate\n\n# 1. Fonksiyon şemasını tanımla\nclass WeatherSearch(BaseModel):\n    \"\"\"Call this with an airport code to get the weather at that airport\"\"\"\n    airport_code: str = Field(description=\"airport code to get weather for\")\n\n# 2. Modele tanıt\nllm = ChatGroq(model=\"llama-3.3-70b-versatile\", temperature=0)\nllm_with_tools = llm.bind_tools([WeatherSearch])\n\n# 3. Chain kur ve çağır\nprompt = ChatPromptTemplate([\n    (\"system\", \"You are a helpful assistant\"),\n    (\"user\", \"{input}\")\n])\nchain = prompt | llm_with_tools\n\nresponse = chain.invoke({\"input\": \"What is the weather in IST today?\"})\nprint(response.tool_calls)\n# [{'name': 'WeatherSearch', 'args': {'airport_code': 'IST'}, 'type': 'tool_call'}]"
+            },
+            {
+              "label": "Birden Fazla Fonksiyon",
+              "code": "class FlightsSearch(BaseModel):\n    \"\"\"Call this to get flights between two cities\"\"\"\n    origin: str = Field(description=\"Departure city code e.g. IST\")\n    destination: str = Field(description=\"Arrival city code e.g. LHR\")\n    date: str = Field(description=\"Travel date in YYYY-MM-DD format\")\n\n# İkisini birden tanıt\nllm_with_tools = llm.bind_tools([WeatherSearch, FlightsSearch])\nchain = prompt | llm_with_tools\n\n# Hava sorusu → WeatherSearch seçer\nresponse = chain.invoke({\"input\": \"What is the weather in IST today?\"})\nprint(response.tool_calls)\n# [{'name': 'WeatherSearch', 'args': {'airport_code': 'IST'}}]\n\n# Uçuş + hava sorusu → ikisini birden çağırır\nresponse = chain.invoke({\n    \"input\": \"Ankara'dan Londra'ya 2026-12-15 uçuşları ver, oradaki hava durumu nasıl?\"\n})\nprint(response.tool_calls)\n# [{'name': 'FlightsSearch', 'args': {'origin': 'ESB', 'destination': 'LHR', 'date': '2026-12-15'}},\n#  {'name': 'WeatherSearch', 'args': {'airport_code': 'LHR'}}]"
+            }
+          ]
+        },
+        {
+          "type": 0,
+          "heading": "Önemli Notlar",
+          "content": "**Model fonksiyonu çalıştırmaz** — sadece hangi fonksiyonu hangi parametrelerle çağırman gerektiğini söyler. Çalıştırmak sana kalır.\n\n**`Field(description=...)` kritik** — LLM bu açıklamayı okuyarak parametreyi nasıl dolduracağına karar verir. Açıklama eksik veya yanlışsa model yanlış parametre üretir.\n\n**Model seçimi önemli** — küçük modeller (`llama-3.1-8b`) birden fazla tool'u parse etmekte zorlanabilir. Birden fazla fonksiyon kullanıyorsan `llama-3.3-70b-versatile` tercih et."
+        },
+        {
+          "type": 0,
+          "heading": "Seri İçindeki Yeri",
+          "content": "Bu notebook, LangChain ile kurulan RAG serisinin 6. adımıdır.\n\n- ✅ **Adım 1:** Mesaj yapısı ve LLM bağlantısı\n- ✅ **Adım 2:** PromptTemplate ile şablonlu prompt\n- ✅ **Adım 3:** Çoklu zincir kurma ve zincirleri bağlama\n- ✅ **Adım 4:** Metin bölme ve embedding\n- ✅ **Adım 5:** ChromaDB vektör store ve benzerlik araması\n- ✅ **Adım 6:** Function Calling ← *bu repo*\n- **Adım 7:** Uçtan uca RAG pipeline\n\nHer adım bir sonrakine köprü kuruyor."
+        },
+        {
+          "type": 0,
+          "heading": "Lisans",
+          "content": "MIT"
+        }
+      ]
+    }
+  ]
+}

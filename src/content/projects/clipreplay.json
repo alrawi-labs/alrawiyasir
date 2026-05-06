@@ -1,0 +1,123 @@
+{
+  "id": 500,
+  "title": "ClipReplay",
+  "subtitle": "YouTube Video Section Loop Chrome Extension",
+  "isFeatured": true,
+  "description": "ClipReplay is a Chrome extension that lets you loop any specific section of a YouTube video. Simply enter a start and end time, click Start Loop, and the video will repeat that segment continuously — perfect for studying, music practice, or reviewing specific content.",
+  "longDescription": "ClipReplay is a lightweight Chrome extension built for users who need to repeatedly watch specific sections of YouTube videos. Whether you are studying from a lecture, practicing a music piece, or reviewing a particular moment in a video, ClipReplay lets you define a precise time range and loop it seamlessly without any manual rewinding.\n\nThe extension works via a clean popup UI that appears when you click the extension icon on any YouTube page. You enter the start and end times in minute:second format, click Start Loop, and the extension injects a timeupdate event listener directly into the YouTube video element. When the video reaches the end time, it automatically jumps back to the start time — creating a smooth, uninterrupted loop.\n\nThe loop state is persisted in localStorage so the popup correctly reflects whether a loop is currently active when reopened. Stopping the loop removes the event listener and clears the stored state. The extension is built with Manifest V3, uses the scripting and activeTab permissions, and is scoped exclusively to YouTube via host permissions.",
+  "category": ["Web", "Tools"],
+  "tags": [
+    "Chrome Extension",
+    "JavaScript",
+    "YouTube",
+    "Manifest V3",
+    "Browser Extension",
+    "Productivity",
+    "Video Tools"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835338/438293040-9813d952-248b-4f8b-8c13-b070f08259f4_ixybvw.png",
+  "techLogos": ["javascript", "chrome", "html", "css"],
+  "date": "2023",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Frontend Developer",
+  "demoLink": null,
+  "githubLink": "https://github.com/yasir237/ClipReplay",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "JavaScript (Manifest V3)",
+      "description": "Core extension logic built with Chrome's Manifest V3 architecture using service workers and scripting API."
+    },
+    {
+      "name": "Chrome Extensions API",
+      "description": "chrome.scripting and chrome.tabs APIs used to inject scripts and interact with the active YouTube tab."
+    },
+    {
+      "name": "HTML & CSS",
+      "description": "Clean popup interface with a dark theme, custom CSS variables, and smooth hover/active transitions."
+    },
+    {
+      "name": "localStorage",
+      "description": "Loop state, start time, and end time persisted in localStorage so the popup reflects the correct state when reopened."
+    },
+    {
+      "name": "YouTube Video API (DOM)",
+      "description": "Direct manipulation of the YouTube video element via timeupdate event listener for precise loop control."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "Loop Any YouTube Video Section — Precisely and Instantly",
+      "content": "ClipReplay is a Chrome browser extension that solves a simple but frustrating problem: repeatedly watching a specific section of a YouTube video. Instead of manually dragging the progress bar back every time, you define a start and end time once, and ClipReplay loops that segment automatically and indefinitely.\n\nThe extension is particularly useful for:\n- **Students** reviewing a specific explanation in a lecture video\n- **Musicians** practicing along to a particular passage\n- **Language learners** repeating a phrase or sentence\n- **Anyone** who needs to watch a specific moment multiple times\n\nThe popup UI is minimal and dark-themed, matching YouTube's aesthetic. The loop runs entirely in the browser with no external servers or data collection."
+    },
+    {
+      "type": 1,
+      "heading": "Main Interface",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835338/438293040-9813d952-248b-4f8b-8c13-b070f08259f4_ixybvw.png",
+      "caption": "ClipReplay popup — enter start and end times to define the loop section"
+    },
+    {
+      "type": 0,
+      "heading": "How to Use",
+      "subheading": "Set up a loop in seconds",
+      "content": "**Step 1 — Install the Extension**\n- Download the repository as a ZIP from GitHub.\n- Go to `chrome://extensions/` in Chrome.\n- Enable **Developer Mode** in the top right corner.\n- Click **Load unpacked** and select the folder containing `manifest.json`.\n\n**Step 2 — Open a YouTube Video**\nNavigate to any YouTube video you want to loop.\n\n**Step 3 — Click the Extension Icon**\nClick the ClipReplay icon in your Chrome toolbar to open the popup.\n\n**Step 4 — Enter Start and End Times**\nType your desired start and end times in `minute:second` format (e.g. `7:23` and `20:18`).\n\n**Step 5 — Click Start Loop**\nClick the **Start Loop** button. The video will immediately jump to the start time and begin looping the defined section continuously.\n\n**Step 6 — Stop the Loop**\nTo stop, click the **Stop Loop** button in the popup. The event listener is removed and the video returns to normal playback."
+    },
+    {
+      "type": 1,
+      "heading": "Loop Active State",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835381/440176768-4d2b90bf-c60a-4f42-9a8f-dbfd5da4cddf_ie0qwy.png",
+      "caption": "Popup when loop is active — shows the current time range and Stop Loop button"
+    },
+    {
+      "type": 0,
+      "heading": "Technical Implementation",
+      "subheading": "How the loop mechanism works under the hood",
+      "content": "ClipReplay is built on Chrome's **Manifest V3** architecture. The core loop mechanism works by injecting a JavaScript function directly into the active YouTube tab using `chrome.scripting.executeScript`.\n\n**Loop Injection**\nWhen the user submits the form, the start and end times are converted from `mm:ss` format to total seconds. The `loopVideo(start, end)` function is then injected into the YouTube page. This function:\n1. Selects the `<video>` element on the page.\n2. Removes any previously attached loop handler to prevent duplicates.\n3. Attaches a new `timeupdate` event listener that checks the video's `currentTime` on every tick.\n4. When `currentTime >= end`, it sets `currentTime = start`, creating the loop.\n5. Stores a reference to the handler on the video element (`video._loopHandler`) for clean removal later.\n\n**Loop Removal**\nWhen the user clicks Stop Loop, the `stopLoop()` function is injected. It retrieves the stored handler reference and calls `removeEventListener`, cleanly detaching the loop without affecting normal playback.\n\n**State Persistence**\nThe loop state (`isLooping`, `startTime`, `endTime`) is saved in `localStorage`. When the popup is reopened, it reads this state and shows either the setup form or the active loop UI accordingly.\n\n**Background Service Worker**\nThe `background.js` service worker handles the extension icon click event, using `chrome.scripting.executeScript` to toggle play/pause on the active tab's video element."
+    },
+    {
+      "type": 4,
+      "heading": "Source Code",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "language": "javascript",
+          "label": "Loop Logic",
+          "code": "function loopVideo(start, end) {\n  const video = document.querySelector('video');\n  if (video) {\n    video.currentTime = start;\n\n    if (video._loopHandler) {\n      video.removeEventListener('timeupdate', video._loopHandler);\n    }\n\n    const checkTime = () => {\n      if (video.currentTime >= end) {\n        video.currentTime = start;\n      }\n    };\n\n    video.addEventListener('timeupdate', checkTime);\n    video._loopHandler = checkTime;\n  } else {\n    alert('No video found on this page!');\n  }\n}\n\nfunction stopLoop() {\n  const video = document.querySelector('video');\n  if (video && video._loopHandler) {\n    video.removeEventListener('timeupdate', video._loopHandler);\n    delete video._loopHandler;\n  }\n}\n\nfunction timeToSeconds(time) {\n  const parts = time.split(':');\n  const minutes = parseInt(parts[0]) || 0;\n  const seconds = parseInt(parts[1]) || 0;\n  return (minutes * 60) + seconds;\n}"
+        },
+        {
+          "language": "javascript",
+          "label": "popup.js",
+          "code": "document.addEventListener('DOMContentLoaded', () => {\n  const isLooping = localStorage.getItem('isLooping') === 'true';\n  const startTime = localStorage.getItem('startTime');\n  const endTime = localStorage.getItem('endTime');\n\n  if (isLooping) {\n    document.getElementById('stopButton').classList.remove('hidden');\n    document.getElementById('loopForm').classList.add('hidden');\n    document.getElementById('statusText').innerHTML =\n      `<span class=\"time-info\">${startTime} - ${endTime}</span> loop is running`;\n  }\n});\n\ndocument.getElementById('loopForm').addEventListener('submit', (event) => {\n  event.preventDefault();\n  const startInput = document.getElementById('start').value;\n  const endInput = document.getElementById('end').value;\n  const startSeconds = timeToSeconds(startInput);\n  const endSeconds = timeToSeconds(endInput);\n\n  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {\n    if (tabs.length > 0) {\n      chrome.scripting.executeScript({\n        target: { tabId: tabs[0].id },\n        func: loopVideo,\n        args: [startSeconds, endSeconds],\n      });\n    }\n  });\n\n  localStorage.setItem('isLooping', 'true');\n  localStorage.setItem('startTime', startInput);\n  localStorage.setItem('endTime', endInput);\n});"
+        },
+        {
+          "language": "javascript",
+          "label": "background.js",
+          "code": "chrome.action.onClicked.addListener((tab) => {\n  chrome.scripting.executeScript({\n    target: { tabId: tab.id },\n    function: togglePlayPause\n  });\n});\n\nfunction togglePlayPause() {\n  const video = document.querySelector('video');\n  if (video) {\n    if (video.paused) {\n      video.play();\n    } else {\n      video.pause();\n    }\n  } else {\n    alert('No video found on this page.');\n  }\n}"
+        },
+        {
+          "language": "json",
+          "label": "manifest.json",
+          "code": "{\n  \"manifest_version\": 3,\n  \"name\": \"ClipReplay\",\n  \"version\": \"1.0\",\n  \"description\": \"Loop specific sections of YouTube videos easily.\",\n  \"permissions\": [\"scripting\", \"activeTab\"],\n  \"host_permissions\": [\"https://www.youtube.com/*\"],\n  \"icons\": {\n    \"16\": \"icons/ClipReplayLogo.png\",\n    \"48\": \"icons/ClipReplayLogo.png\",\n    \"128\": \"icons/ClipReplayLogo.png\"\n  },\n  \"action\": {\n    \"default_popup\": \"popup.html\",\n    \"default_icon\": {\n      \"16\": \"icons/ClipReplayLogo.png\",\n      \"48\": \"icons/ClipReplayLogo.png\",\n      \"128\": \"icons/ClipReplayLogo.png\"\n    }\n  },\n  \"background\": {\n    \"service_worker\": \"background.js\"\n  }\n}"
+        },
+        {
+          "language": "css",
+          "label": "popup.css",
+          "code": ":root {\n  --primary-color: #e74c3c;\n  --primary-hover: #c0392b;\n  --bg-color: #1a1a1a;\n  --card-bg: #252525;\n  --text-color: #f5f5f5;\n  --input-bg: #333333;\n  --border-radius: 8px;\n  --box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);\n}\n\nbody {\n  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;\n  background-color: var(--bg-color);\n  color: var(--text-color);\n  width: 320px;\n  min-height: 280px;\n  display: flex;\n  justify-content: center;\n  align-items: center;\n  padding: 15px;\n}\n\n.btn {\n  background-color: var(--primary-color);\n  color: white;\n  border: none;\n  padding: 10px 15px;\n  font-size: 15px;\n  border-radius: var(--border-radius);\n  cursor: pointer;\n  transition: all 0.2s ease;\n  font-weight: 600;\n  width: 100%;\n}\n\n.btn:hover {\n  background-color: var(--primary-hover);\n  transform: translateY(-2px);\n  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);\n}"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "Installation",
+      "subheading": "Load ClipReplay as an unpacked Chrome extension",
+      "content": "Since ClipReplay is not published on the Chrome Web Store, it is loaded manually as an unpacked extension:\n\n1. Go to the [GitHub repository](https://github.com/yasir237/ClipReplay) and click **Code → Download ZIP**.\n2. Extract the ZIP file to a folder on your computer.\n3. Open Chrome and navigate to `chrome://extensions/`.\n4. Enable **Developer Mode** using the toggle in the top right corner.\n5. Click **Load unpacked** and select the extracted folder (the one containing `manifest.json`).\n6. The ClipReplay icon will appear in your Chrome toolbar.\n7. Navigate to any YouTube video, click the icon, and start looping."
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

@@ -1,0 +1,38 @@
+{
+  "id": 3,
+  "title": "Creating dynamic sites with CMS WordPress + SEO for WordPress websites",
+  "subtitle": "How to combine dynamic content management with solid SEO foundations to build sites that rank and perform.",
+  "category": "seo",
+  "date": "January 2025",
+  "readTime": "12 min read",
+  "coverImage": "/images/seo-01.png",
+  "illustr_01": "/images/seo-01.png",
+  "illustr_02": "/images/seo-02.png",
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Dynamic content and SEO — a powerful combo",
+      "content": "A static site is easy to manage when you have 5 pages. But as your content grows, you need a system. WordPress custom post types let you create structured, dynamic content — and when combined with good SEO practices, you get a site that's both scalable and discoverable."
+    },
+    {
+      "type": 0,
+      "heading": "Set up custom post types",
+      "content": "Use the Custom Post Type UI plugin or register post types manually in your theme's functions.php. Structure your content around what you publish — articles, projects, testimonials, FAQs. Each content type gets its own archive and single template, which gives you full control over how it's displayed and indexed."
+    },
+    {
+      "type": 0,
+      "heading": "On-page SEO essentials",
+      "content": "Install Rank Math or Yoast SEO. Configure your title templates, meta descriptions, and Open Graph tags. Make sure each page has a clear H1, a logical heading hierarchy, and a focus keyword that matches real search intent — not just what sounds good."
+    },
+    {
+      "type": 0,
+      "heading": "Site speed and Core Web Vitals",
+      "content": "Google's ranking algorithm weighs performance heavily. Use a caching plugin like WP Rocket, serve images in WebP format, and eliminate render-blocking scripts. Run your site through PageSpeed Insights regularly and treat it like a dashboard — not a one-time check."
+    },
+    {
+      "type": 0,
+      "heading": "Internal linking strategy",
+      "content": "Dynamic sites generate a lot of content — which means a lot of linking opportunities. Build a deliberate internal linking structure: every article should link to at least two related pieces of content. This distributes page authority and keeps users engaged longer."
+    }
+  ]
+}

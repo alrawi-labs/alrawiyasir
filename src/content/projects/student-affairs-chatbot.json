@@ -1,0 +1,170 @@
+{
+    "id": 100,
+    "title": "Student Affairs ChatBot",
+    "subtitle": "LLaMA-Based AI Chatbot for University Student Services — Graduation Project",
+    "isFeatured": true,
+    "description": "An AI-powered chatbot developed as a graduation project at Kırıkkale University that answers frequently asked student affairs questions with 92% accuracy. Built on the LLaMA architecture with fine-tuning, web scraping for data collection, and three data augmentation techniques to overcome limited training data.",
+    "longDescription": "Student Affairs ChatBot is an AI assistant developed to solve a real problem in university environments: student affairs offices receive the same repetitive questions every semester, overloading staff and slowing down students' access to information.\n\nThe system was built on the LLaMA large language model architecture, fine-tuned using the Face FungE method on a custom dataset collected from Kırıkkale University's official student affairs web pages via web scraping. Since the collected data was limited in volume, three data augmentation techniques were applied to enrich the training set: EDA (Easy Data Augmentation) for word-level variations, Back-Translation for natural paraphrasing through translation, and T5-based paraphrasing for semantic rewriting.\n\nThe result is a chatbot that understands natural language questions from students and responds with accurate, context-appropriate answers — 24/7, without staff intervention. In user testing, the system achieved a 92% correct response rate.\n\nThe project was developed as a graduation project at Kırıkkale University, Computer Engineering Department, under the supervision of Assoc. Prof. Dr. Fahrettin HORASAN, in collaboration with team member Yusuf Ömer KARA. It was presented at the 2024–2025 Graduation Projects Exhibition.",
+    "category": [
+        "AI / ML"
+    ],
+    "tags": [
+        "Python",
+        "LLaMA",
+        "NLP",
+        "Fine-tuning",
+        "Web Scraping",
+        "Data Augmentation",
+        "Chatbot",
+        "Deep Learning",
+        "T5",
+        "BeautifulSoup"
+    ],
+    "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836507/585127437-f4d43e22-ad1d-45b3-b150-59a2f160c9ca_pbvxjv.png",
+    "techLogos": [
+        "python",
+        "pytorch"
+    ],
+    "date": "2024-2025",
+    "duration": "1 semester",
+    "teamSize": 2,
+    "role": "AI Developer",
+    "demoLink": "https://www.youtube.com/watch?v=AiV-jG-OoPs",
+    "githubLink": null,
+    "buy": null,
+    "technologies": [
+        {
+            "name": "LLaMA",
+            "description": "Meta AI's large language model architecture used as the base model, providing strong natural language understanding for Turkish student queries."
+        },
+        {
+            "name": "Face FungE Fine-tuning",
+            "description": "Fine-tuning method used to adapt the LLaMA base model to the specific question-answer format of university student affairs queries."
+        },
+        {
+            "name": "BeautifulSoup & Requests",
+            "description": "Python libraries used to web scrape structured content from Kırıkkale University's official student affairs web pages for training data collection."
+        },
+        {
+            "name": "EDA (Easy Data Augmentation)",
+            "description": "Data augmentation technique applying word deletion and synonym replacement to create natural variations in the training sentences."
+        },
+        {
+            "name": "Back-Translation",
+            "description": "Augmentation technique that translates sentences to a foreign language and back to Turkish, generating naturally varied paraphrases."
+        },
+        {
+            "name": "T5 Paraphrasing",
+            "description": "Google's T5 text-to-text transformer used to rewrite training sentences while preserving their semantic meaning, enriching dataset diversity."
+        },
+        {
+            "name": "Python",
+            "description": "Primary development language for data collection, preprocessing, augmentation pipeline, model training, and chatbot backend."
+        }
+    ],
+    "contentBlocks": [
+        {
+            "type": 0,
+            "heading": "Project Overview",
+            "subheading": "A 24/7 AI Assistant for University Student Services",
+            "content": "Student Affairs ChatBot was developed to address a real and persistent problem in university environments: student affairs offices receive the same repetitive questions every semester — about course registration, exam schedules, deadlines, library hours, and more. This overloads staff and slows down students who need quick answers.\n\nThe chatbot provides accurate, natural-language answers to these questions around the clock, without any staff involvement. Students simply type their question in Turkish and receive an immediate, contextually appropriate response.\n\nThe system was developed as a graduation project at Kırıkkale University, Computer Engineering Department, under the supervision of **Assoc. Prof. Dr. Fahrettin HORASAN**, in collaboration with **Yusuf Ömer KARA**. It was presented at the **2024–2025 Graduation Projects Exhibition**."
+        },
+        {
+            "type": 0,
+            "heading": "Chatbot Demo Video",
+            "content": "Watch the full project promotional video on YouTube:\n\n[![Watch on YouTube](https://img.youtube.com/vi/AiV-jG-OoPs/maxresdefault.jpg)](https://www.youtube.com/watch?v=AiV-jG-OoPs)\n\n👉 [Watch on YouTube](https://www.youtube.com/watch?v=AiV-jG-OoPs)"
+        },
+        {
+            "type": 2,
+            "heading": "Demo Video",
+            "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1777836875/585128427-5eadd7b8-7b14-45bd-b10d-f7d92fff8874_bdrkob.mp4",
+            "caption": "Full demonstration of the Student Affairs ChatBot — live question answering in Turkish"
+        },
+        {
+            "type": 1,
+            "heading": "Chat Interface",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836804/585109289-d00c5293-8e15-48b0-ad78-9bc9d398cdc2_bjxap3.png",
+            "caption": "Kırıkkale University Assistant — chatbot UI with student query and instant response"
+        },
+        {
+            "type": 1,
+            "heading": "Chat Cafeteria Hours Response",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836895/585109900-ffbfeb17-a17e-420c-9c29-6d5bdcf80c39_omezj8.png",
+            "caption": "Example response — cafeteria hours query answered with accurate schedule information"
+        },
+        {
+            "type": 0,
+            "heading": "Motivation",
+            "subheading": "Why this problem needed a smart solution",
+            "content": "**Repetitive Information Requests**\nQuestions directed to student affairs offices are highly repetitive by nature. The same questions about registration, exams, and deadlines are asked hundreds of times each semester by different students. This project automates responses to these queries with an accessible, user-friendly chatbot.\n\n**Human-Like Responses via NLP**\nThe model is built on the LLaMA architecture and trained to understand questions posed in natural Turkish language — going beyond traditional keyword-based retrieval systems to provide intuitive, human-like answers.\n\n**Strengthening Deep Learning with Data Augmentation**\nTo overcome limited training data availability, EDA, Back-Translation, and T5-based paraphrasing were used to enrich the dataset, improving the model's ability to handle diverse phrasings of the same question.\n\n**A Novel Use Case: Smart Interface for Institutional Knowledge**\nMost chatbot applications target commercial domains. This project presents an original application that combines institutional knowledge access with a modern conversational interface in a university environment."
+        },
+        {
+            "type": 0,
+            "heading": "System Pipeline",
+            "subheading": "From raw web data to a fine-tuned conversational model",
+            "content": "**Step 1 — Data Collection (Web Scraping)**\nTraining data was collected from Kırıkkale University's official student affairs web pages using Python's BeautifulSoup and Requests libraries. The scraping process systematically extracted structured Q&A content from the institutional website.\n\n**Step 2 — Data Augmentation**\nSince the collected dataset was limited in size, three augmentation techniques were applied to expand and diversify the training data:\n\n- **EDA (Easy Data Augmentation)** — Word deletion and synonym substitution to create natural sentence variations\n- **Back-Translation** — Sentences translated to a foreign language and back to Turkish, generating naturally paraphrased versions\n- **T5 Paraphrasing** — Google's T5 model used to rewrite sentences semantically while preserving their meaning\n\n**Step 3 — Model Fine-tuning**\nThe LLaMA architecture was selected as the base model. Fine-tuning was performed using the **Face FungE** method on the augmented dataset, structured in a question-answer format. The model was optimized to produce correct responses to the types of questions students ask.\n\n**Step 4 — Deployment & Testing**\nThe chatbot was deployed with a chat interface and evaluated through user testing, achieving a **92% correct response rate**."
+        },
+        {
+            "type": 1,
+            "heading": "Chat Poster",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836924/585111191-ee1014a4-edbb-4068-a460-933c61ea83e9_iybykv.png",
+            "caption": "Official project poster presented at Kırıkkale University 2024–2025 Graduation Projects Exhibition"
+        },
+        {
+            "type": 0,
+            "heading": "Results & Discussion",
+            "content": "The system demonstrated strong performance in answering the most frequently asked student affairs questions with high accuracy and speed.\n\n**Key findings from user testing:**\n- The chatbot provided correct information in **92% of test cases**\n- The LLaMA architecture provided a strong foundation for Turkish natural language understanding\n- Data augmentation successfully overcame the limited dataset challenge, improving the model's tolerance to varied phrasings\n- The Q&A training format was effectively learned by the model\n\n**Limitations & Future Work:**\nThe model currently relies on a static dataset. For the system to stay current with institutional changes (new policies, updated schedules), a dynamic data pipeline — such as an API integration with the university's information system — is recommended.\n\nFuture development targets include multi-language support, mobile platform integration, and a self-updating architecture driven by user feedback."
+        },
+        {
+            "type": 0,
+            "heading": "Future Roadmap",
+            "content": "- **Multi-language support** — Extend the chatbot to answer in Arabic and English in addition to Turkish\n- **Mobile integration** — Deploy the chatbot as a native mobile application\n- **Continuous learning** — Implement a feedback loop where user interactions improve the model over time\n- **API integration** — Connect to the university's live information systems for real-time data updates\n- **Expanded coverage** — Extend beyond student affairs to cover library, cafeteria, dormitory, and academic calendar queries"
+        },
+        {
+            "type": 5,
+            "heading": "Project Presentation",
+            "pdfUrl": "https://github.com/user-attachments/files/27183621/chatbot-projesi.pdf",
+            "caption": "Kırıkkale University 2024–2025 Graduation Projects Exhibition — full project poster"
+        },
+        {
+            "type": 0,
+            "heading": "Project Info",
+            "content": "**Type:** Graduation Project (Bitirme Projesi)\n\n**Institution:** Kırıkkale University, Department of Computer Engineering\n\n**Advisor:** Assoc. Prof. Dr. Fahrettin HORASAN\n\n**Team:** Yasir Ayad Hamed AL RAWEE & Yusuf Ömer KARA & Mehmet Akif KAYMAK\n\n**Presented at:** Kırıkkale University Computer Engineering 2024–2025 Graduation Projects Exhibition"
+        }
+    ],
+    "challenges": [
+        "Limited training data available from the university's student affairs domain",
+        "Adapting a large language model (LLaMA) to a specific Turkish institutional Q&A context",
+        "Ensuring the model handles diverse phrasings of the same question correctly",
+        "Keeping the chatbot's knowledge current as institutional information changes over time"
+    ],
+    "solutions": [
+        "Applied three data augmentation techniques (EDA, Back-Translation, T5 Paraphrasing) to multiply dataset diversity",
+        "Used Face FungE fine-tuning to specialize the LLaMA base model on the student affairs Q&A format",
+        "Augmented dataset covers a wide range of natural language variations for the same queries",
+        "Identified API integration as the recommended path for dynamic knowledge updates"
+    ],
+    "results": [
+        {
+            "metric": "Accuracy",
+            "value": "92%",
+            "description": "Correct response rate observed in user testing"
+        },
+        {
+            "metric": "Availability",
+            "value": "24/7",
+            "description": "Chatbot accessible at all times without staff intervention"
+        },
+        {
+            "metric": "Augmentation",
+            "value": "3 methods",
+            "description": "EDA, Back-Translation, and T5 Paraphrasing applied to overcome limited training data"
+        },
+        {
+            "metric": "Base Model",
+            "value": "LLaMA",
+            "description": "Meta AI's large language model, fine-tuned on custom university dataset"
+        }
+    ],
+    "testimonial": null
+}

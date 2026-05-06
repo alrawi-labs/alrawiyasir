@@ -1,0 +1,108 @@
+{
+  "id": 600,
+  "title": "Zikra - Prayer Times App",
+  "subtitle": "Minimalist Location-Based Prayer Times Web Application",
+  "isFeatured": true,
+  "description": "Zikra is a minimalist web application that displays dynamic prayer times based on the user's location. It simplifies daily prayer planning with an elegant interface and offers a spiritual experience with daily reminders from the Quran.",
+  "longDescription": "Zikra is a React-based prayer times application that automatically detects the nearest city to the user using the Haversine formula and fetches accurate prayer times via the Aladhan API. The app displays a live countdown to the next prayer, shows random Quranic verses in both Arabic and Turkish, and dynamically updates the page title based on the selected city.\n\nThe nearest city detection algorithm compares the user's GPS coordinates against all 81 Turkish provinces using spherical distance calculations, ensuring high accuracy. The countdown timer converts all prayer times to minutes, filters past prayers, and calculates the remaining time to the next prayer in real time.\n\nSpecial Arabic fonts (Scheherazade, Amiri) are used for proper Quranic text rendering, and Turkish character fallback has been optimized. The app defaults to Istanbul when no location is provided, and the city can be changed dynamically at any time.",
+  "category": ["Web"],
+  "tags": [
+    "React",
+    "Tailwind CSS",
+    "Vite",
+    "Prayer Times API",
+    "Geolocation",
+    "Haversine Algorithm",
+    "Islamic App"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777837098/442466303-3569b407-21dd-4e28-a02d-ba3c1a4f8d37_mt6jse.png",
+  "techLogos": ["react", "tailwind", "vite"],
+  "date": "2025",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Frontend Developer",
+  "demoLink": "https://yasir237.github.io/Zikra-NamazVakitleri/",
+  "githubLink": "https://github.com/yasir237/Zikra-NamazVakitleri",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "React",
+      "description": "Core UI framework for building the component-based interface."
+    },
+    {
+      "name": "Tailwind CSS",
+      "description": "Modern utility-first CSS framework for responsive and clean styling."
+    },
+    {
+      "name": "Vite",
+      "description": "Fast development environment and build tool."
+    },
+    {
+      "name": "Aladhan Prayer Times API",
+      "description": "External API used to fetch accurate prayer times by city."
+    },
+    {
+      "name": "React Router",
+      "description": "Client-side routing for seamless page transitions."
+    },
+    {
+      "name": "Haversine Algorithm",
+      "description": "Spherical distance formula used to detect the nearest city from GPS coordinates."
+    },
+    {
+      "name": "Arabic Fonts (Scheherazade, Amiri)",
+      "description": "Custom fonts for accurate and beautiful Quranic Arabic text rendering."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "Minimalist Prayer Times App with Location Intelligence",
+      "content": "Zikra is a minimalist React web application designed to help Muslims keep track of their daily prayers. The app automatically detects the user's location and displays the five daily prayer times for the nearest Turkish city.\n\nA live countdown timer shows exactly how much time remains until the next prayer, updating in real time. Random Quranic verses are displayed in both Arabic and Turkish to offer a spiritual and reflective experience throughout the day.\n\nThe page title dynamically updates based on the selected city, and the app defaults to Istanbul when no location permission is granted. Users can also change the city manually at any time."
+    },
+    {
+      "type": 1,
+      "heading": "App Interface",
+      "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777837105/442447695-4330f2e4-e951-427b-bbb3-3c1e5587c3b0_vvbtvr.png",
+      "caption": "Zikra prayer times interface with countdown and Quranic verse display"
+    },
+    {
+      "type": 0,
+      "heading": "Nearest City Detection Algorithm",
+      "subheading": "Haversine Formula for Precise Location Matching",
+      "content": "When the user grants location permission, the app retrieves their GPS coordinates (latitude and longitude). These coordinates are then compared against the geographical centers of all 81 Turkish provinces using the **Haversine formula** — a well-established algorithm for calculating great-circle distances on a sphere.\n\nThe formula accounts for the Earth's curvature, making it significantly more accurate than simple Euclidean distance calculations. The city with the minimum calculated distance is selected as the user's location, and prayer times for that city are fetched immediately from the API.\n\nThis approach ensures that users in any part of Turkey — even rural areas — receive the prayer times of their closest city without any manual input."
+    },
+    {
+      "type": 4,
+      "heading": "Location & Countdown Algorithms",
+      "defaultTab": 0,
+      "codeBlocks": [
+        {
+          "language": "javascript",
+          "label": "Haversine Distance",
+          "code": "const calculateDistance = (lat1, lon1, lat2, lon2) => {\n  const R = 6371; // Earth radius in km\n  const dLat = (lat2 - lat1) * Math.PI / 180;\n  const dLon = (lon2 - lon1) * Math.PI / 180;\n  const a =\n    Math.sin(dLat / 2) ** 2 +\n    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *\n    Math.sin(dLon / 2) ** 2;\n  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));\n  return R * c;\n};"
+        },
+        {
+          "language": "javascript",
+          "label": "Next Prayer Countdown",
+          "code": "const prayerTimesWithNames = Object.entries(prayerTimesObj).map(([name, timeStr]) => {\n  if (!timeStr) return { name, minutes: Infinity };\n  const [hour, minute] = timeStr.split(':').map(Number);\n  return { name, minutes: hour * 60 + minute };\n});\n\nconst currentMinutes = currentTime.hour * 60 + currentTime.minute;\nconst upcomingPrayers = prayerTimesWithNames.filter(p => p.minutes > currentMinutes);\nconst nextPrayer = upcomingPrayers.reduce((prev, curr) =>\n  prev.minutes < curr.minutes ? prev : curr\n);\n\nconst remainingTime = nextPrayer.minutes - currentMinutes;\nconst hours = Math.floor(remainingTime / 60);\nconst minutes = remainingTime % 60;"
+        },
+        {
+          "language": "javascript",
+          "label": "Quran Verses",
+          "code": "const ayetler = [\n  {\n    arapca: \"فَذَكِّرْ إِنَّمَا أَنْتَ مُذَكِّرٌ\",\n    turkce: \"Öğüt ver, çünkü sen ancak öğüt verensin\",\n    reference: \"Gâşiye Suresi - 21\"\n  },\n  // ... more verses\n];\n\n// Random verse on each render\nconst randomAyet = ayetler[Math.floor(Math.random() * ayetler.length)];"
+        }
+      ]
+    },
+    {
+      "type": 0,
+      "heading": "Key Features",
+      "content": "**📍 Dynamic Prayer Times by City** — Prayer times are fetched in real time from the Aladhan API based on the detected or selected city.\n\n**⏰ Live Countdown Timer** — A precise countdown shows hours and minutes remaining until the next prayer, updating every minute.\n\n**🕋 Quranic Verse Display** — Random verses from the Quran are shown in both Arabic script and Turkish translation, with references included.\n\n**🌙 Arabic Font Support** — Scheherazade and Amiri fonts ensure beautiful and accurate rendering of Arabic text.\n\n**📱 Responsive Design** — The app is fully responsive and works seamlessly across desktop and mobile devices.\n\n**🌐 Dynamic Page Title** — The browser tab title updates automatically to reflect the currently selected city.\n\n**🧭 Smart City Default** — Defaults to Istanbul when location permission is denied; the city can be changed manually at any time."
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

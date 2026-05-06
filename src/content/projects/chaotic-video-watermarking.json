@@ -1,0 +1,180 @@
+{
+    "id": 150,
+    "title": "Chaotic Video Watermarking",
+    "subtitle": "TÜBİTAK-Supported Research — Henon Map, DWT & SVD-Based Digital Video Watermarking",
+    "isFeatured": true,
+    "description": "A TÜBİTAK 2209-A funded academic research project that develops a novel digital video watermarking method combining the Henon chaotic algorithm with DWT (Discrete Wavelet Transform) and SVD (Singular Value Decomposition). The method achieves high robustness against attacks while remaining imperceptible to viewers, with results of PSNR: 28.61 dB, SSIM: 0.96, and NC: 0.93.",
+    "longDescription": "This research project, supported by TÜBİTAK under the 2209-A University Students Research Projects Support Program, addresses the growing need to protect digital video content from unauthorized copying, manipulation, and attacks.\n\nThe core innovation is a three-layer pipeline: first, each video frame's LL subband is extracted via DWT (Discrete Wavelet Transform); SVD is then applied to both the frame and the watermark image, and their singular values are merged with dimensionality reduction to minimize quality loss; finally, the Henon chaotic map is used to determine the embedding order of pixels — instead of embedding sequentially, pixels are selected in a chaotic, non-sequential pattern that is mathematically unpredictable without the secret key.\n\nThe Henon map generates a unique pixel permutation sequence for each frame based on its chaotic attractor properties. This means that even if an attacker knows the watermarking algorithm, they cannot extract the watermark without knowing the exact initial conditions of the Henon map.\n\nThe method also implements an adaptive watermarking strategy: high-motion regions receive stronger watermark embedding for robustness, while static regions receive lighter embedding to preserve visual quality.\n\nFour operating modes are supported — every nth frame, frames n through m, specific frame indices, or all frames — with the selected mode acting as an additional security key during extraction.\n\nPerformance evaluation was conducted using NC, PSNR, and SSIM metrics under noise addition, compression, cropping, and blurring attacks. The results confirm both high robustness and low perceptibility: PSNR of 28.61 dB, SSIM of 0.96, and NC of 0.93.",
+    "category": [
+        "Security"
+    ],
+    "tags": [
+        "Python",
+        "MATLAB",
+        "Watermarking",
+        "Chaotic Systems",
+        "Henon Map",
+        "SVD",
+        "DWT",
+        "Cryptography",
+        "Video Security",
+        "TÜBİTAK",
+        "Academic Research"
+    ],
+    "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835257/585098404-18df2cb1-8544-42a9-87e2-0011321beed7_pcndvy.png",
+    "techLogos": [
+        "python",
+        "matlab"
+    ],
+    "date": "2024-2025",
+    "duration": "8 months",
+    "teamSize": 2,
+    "role": "Research Developer",
+    "demoLink": null,
+    "githubLink": null,
+    "buy": null,
+    "technologies": [
+        {
+            "name": "Henon Chaotic Algorithm",
+            "description": "Chaotic map used to generate a non-sequential pixel permutation sequence for each video frame, making the watermark embedding pattern mathematically unpredictable without the secret key."
+        },
+        {
+            "name": "DWT",
+            "description": "Separates video frame content into low and high frequency components, enabling frequency-domain watermark embedding that is resilient to compression and manipulation attacks."
+        },
+        {
+            "name": "SVD",
+            "description": "Decomposes the frame and watermark matrices into singular values; merging them at the singular value level preserves critical visual information while hiding the watermark."
+        },
+        {
+            "name": "Adaptive Watermarking Strategy",
+            "description": "High-motion regions receive stronger watermark embedding for robustness; static regions receive lighter embedding to minimize perceptibility."
+        },
+        {
+            "name": "PSNR / SSIM / NC Metrics",
+            "description": "Standard image and watermark quality metrics used to evaluate imperceptibility (PSNR, SSIM) and robustness under attack (NC — Normalized Correlation)."
+        },
+        {
+            "name": "Mode-Based Security Key",
+            "description": "The selected watermarking mode (every nth frame, range, specific indices, or all frames) serves as an additional extraction key, adding another layer of security."
+        }
+    ],
+    "contentBlocks": [
+        {
+            "type": 0,
+            "heading": "Project Overview",
+            "subheading": "TÜBİTAK 2209-A — Chaotic Video Watermarking",
+            "content": "This project was developed as a graduation project at Kırıkkale University, Department of Computer Engineering, under the supervision of Assoc. Prof. Dr. Fahrettin HORASAN, in collaboration with team member Yusuf Ömer KARA. The research was awarded funding under the **TÜBİTAK 2209-A University Students Research Projects Support Program**.\n\nThe core problem addressed is the protection of digital video content from unauthorized copying, manipulation, and forgery. The solution is a novel video watermarking algorithm that invisibly embeds a watermark image into a video by combining the Henon chaotic map with DWT and SVD techniques.\n\nThe project was presented at the Kırıkkale University Computer Engineering Department 2024–2025 Graduation Projects Exhibition and was submitted for publication in an international academic journal."
+        },
+        {
+            "type": 0,
+            "heading": "Motivation & Problem Statement",
+            "subheading": "Why video watermarking — and why chaotic?",
+            "content": "As digital content is increasingly distributed and copied online, protecting intellectual property rights has become a critical challenge. Digital watermarking embeds an invisible, owner-identifying mark into the content itself — unlike encryption, the protection remains even after the content is decrypted and distributed.\n\nMost existing watermarking research focuses on **static images**. Applying these techniques to video is significantly more complex because video consists of hundreds of individual frames, each requiring independent and consistent watermark embedding.\n\nThe majority of video watermarking methods embed the watermark in a fixed, sequential order — which is vulnerable to targeted extraction attacks. This project addresses that vulnerability by using the **Henon chaotic map** to randomize the embedding order in a mathematically unpredictable, yet fully reproducible way, given the correct secret key.\n\nThe combination of Henon chaos + DWT frequency separation + SVD singular value merging results in a system that is simultaneously robust against attacks and imperceptible to viewers."
+        },
+        {
+            "type": 0,
+            "heading": "The Henon Chaotic Map",
+            "subheading": "Why chaos makes watermarking more secure",
+            "content": "The Henon map is a discrete-time dynamical system that exhibits chaotic behavior. Its mathematical formulation is:\n\n**x(n+1) = 1 − a·x(n)² + y(n)**\n**y(n+1) = b·x(n)**\n\nWith typical parameters a = 1.4 and b = 0.3, the Henon map generates a sequence of values that appears random but is entirely deterministic given the initial conditions (x₀, y₀).\n\nIn this watermarking system, the Henon map is used to determine **which pixels in a 4×4 block are modified, and in what order**. Instead of embedding watermark bits sequentially (position 0,0 → 0,1 → 0,2...), the map generates a chaotic permutation such as:\n\nX = [2, 2, 2, 0, 2, 0, 3, 1, 0, 1, 3, 1, 1, 0, 3, 3]\nY = [0, 2, 1, 2, 3, 0, 0, 0, 3, 1, 1, 3, 2, 1, 2, 3]\n\nThis means the watermark is scattered across the frame in a pattern that is impossible to predict or reverse without the exact initial conditions of the Henon map — which serve as the secret encryption key."
+        },
+        {
+            "type": 1,
+            "heading": "Henon Map Visualization",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835274/585098279-27f62a5f-3b7b-422d-b34b-4f335df432a3_jm82l0.png",
+            "caption": "Henon map attractor plot showing the chaotic distribution pattern used for pixel selection across 10,000+ iterations"
+        },
+        {
+            "type": 0,
+            "heading": "Watermark Embedding Pipeline",
+            "subheading": "7 steps from video frame to watermarked frame",
+            "content": "**Step 1 — Frame Extraction**\nThe video is decomposed into individual frames. The target frame(s) are selected based on the operating mode chosen.\n\n**Step 2 — DWT (Discrete Wavelet Transform)**\nThe selected frame undergoes DWT, separating it into four subbands: LL (low frequency — the approximation of the image), LH, HL, and HH. The watermark is embedded in the **LL subband**, which is the most perceptually significant and most robust under compression.\n\n**Step 3 — SVD of the Frame's LL Subband**\nSingular Value Decomposition is applied to the LL subband: **A = U Σ Uᵀ**. The singular values in Σ represent the most important structural information of the frame.\n\n**Step 4 — SVD of the Watermark**\nThe watermark image also undergoes SVD independently. Its singular values are extracted.\n\n**Step 5 — Singular Value Merging & Dimensionality Reduction**\nThe singular values of the frame and the watermark are merged using a scaling factor. A dimensionality reduction step is applied to achieve smaller size and higher quality output.\n\n**Step 6 — Henon Chaotic Pixel Selection**\nInstead of embedding sequentially, the Henon map generates a chaotic ordering of pixels within each 4×4 block. The watermark bits are embedded according to this chaotic sequence.\n\n**Step 7 — Inverse SVD → Inverse DWT → Watermarked Frame**\nThe modified singular values are reassembled using inverse SVD, then the LL subband is recombined with the original LH, HL, HH subbands using inverse DWT. The result is a watermarked frame that is visually identical to the original."
+        },
+        {
+            "type": 1,
+            "heading": "Algorithm Flow & Henon Pixel Shuffling",
+            "imageUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777835275/585098186-1f62dd73-7243-462e-a12e-af295214c1a5_hybuis.png",
+            "caption": "Full embedding pipeline — DWT → SVD → Singular Value Merging → Henon chaotic pixel ordering → Inverse TDA → Watermarked Frame"
+        },
+        {
+            "type": 0,
+            "heading": "Watermark Extraction Pipeline",
+            "subheading": "Reversing the process to recover the watermark",
+            "content": "**Step 1 — Select the Watermarked Video**\nThe video suspected of containing a watermark is loaded.\n\n**Step 2 — Frame Selection & DWT**\nThe same frames are selected using the same mode. DWT is applied to extract the LL subband.\n\n**Step 3 — SVD of the Watermarked LL Subband**\nSVD is applied to extract the modified singular values.\n\n**Step 4 — Henon Map Regeneration**\nUsing the same initial conditions (secret key), the Henon map regenerates the identical chaotic pixel selection sequence.\n\n**Step 5 — Reverse Singular Value Merging**\nThe watermark's singular values are recovered by reversing the merging equation.\n\n**Step 6 — Inverse SVD → Watermark Image**\nThe recovered singular values are reassembled using inverse SVD to reconstruct the original watermark image.\n\nIf an incorrect secret key is used (wrong Henon initial conditions or wrong mode), the extraction produces meaningless noise — confirming the security of the scheme."
+        },
+        {
+            "type": 0,
+            "heading": "Watermarking Modes",
+            "subheading": "Flexible frame selection — and an extra security key",
+            "content": "The system supports four distinct watermarking modes. The selected mode is not just a configuration option — it also acts as part of the security key for extraction.\n\n**Mode 1 — Every nth Frame**\nWatermark is embedded in every nth frame of the video. Example: n=30 embeds at frames 0, 30, 60, 90...\n\n**Mode 2 — Frame Range (n to m)**\nWatermark is embedded in all frames between index n and m. Example: n=237, m=2018 embeds on frames 237 through 2018.\n\n**Mode 3 — Specific Frame Indices**\nWatermark is embedded only at a specified list of frame indices. Example: [23, 7, 2018, 1028].\n\n**Mode 4 — All Frames**\nWatermark is embedded in every single frame of the video from first to last.\n\nBecause the mode defines which frames were watermarked, an attacker who does not know the mode cannot extract the watermark — even if they possess the algorithm and Henon key."
+        },
+        {
+            "type": 0,
+            "heading": "Performance Results",
+            "subheading": "PSNR, SSIM, and NC under attack conditions",
+            "content": "The watermarking method was evaluated using three standard metrics under attacks including noise addition, video compression, cropping, and blurring:\n\n**PSNR (Peak Signal-to-Noise Ratio): 28.61 dB**\nMeasures the visual quality of the watermarked video compared to the original. Higher values indicate less visible distortion.\n\n**SSIM (Structural Similarity Index): 0.96**\nMeasures how similar the watermarked frame's structure is to the original. A value of 1.0 is perfect identity; 0.96 indicates the watermark is visually imperceptible.\n\n**NC (Normalized Correlation): 0.93**\nMeasures how accurately the watermark can be recovered after attacks. A value of 1.0 is perfect recovery; 0.93 demonstrates high robustness against the tested attacks.\n\nThese results confirm that the method achieves its two primary goals simultaneously: the watermark is **imperceptible** to viewers (high PSNR, high SSIM) and **robust** against common attacks (high NC)."
+        },
+        {
+            "type": 0,
+            "heading": "Mathematical Foundation",
+            "subheading": "Core formulas used in the algorithm",
+            "content": "**Henon Map**\nx(n+1) = 1 − a·x(n)² + y(n)\ny(n+1) = b·x(n)\n\n**Singular Value Decomposition (SVD)**\nA = U Σ Uᵀ\nwhere U is an orthogonal matrix and Σ is a diagonal matrix of singular values.\n\n**Discrete Wavelet Transform (DWT)**\nf(t) = Σ c(j,k) · ψ(j,k)(t)\nDecomposes the frame into low and high frequency components at multiple scales.\n\n**Normalized Correlation (NC)**\nNC = [Σ W(i,j) · W'(i,j)] / [√Σ W(i,j)² · √Σ W'(i,j)²]\nwhere W and W' are the original and extracted watermarks.\n\n**PSNR**\nPSNR = 10 · log₁₀(MAX² / MSE)\nwhere MAX is the maximum pixel value and MSE is the mean squared error.\n\n**SSIM**\nSSIM(x,y) = [(2μₓμᵧ + C₁)(2σₓᵧ + C₂)] / [(μₓ² + μᵧ² + C₁)(σₓ² + σᵧ² + C₂)]\n\n**Adaptive Frequency Strategy**\nF = f_low + f_high\nHigh-motion regions use higher embedding strength; static regions use lower strength to preserve visual quality."
+        },
+        {
+            "type": 0,
+            "heading": "Challenges & Solutions",
+            "content": "**Henon Map Optimization** — In certain parameter ranges, the Henon algorithm does not produce sufficiently complex chaotic behavior. The team addressed this through parameter optimization, and identified the Lorenz system as a fallback for cases requiring stronger chaotic behavior.\n\n**Multi-Resolution Performance** — Adapting the algorithm to handle video content at different resolutions and frame rates required iterative tuning of the DWT decomposition levels and embedding strength parameters.\n\n**Hardware Constraints** — Limited computational resources slowed analysis of high-resolution video content. Cloud computing was incorporated to enable parallel processing and team collaboration.\n\n**Frame Consistency** — Ensuring that the watermark remains correctly aligned and recoverable across hundreds of frames with different motion levels required careful management of the mode system and Henon key state."
+        },
+        {
+            "type": 0,
+            "heading": "Research Context & Contributions",
+            "subheading": "What this work adds to the literature",
+            "content": "Most existing digital watermarking research focuses on **static images** using DWT and SVD techniques (Alshoura et al., 2021; Evsutin & Dzhanashia, 2022). Applications of these techniques to dynamic video content with chaotic permutation are significantly less common.\n\nThis project makes the following contributions:\n\n**1. Chaotic Permutation for Video** — Extends the Henon-map-based watermarking approach (previously demonstrated for images by Kumar, 2024) to multi-frame video content.\n\n**2. Mode-Based Key System** — Introduces frame selection mode as an additional dimension of the security key, a novel security mechanism not found in comparable works.\n\n**3. Adaptive Intensity Strategy** — Applies motion-aware adaptive watermark strength, a technique that is particularly suited to high-resolution dynamic video and not addressed by most image-focused methods.\n\n**4. Combined DWT + SVD + Henon Pipeline** — The integration of all three techniques in a unified video watermarking pipeline is a novel architecture with demonstrated quantitative performance.\n\nThe results were presented at the Kırıkkale University Computer Engineering 2024–2025 Graduation Projects Exhibition and the research is being prepared for submission to an international journal."
+        },
+        {
+            "type": 0,
+            "heading": "Project Info",
+            "content": "**Type:** TÜBİTAK 2209-A Funded Academic Research Project\n\n**Institution:** Kırıkkale University, Department of Computer Engineering\n\n**Advisor:** Assoc. Prof. Dr. Fahrettin HORASAN\n\n**Team:** Yasir Ayad Hamed AL RAWEE & Yusuf Ömer KARA\n\n**Duration:** 8 months (2024–2025)\n\n**Presented at:** Kırıkkale University Computer Engineering 2024–2025 Graduation Projects Exhibition\n\n**Funding:** TÜBİTAK 2209-A University Students Research Projects Support Program"
+        }
+    ],
+    "challenges": [
+        "Extending image-based DWT-SVD watermarking to dynamic multi-frame video content",
+        "Optimizing the Henon map parameters for consistent chaotic behavior across all frame types",
+        "Ensuring watermark recoverability across different video resolutions and frame rates",
+        "Managing computational load for high-resolution video analysis under hardware constraints"
+    ],
+    "solutions": [
+        "Developed a frame-by-frame pipeline applying DWT and SVD independently to each frame's LL subband",
+        "Implemented Henon parameter optimization with Lorenz system as a documented fallback",
+        "Introduced an adaptive embedding strength system based on motion detection per region",
+        "Integrated cloud computing resources for parallelized testing and team collaboration"
+    ],
+   "results": [
+    {
+        "metric": "PSNR",
+        "value": "28.61 dB",
+        "description": "High visual quality — watermark imperceptible to viewers"
+    },
+    {
+        "metric": "SSIM",
+        "value": "0.96",
+        "description": "Structural similarity near-identical to original video"
+    },
+    {
+        "metric": "NC",
+        "value": "0.93",
+        "description": "Watermark robustness under noise, compression, cropping, and blurring attacks"
+    },
+    {
+        "metric": "Funding",
+        "value": "TÜBİTAK",
+        "description": "Awarded TÜBİTAK 2209-A University Students Research Projects Support"
+    },
+    {
+        "metric": "Exhibition",
+        "value": "2024–2025",
+        "description": "Presented at Kırıkkale University Computer Engineering Graduation Projects Exhibition"
+    }
+],
+    "testimonial": null
+}

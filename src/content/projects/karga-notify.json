@@ -1,0 +1,172 @@
+{
+  "id": 400,
+  "title": "Karga Notify",
+  "subtitle": "Automated Grade Tracker & Notification System for University Students",
+  "isFeatured": true,
+  "description": "Karga Notify is a C# desktop application that automatically monitors university grade announcements and sends instant desktop notifications when new exam results are published. Students can track midterm, final, and resit grades without manually checking the student portal.",
+  "longDescription": "Karga Notify is a desktop application built for university students to automate the tedious process of checking grade announcements. Instead of repeatedly logging into the student portal, the app handles the entire login flow automatically — navigating to the grade page, scraping current results, and comparing them against previously stored data.\n\nWhen a new grade is announced or an existing one changes, the app immediately sends a desktop notification containing the course name and the new grade value. Newly announced passing grades are highlighted in green and failing ones in red in the course list, making it easy to spot changes at a glance.\n\nThe app features credential saving so that login details are pre-filled on every session — the student only needs to solve the CAPTCHA. A dedicated Settings page offers 6 different color themes. The Help page links to the GitHub documentation, and the About page contains information about the developer and the application.",
+  "category": ["Desktop", "Automation"],
+  "tags": [
+    "C#",
+    "Desktop App",
+    "Web Scraping",
+    "Automation",
+    "University",
+    "Notifications",
+    "Student Tools",
+    "Windows"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1777836240/438293072-c7196c65-a8b8-4c2f-b1ab-0d7d8b33da34_ff3ggh.png",
+  "techLogos": ["csharp", "dotnet", "windows"],
+  "date": "2024",
+  "duration": null,
+  "teamSize": 1,
+  "role": "Desktop Developer",
+  "demoLink": null,
+  "githubLink": "https://github.com/yasir237/Karga-Notify",
+  "buy": null,
+  "technologies": [
+    {
+      "name": "C# & .NET",
+      "description": "Core language and framework used to build the desktop application and automate browser interactions."
+    },
+    {
+      "name": "Browser Automation",
+      "description": "Automated navigation through the university portal login flow, grade page routing, and data extraction."
+    },
+    {
+      "name": "Desktop Notifications",
+      "description": "Real-time Windows desktop notifications triggered when new grades are announced or existing ones change."
+    },
+    {
+      "name": "Credential Storage",
+      "description": "Login credentials are saved locally and auto-filled on each session, requiring only CAPTCHA completion."
+    },
+    {
+      "name": "Data Change Detection",
+      "description": "Grade data is compared against previously stored results to detect new announcements and changes."
+    },
+    {
+      "name": "Theme System",
+      "description": "6 built-in color themes available from the Settings page for UI personalization."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "Never Miss a Grade Announcement Again",
+      "content": "Karga Notify is a desktop application designed to save university students from repeatedly logging into their student portal to check for new grade announcements. The app automates the entire process — from login to grade extraction — and notifies the user instantly when something changes.\n\nUsers can track midterm (vize), final, and resit (bütünleme) exam results for all their enrolled courses. When a new result is published, a desktop notification appears with the course name and grade value. The course list updates in real time, with newly announced grades highlighted by background color so changes are immediately visible.\n\nThe app is not affiliated with any official university institution. It was developed by Yasir Alrawi and all rights belong to Alrawi."
+    },
+    {
+      "type": 1,
+      "heading": "Main Interface",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/86b99364-bd26-4a1c-ab39-e463605317c0",
+      "caption": "Karga Notify — main screen on first launch"
+    },
+    {
+      "type": 0,
+      "heading": "How It Works",
+      "subheading": "Automated from login to notification",
+      "content": "**Step 1 — Save Your Credentials (Optional)**\nOn first use, you can save your student portal login credentials in the app. On every subsequent session, the login form is pre-filled automatically — you only need to solve the CAPTCHA. If you choose not to save credentials, you can enter them manually each time.\n\n**Step 2 — Click START**\nPress the START button to launch the automated browser. The app opens the university login page and navigates through the portal automatically.\n\n**Step 3 — Log In**\nLog in using your student account. After successful login, no further manual interaction is needed — the app takes over.\n\n**Step 4 — Automatic Navigation**\nAfter login, the portal homepage opens. The app waits 10 seconds, then automatically navigates to the Grade Information (Not Bilgisi) page.\n\n**Step 5 — Allow Notifications**\nWithin 20 seconds of reaching the grade page, you must grant notification permission in the browser. If you miss this window, click FREEZE, then START again and repeat the login. Once permission is granted, the browser runs in the background automatically.\n\n**Step 6 — Live Grade Monitoring**\nAfter another 10 seconds, your current grade data appears in the app. From this point, the app continuously monitors for changes. When a new grade is announced:\n- A desktop notification is sent with the course name and grade value.\n- The course appears in the list with a colored background: green for passing, red for failing.\n- If the latest announced grade is a pass, it also appears persistently in the bottom-left panel."
+    },
+    {
+      "type": 1,
+      "heading": "Credential Storage",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/2740cf04-43e0-457e-9772-fc47df249330",
+      "caption": "Login credentials are saved and auto-filled on every session"
+    },
+    {
+      "type": 1,
+      "heading": "Last Announced Grade Panel",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/073ccd7e-909f-4958-a116-e766661e3f0a",
+      "caption": "Bottom-left panel shows the most recently announced passing grade"
+    },
+    {
+      "type": 1,
+      "heading": "Starting the Program",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/b030c581-28bc-4457-b9f8-58672dba52ce",
+      "caption": "Click START to launch the automated browser session"
+    },
+    {
+      "type": 1,
+      "heading": "University Login Page",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/b43b16b3-2528-4d20-867a-07899a1075b1",
+      "caption": "KKU student portal login — credentials are auto-filled if saved"
+    },
+    {
+      "type": 1,
+      "heading": "Portal Homepage",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/74f007ac-610b-48c8-84db-f3c52360fd7d",
+      "caption": "After login, the app navigates automatically — no action needed"
+    },
+    {
+      "type": 1,
+      "heading": "Student Information System",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/73adc83a-6131-4a01-8410-fdca945d467d",
+      "caption": "The app waits 10 seconds then automatically navigates to the grade page"
+    },
+    {
+      "type": 1,
+      "heading": "Notification Permission",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/f8cdc159-71ac-48fe-9d9d-2401e74444d4",
+      "caption": "Grant notification permission within 20 seconds to receive grade alerts"
+    },
+    {
+      "type": 1,
+      "heading": "Live Grade List",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/e2019ea6-5939-47a9-a8cc-cbbee92cb70c",
+      "caption": "Grade list updates in real time — new grades highlighted in green (pass) or red (fail)"
+    },
+    {
+      "type": 1,
+      "heading": "Desktop Notification",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/503a159b-d617-41e4-b2f6-a727ed550211",
+      "caption": "Instant desktop notification with course name and grade value when a new result is announced"
+    },
+    {
+      "type": 0,
+      "heading": "Settings & Themes",
+      "content": "The Settings page offers 6 different color themes for UI personalization, allowing users to customize the look of the application. From Settings you can also reset all application data or restart the program.\n\nAvailable options on the Settings page:\n- **6 color themes** — switch between different visual styles\n- **Reset** — clears all saved data and resets the app to its initial state\n- **Restart** — closes and relaunches the application"
+    },
+    {
+      "type": 1,
+      "heading": "Settings Page",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/2c452f52-ef7a-44c6-b993-ba72cb307846",
+      "caption": "Settings page with 6 theme options, reset, and restart controls"
+    },
+    {
+      "type": 1,
+      "heading": "Tomato Theme Example",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/2eb1aaf1-35eb-4b43-8d7f-d8fbb7ddd7dc",
+      "caption": "Example of the Tomato color theme applied to the interface"
+    },
+    {
+      "type": 0,
+      "heading": "Help & About Pages",
+      "content": "**Help Page** — Links directly to the GitHub repository where detailed usage instructions and documentation are available. Clicking the Help button opens this GitHub page in the browser.\n\n**About Page** — Contains information about the application's features and development. States that the app was developed by Yasir Alrawi and belongs to Alrawi. Confirms the app is not affiliated with any official institution. Clicking the developer's name redirects to Yasir Alrawi's LinkedIn profile."
+    },
+    {
+      "type": 1,
+      "heading": "Help Page",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/b9632b57-7c2a-442e-9f02-b61b3a64ac76",
+      "caption": "Help page links to the GitHub documentation"
+    },
+    {
+      "type": 1,
+      "heading": "GitHub Help Documentation",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/450cd425-f84c-4abe-a38e-36f6a8358df2",
+      "caption": "Detailed usage guide on the GitHub repository page"
+    },
+    {
+      "type": 1,
+      "heading": "About Page",
+      "imageUrl": "https://github.com/yasir723/Karga-Notify/assets/111686779/7ec4e752-be08-492e-b313-bb64ec7db884",
+      "caption": "About page with developer information and application details"
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}

@@ -1,0 +1,848 @@
+========================================
+FILE: src\app\layout.tsx
+========================================
+import type { Metadata } from "next";
+import "./globals.css";
+
+export const metadata: Metadata = {
+  title: "Yasir Alrawi",
+  description: "Your next big idea starts here",
+  icons: {
+    icon: '/images/alrawiikon.png', // public klasöründeki yol
+    shortcut: '/images/alrawiikon.png',
+    apple: '/images/alrawiikon.png', // Opsiyonel: Apple cihazlar için
+  },
+};
+
+export default function RootLayout({
+  children,
+    modal,
+}: Readonly<{
+  children: React.ReactNode;
+    modal: React.ReactNode;
+}>) {
+  return (
+    <html lang="en">
+      <body>
+        {children}
+        {modal}
+        </body>
+    </html>
+  );
+}
+
+
+========================================
+FILE: src\app\page.tsx
+========================================
+"use client";
+
+import ScrollProgressBar        from "@/components/ui/ScrollProgressBar";
+import Navbar                   from "@/components/sections/Navbar";
+import Hero                     from "@/components/sections/Hero";
+import Education                from "@/components/sections/Education";
+import FeaturedProjects         from "@/components/sections/FeaturedProjects";
+import Experience               from "@/components/sections/Experience";
+import Courses                  from "@/components/sections/Courses";
+import Skills                   from "@/components/sections/Skills";
+import Volunteering             from "@/components/sections/Volunteering";
+import Certificates             from "@/components/sections/Certificates";
+import ContactForm              from "@/components/sections/ContactForm";
+import Footer                   from "@/components/sections/Footer";
+
+export default function Home() {
+  return (
+    <div className="min-h-screen">
+      <ScrollProgressBar />
+      <Navbar />
+      <main>
+        <Hero />
+        <Education />
+        <FeaturedProjects />
+        <Experience />
+        <Courses />
+        <Skills />
+        <Volunteering />
+        <Certificates />
+        <ContactForm />
+      </main>
+      <Footer />
+    </div>
+  );
+}
+
+========================================
+FILE: src\components\sections\FeaturedProjects.tsx
+========================================
+"use client";
+
+import { useState, useMemo, useEffect } from "react";
+import { motion, AnimatePresence } from "motion/react";
+import { ChevronRight } from "lucide-react";
+import useWidth from "../../../hooks/useWidth";
+import images from "../../../constants/images";
+import Link from "next/link";
+import { Project } from "@/types/project";
+
+const MAX_VISIBLE = 9;
+
+const FeaturedProjects = () => {
+  const w = useWidth();
+  const isMobile = w < 768;
+  const isTablet = w >= 768 && w < 1024;
+
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [activeTag, setActiveTag] = useState("All");
+  const [showAll, setShowAll] = useState(false);
+
+  useEffect(() => {
+    fetch("/api/projects")
+      .then((r) => r.json())
+      .then(setProjects);
+  }, []);
+
+  const ALL_TAGS = [
+    "All",
+    ...Array.from(new Set(projects.flatMap((p) => p.category))),
+  ];
+
+  const filtered = useMemo(
+    () =>
+      activeTag === "All"
+        ? projects
+        : projects.filter((p) => p.category.includes(activeTag)),
+    [activeTag, projects],
+  );
+
+  const visible = showAll ? filtered : filtered.slice(0, MAX_VISIBLE);
+  const hasMore = filtered.length > MAX_VISIBLE;
+
+  const handleTag = (tag: string) => {
+    setActiveTag(tag);
+    setShowAll(false);
+  };
+
+  const truncateWords = (text: string, limit = 10) => {
+    const words = text.split(/\s+/).filter(Boolean);
+    return words.length <= limit
+      ? text
+      : `${words.slice(0, limit).join(" ")}...`;
+  };
+
+  return (
+    <section
+      id="courses"
+      className={isMobile ? "rounded-b-[64px]" : "py-24 rounded-b-[128px]"}
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        justifyContent: "center",
+        position: "relative",
+        paddingTop: isMobile ? "60px" : "120px",
+        paddingBottom: isMobile ? "60px" : "80px",
+        overflow: "hidden",
+      }}
+    >
+      {/* Background */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          left: 0,
+          width: "100%",
+          height: "100%",
+          backgroundImage: `url(${images.heroBg})`,
+          backgroundSize: "cover",
+          backgroundPosition: "center",
+          transform: "scaleX(-1)",
+          zIndex: -1,
+        }}
+      />
+
+      <div
+        className={
+          isMobile
+            ? "px-5 w-full"
+            : "max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 w-full"
+        }
+      >
+        {/* Header */}
+        <div
+          className={
+            isMobile
+              ? "flex flex-col gap-6 mb-10"
+              : "flex flex-row justify-between items-end mb-12 gap-8"
+          }
+        >
+          <h4
+            className={
+              isMobile
+                ? "text-3xl font-semibold text-white"
+                : "text-6xl w-100 font-semibold text-white"
+            }
+          >
+            Featured Projects
+          </h4>
+          {!isMobile && (
+            <span
+              style={{
+                fontSize: "58px",
+                fontWeight: 900,
+                color: "white",
+                opacity: 0.5,
+                letterSpacing: "-4px",
+                lineHeight: 1,
+                userSelect: "none",
+                alignSelf: "flex-end",
+              }}
+            >
+              {filtered.length} PROJECT
+            </span>
+          )}
+        </div>
+
+        {/* Kategori filtreleri */}
+        <div
+          style={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: "10px",
+            marginBottom: isMobile ? "32px" : "48px",
+          }}
+        >
+          {ALL_TAGS.map((tag) => (
+            <button
+              key={tag}
+              onClick={() => handleTag(tag)}
+              style={{
+                padding: "8px 20px",
+                borderRadius: "50px",
+                border: "1.5px solid",
+                borderColor:
+                  activeTag === tag ? "#f6c7b2" : "rgba(255,255,255,0.25)",
+                background:
+                  activeTag === tag ? "#f6c7b2" : "rgba(255,255,255,0.08)",
+                color: activeTag === tag ? "#1a1a1a" : "white",
+                fontSize: "13px",
+                fontWeight: 600,
+                letterSpacing: "0.5px",
+                cursor: "pointer",
+                transition: "all 0.2s ease",
+              }}
+            >
+              {tag}
+            </button>
+          ))}
+        </div>
+
+        {/* Cards */}
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: isMobile
+              ? "1fr"
+              : isTablet
+                ? "1fr 1fr"
+                : "1fr 1fr 1fr",
+            gap: "32px",
+          }}
+        >
+          <AnimatePresence mode="popLayout">
+            {visible.map((project, idx) => (
+              <motion.div
+                key={project.slug}
+                layout
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{ delay: idx * 0.05, duration: 0.3 }}
+                whileHover={{ y: -6 }}
+                className="project-card relative bg-[#f5ede0] rounded-3xl overflow-hidden flex flex-col group"
+                style={{ minHeight: isMobile ? "380px" : "500px" }}
+              >
+                {/* Image */}
+                <div
+                  style={{
+                    width: "100%",
+                    height: isMobile ? "180px" : "220px",
+                    overflow: "hidden",
+                    flexShrink: 0,
+                    position: "relative",
+                    zIndex: 1,
+                  }}
+                >
+                  <img
+                    src={project.image}
+                    alt={project.title}
+                    referrerPolicy="no-referrer"
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover",
+                      transition: "transform 0.6s cubic-bezier(0.4,0,0.2,1)",
+                    }}
+                    className="group-hover:scale-105"
+                  />
+                </div>
+
+                {/* Content */}
+                <div className="p-8 flex flex-col flex-grow relative z-10">
+                  <span className="text-xl font-medium uppercase tracking-widest text-[#333] mb-4">
+                    {project.title}
+                  </span>
+                  <p
+                    className="leading-snug mb-6"
+                    style={{ maxWidth: "380px" }}
+                  >
+                    {truncateWords(project.description, 10)}
+                  </p>
+                  <div
+                    style={{
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "8px",
+                      flexGrow: 1,
+                      alignContent: "flex-start",
+                    }}
+                  >
+                    {project.technologies.slice(0, 5).map((t) => (
+                      <span
+                        key={t.name}
+                        style={{
+                          fontSize: "9px",
+                          fontWeight: 700,
+                          color: "#666",
+                          background: "rgba(0,0,0,0.07)",
+                          borderRadius: "50px",
+                          padding: "4px 12px",
+                          letterSpacing: "0.5px",
+                          textTransform: "uppercase",
+                        }}
+                      >
+                        {t.name}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Link */}
+                <div className="px-8 pb-8 relative z-10">
+                  <Link
+                    href={`/projects/${project.slug}`}
+                    className="inline-flex items-center gap-2 text-brand-blue font-bold text-xl uppercase tracking-wider hover:gap-4 transition-all"
+                  >
+                    View Project <ChevronRight size={16} />
+                  </Link>
+                </div>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        {/* Show more / Show less */}
+        {hasMore && (
+          <motion.div
+            initial={{ opacity: 0, y: 12 }}
+            animate={{ opacity: 1, y: 0 }}
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              marginTop: "48px",
+            }}
+          >
+            <button
+              onClick={() => setShowAll((prev) => !prev)}
+              style={{
+                background: "rgba(255,255,255,0.1)",
+                color: "white",
+                border: "1.5px solid rgba(255,255,255,0.3)",
+                borderRadius: "50px",
+                padding: "14px 36px",
+                fontWeight: 700,
+                fontSize: "14px",
+                letterSpacing: "1px",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "8px",
+                transition: "all 0.2s ease",
+              }}
+              onMouseEnter={(e) => {
+                (e.currentTarget as HTMLElement).style.background = "#f6c7b2";
+                (e.currentTarget as HTMLElement).style.color = "#1a1a1a";
+                (e.currentTarget as HTMLElement).style.borderColor = "#f6c7b2";
+              }}
+              onMouseLeave={(e) => {
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(255,255,255,0.1)";
+                (e.currentTarget as HTMLElement).style.color = "white";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(255,255,255,0.3)";
+              }}
+            >
+              {showAll
+                ? "SHOW LESS"
+                : `SHOW ALL PROJECTS (${filtered.length - MAX_VISIBLE} more)`}
+              <motion.span
+                animate={{ rotate: showAll ? 270 : 90 }}
+                transition={{ duration: 0.3 }}
+                style={{ display: "flex" }}
+              >
+                <ChevronRight size={16} />
+              </motion.span>
+            </button>
+          </motion.div>
+        )}
+      </div>
+    </section>
+  );
+};
+
+export default FeaturedProjects;
+
+
+========================================
+FILE: src\components\projects\ProjectModal.tsx
+========================================
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useEffect, useRef } from "react";
+import { X } from "lucide-react";
+import ProjectDetailLayout from "./ProjectDetailLayout";
+import { Project } from "@/types/project";
+
+export default function ProjectModal({ project }: { project: Project }) {
+  const router = useRouter();
+  const overlayRef = useRef<HTMLDivElement>(null);
+
+  // ESC ile kapat
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") router.back();
+    };
+    document.addEventListener("keydown", handler);
+    document.body.style.overflow = "hidden";
+    return () => {
+      document.removeEventListener("keydown", handler);
+      document.body.style.overflow = "";
+    };
+  }, [router]);
+
+  return (
+    <div
+      ref={overlayRef}
+      onClick={(e) => e.target === overlayRef.current && router.back()}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(0,0,0,0.6)",
+        zIndex: 1000,
+        display: "flex",
+        alignItems: "flex-start",
+        justifyContent: "center",
+        overflowY: "auto",
+        padding: "40px 16px",
+      }}
+    >
+      <div
+        style={{
+          background: "#f5ede0",
+          borderRadius: "32px",
+          width: "100%",
+          maxWidth: "900px",
+          position: "relative",
+          overflow: "hidden",
+        }}
+      >
+        {/* Kapat butonu */}
+        <button
+          onClick={() => router.back()}
+          style={{
+            position: "sticky",
+            top: "16px",
+            float: "right",
+            marginRight: "16px",
+            zIndex: 10,
+            background: "rgba(0,0,0,0.08)",
+            border: "none",
+            borderRadius: "50%",
+            width: "40px",
+            height: "40px",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+          }}
+        >
+          <X size={18} />
+        </button>
+
+        <ProjectDetailLayout project={project} isModal={true} />
+      </div>
+    </div>
+  );
+}
+
+========================================
+FILE: src\components\projects\ProjectDetailLayout.tsx
+========================================
+"use client";
+
+import { useRouter } from "next/navigation";
+import { Project } from "@/types/project";
+import ContentBlockRenderer from "./ContentBlockRenderer";
+import { ExternalLink, Github, ShoppingCart, Clock, Users, Tag, ArrowLeft } from "lucide-react";
+
+export default function ProjectDetailLayout({
+  project,
+  isModal,
+}: {
+  project: Project;
+  isModal: boolean;
+}) {
+  const router = useRouter();
+
+  return (
+    <article style={{ padding: isModal ? "48px 40px" : "80px 24px", maxWidth: isModal ? "100%" : "900px", margin: "0 auto", position: "relative" }}>
+
+      {/* Floating back butonu — sadece tam sayfada */}
+      {!isModal && (
+  <button
+    onClick={() => router.back()}
+    style={{
+      position: "fixed",
+      top: "24px",
+      left: "24px",
+      zIndex: 100,
+      display: "inline-flex",
+      alignItems: "center",
+      gap: "10px",
+      background: "#111",
+      border: "none",
+      borderRadius: "50px",
+      padding: "14px 28px 14px 20px",
+      fontSize: "15px",
+      fontWeight: 800,
+      letterSpacing: "0.5px",
+      cursor: "pointer",
+      color: "white",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.35)",
+      transition: "all 0.2s ease",
+    }}
+    onMouseEnter={(e) => {
+      (e.currentTarget as HTMLElement).style.transform = "translateX(-4px) scale(1.04)";
+      (e.currentTarget as HTMLElement).style.boxShadow = "0 12px 40px rgba(0,0,0,0.45)";
+    }}
+    onMouseLeave={(e) => {
+      (e.currentTarget as HTMLElement).style.transform = "translateX(0) scale(1)";
+      (e.currentTarget as HTMLElement).style.boxShadow = "0 8px 32px rgba(0,0,0,0.35)";
+    }}
+  >
+    <ArrowLeft size={18} strokeWidth={2.5} />
+    Back to All Project
+  </button>
+)}
+
+      {/* Hero */}
+      <header style={{ marginBottom: "48px" }}>
+        <span style={{ fontSize: "12px", fontWeight: 700, letterSpacing: "3px", textTransform: "uppercase", color: "#888", display: "block", marginBottom: "12px" }}>
+          {Array.isArray(project.category) ? project.category.join(" · ") : project.category}
+        </span>
+        <h1 style={{ fontSize: isModal ? "32px" : "48px", fontWeight: 600, letterSpacing: "-1px", lineHeight: 1.1, marginBottom: "16px" }}>
+          {project.title}
+        </h1>
+        <p style={{ fontSize: "18px", color: "rgba(0,0,0,0.6)", lineHeight: 1.6, marginBottom: "32px" }}>
+          {project.subtitle}
+        </p>
+
+        <img
+          src={project.image}
+          alt={project.title}
+          style={{ width: "100%", borderRadius: "20px", aspectRatio: "16/9", objectFit: "cover", marginBottom: "32px" }}
+        />
+
+        {/* Meta grid */}
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))", gap: "16px", marginBottom: "32px" }}>
+          {[
+            { icon: <Clock size={14} />, label: "Duration", value: project.duration },
+            { icon: <Users size={14} />, label: "Team", value: `${project.teamSize} person` },
+            { icon: <Tag size={14} />, label: "Role", value: project.role },
+            { icon: <Clock size={14} />, label: "Date", value: project.date },
+          ].map((item) => (
+            <div key={item.label} style={{ background: "rgba(0,0,0,0.05)", borderRadius: "12px", padding: "12px 16px" }}>
+              <div style={{ display: "flex", alignItems: "center", gap: "6px", color: "#888", fontSize: "11px", fontWeight: 700, letterSpacing: "1px", textTransform: "uppercase", marginBottom: "4px" }}>
+                {item.icon} {item.label}
+              </div>
+              <p style={{ fontSize: "14px", fontWeight: 600, color: "#111", margin: 0 }}>{item.value}</p>
+            </div>
+          ))}
+        </div>
+
+        {/* Results */}
+        {project.results && project.results.length > 0 && (
+          <div style={{ display: "grid", gridTemplateColumns: `repeat(${project.results.length}, 1fr)`, gap: "12px", marginBottom: "32px" }}>
+            {project.results.map((r) => (
+              <div key={r.metric} style={{ background: "#111", borderRadius: "16px", padding: "20px", textAlign: "center" }}>
+                <p style={{ fontSize: "28px", fontWeight: 700, color: "#f6c7b2", margin: "0 0 4px" }}>{r.value}</p>
+                <p style={{ fontSize: "11px", fontWeight: 700, color: "rgba(255,255,255,0.5)", textTransform: "uppercase", letterSpacing: "2px", margin: "0 0 4px" }}>{r.metric}</p>
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", margin: 0 }}>{r.description}</p>
+              </div>
+            ))}
+          </div>
+        )}
+
+        {/* CTA buttons */}
+        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+          {project.demoLink && (
+            <a href={project.demoLink} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#111", color: "white", borderRadius: "50px", padding: "12px 24px", fontWeight: 700, fontSize: "14px", textDecoration: "none" }}>
+              <ExternalLink size={14} /> Live Demo
+            </a>
+          )}
+          {project.githubLink && (
+            <a href={project.githubLink} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "rgba(0,0,0,0.08)", color: "#111", borderRadius: "50px", padding: "12px 24px", fontWeight: 700, fontSize: "14px", textDecoration: "none" }}>
+              <Github size={14} /> GitHub
+            </a>
+          )}
+          {project.buy && (
+            <a href={project.buy.buylink} target="_blank" rel="noopener noreferrer"
+              style={{ display: "inline-flex", alignItems: "center", gap: "8px", background: "#f6c7b2", color: "#111", borderRadius: "50px", padding: "12px 24px", fontWeight: 700, fontSize: "14px", textDecoration: "none" }}>
+              <ShoppingCart size={14} /> Buy — {project.buy.price}
+            </a>
+          )}
+        </div>
+      </header>
+
+      {/* Content Blocks */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "56px" }}>
+        {project.contentBlocks.map((block, i) => (
+          <ContentBlockRenderer key={i} block={block} />
+        ))}
+      </div>
+
+      {/* Testimonial */}
+      {project.testimonial && (
+        <blockquote style={{ margin: "56px 0 0", background: "#111", borderRadius: "24px", padding: "40px", color: "white" }}>
+          <p style={{ fontSize: "20px", lineHeight: 1.6, fontStyle: "italic", marginBottom: "24px", color: "rgba(255,255,255,0.85)" }}>
+            "{project.testimonial.text}"
+          </p>
+          <footer>
+            <strong style={{ color: "#f6c7b2" }}>{project.testimonial.author}</strong>
+            <span style={{ color: "rgba(255,255,255,0.4)", marginLeft: "8px" }}>— {project.testimonial.position}</span>
+          </footer>
+        </blockquote>
+      )}
+
+      {/* Alt back butonu */}
+      <div style={{ marginTop: "80px", paddingBottom: "40px", display: "flex", justifyContent: "center" }}>
+        <button
+          onClick={() => router.back()}
+          style={{
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "10px",
+            background: "transparent",
+            border: "1.5px solid rgba(0,0,0,0.15)",
+            borderRadius: "50px",
+            padding: "14px 32px",
+            fontSize: "13px",
+            fontWeight: 700,
+            letterSpacing: "1px",
+            textTransform: "uppercase",
+            cursor: "pointer",
+            color: "#111",
+            transition: "all 0.2s ease",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "#111";
+            (e.currentTarget as HTMLElement).style.color = "white";
+            (e.currentTarget as HTMLElement).style.borderColor = "#111";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLElement).style.background = "transparent";
+            (e.currentTarget as HTMLElement).style.color = "#111";
+            (e.currentTarget as HTMLElement).style.borderColor = "rgba(0,0,0,0.15)";
+          }}
+        >
+          <ArrowLeft size={14} /> Back to Projects
+        </button>
+      </div>
+
+    </article>
+  );
+}
+
+========================================
+FILE: src\app\@modal\(.)projects\[slug]\page.tsx
+========================================
+import { getProjectBySlug } from "@/lib/projects";
+import { notFound } from "next/navigation";
+import ProjectModal from "@/components/projects/ProjectModal";
+
+export default function ProjectModalPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const project = getProjectBySlug(params.slug);
+  if (!project) notFound();
+  return <ProjectModal project={project} />;
+}
+
+========================================
+FILE: src\app\projects\[slug]\page.tsx
+========================================
+import { getProjectBySlug, getAllProjects } from "@/lib/projects";
+import { notFound } from "next/navigation";
+import ProjectDetailLayout from "@/components/projects/ProjectDetailLayout";
+
+export async function generateStaticParams() {
+  return getAllProjects().map((p) => ({ slug: p.slug }));
+}
+
+export async function generateMetadata({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const project = getProjectBySlug(params.slug);
+  if (!project) return {};
+  return {
+    title: project.title,
+    description: project.description,
+    openGraph: { images: [project.image] },
+  };
+}
+
+export default function ProjectPage({
+  params,
+}: {
+  params: { slug: string };
+}) {
+  const project = getProjectBySlug(params.slug);
+  if (!project) notFound();
+  return <ProjectDetailLayout project={project} isModal={false} />;
+}
+
+========================================
+FILE: src\lib\projects.ts
+========================================
+import fs from "fs";
+import path from "path";
+import { Project } from "@/types/project";
+
+const PROJECTS_DIR = path.join(process.cwd(), "src/content/projects");
+
+export function getAllProjects(): Project[] {
+  const files = fs.readdirSync(PROJECTS_DIR).filter((f) => f.endsWith(".json"));
+  return files
+    .map((file) => {
+      const raw = fs.readFileSync(path.join(PROJECTS_DIR, file), "utf-8");
+      const data = JSON.parse(raw) as Project;
+      data.slug = file.replace(".json", "");
+      return data;
+    })
+    .sort((a, b) => a.id - b.id); 
+}
+
+export function getProjectBySlug(slug: string): Project | null {
+  const filePath = path.join(PROJECTS_DIR, `${slug}.json`);
+  if (!fs.existsSync(filePath)) return null;
+  const raw = fs.readFileSync(filePath, "utf-8");
+  const data = JSON.parse(raw) as Project;
+  data.slug = slug;
+  return data;
+}
+
+export function getFeaturedProjects(): Project[] {
+  return getAllProjects().filter((p) => p.isFeatured);
+}
+
+========================================
+FILE: src\types\project.ts
+========================================
+export type TextBlock = {
+  type: 0;
+  heading: string;
+  subheading?: string;
+  content: string;
+};
+
+export type ImageBlock = {
+  type: 1;
+  heading: string;
+  imageUrl: string;
+  caption?: string;
+};
+
+export type VideoBlock = {
+  type: 2;
+  heading: string;
+  videoUrl: string;
+  posterUrl?: string;
+  caption?: string;
+};
+
+export type GalleryBlock = {
+  type: 3;
+  heading: string;
+  images: { url: string; alt: string; caption?: string }[];
+};
+
+export type CodeBlock = {
+  type: 4;
+  heading: string;
+  codeBlocks: { language: string; label: string; code: string }[];
+  defaultTab?: number;
+};
+
+export interface PdfBlock {
+  type: 5;
+  heading: string;
+  pdfUrl: string;
+  caption?: string;
+}
+
+export type ContentBlock =
+  | TextBlock
+  | ImageBlock
+  | VideoBlock
+  | PdfBlock
+  | GalleryBlock
+  | CodeBlock;
+
+export type Project = {
+  id: number;
+  slug: string;
+  title: string;
+  subtitle: string;
+  isFeatured: boolean;
+  description: string;
+  longDescription: string;
+  category: string[];
+  tags: string[];
+  image: string;
+  techLogos: string[];
+  date: string;
+  duration: string;
+  teamSize: number;
+  role: string;
+  demoLink: string | null;
+  githubLink: string | null;
+  buy: {
+    price: string;
+    currency: string;
+    features: string[];
+    buylink: string;
+  } | null;
+  technologies: { name: string; description: string }[];
+  contentBlocks: ContentBlock[];
+  challenges: string[];
+  solutions: string[];
+  results: { metric: string; value: string; description: string }[];
+  testimonial: { text: string; author: string; position: string } | null;
+};
+

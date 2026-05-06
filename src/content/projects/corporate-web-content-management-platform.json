@@ -1,0 +1,246 @@
+{
+  "id": 450,
+  "title": "Corporate Web Content Management Platform",
+  "subtitle": "Multilingual Congress and Corporate CMS System for Universities",
+  "isFeatured": true,
+  "description": "This project is an enterprise-grade web platform built with ASP.NET Core MVC, designed to manage congresses, symposiums, and academic events for universities. Through the administration panel, non-technical staff can easily manage events and content. The system is designed with a multilingual structure, role-based authorization, and corporate security as its core principles.",
+  "longDescription": "The Corporate Web Content and Event Management Platform is a comprehensive ASP.NET Core MVC application operating on a CMS logic, aimed at generating dynamic websites for academic congresses and events held at universities.\n\nThrough the administration panel, homepage contents, headings, subpages, board members, dates, pricing information, accommodation details, rules, contact information, and additional pages can be managed centrally.\n\nDynamic multilingual content display is provided through Query String-based language selection. A secure and controlled management environment has been established for users with Root and Admin roles using the ASP.NET Identity infrastructure.\n\nAn unlimited number of additional pages can be added and included in the navbar. The content of these additional pages can be designed using the Admin panel, and they can be added to the navbar as a main item or included in a dropdown list.",
+  "category": ["Web"],
+  "tags": [
+    "ASP.NET Core MVC",
+    "Corporate CMS",
+    "University Systems",
+    "Congress Management",
+    "Multilingual Web",
+    "Role Based Authorization",
+    "Entity Framework Core",
+    "SQL Server"
+  ],
+  "image": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768735937/dafsem-ozet-poster_wgqrz3.png",
+  "techLogos": [
+    "dotnet",
+    "csharp",
+    "sqlserver",
+    "bootstrap"
+  ],
+  "date": "2025-05",
+  "duration": "2 months",
+  "teamSize": 1,
+  "role": "Full Stack Developer",
+  "demoLink": "https://familycongress.kku.edu.tr/index-tr.html",
+  "githubLink": null,
+  "buy": {
+    "price": "64$",
+    "currency": "USD",
+    "features": [
+      "Lifetime updates are included",
+      "Valid for a single project",
+      "Source code is included"
+    ],
+    "buylink": "https://yasiralrawi.gumroad.com/l/elpyz"
+  },
+  "technologies": [
+    {
+      "name": "ASP.NET Core MVC",
+      "description": "Layered and sustainable architecture for enterprise web applications."
+    },
+    {
+      "name": "Entity Framework",
+      "description": "Robust and consistent data management for academic event data."
+    },
+    {
+      "name": "Multilingual Interface",
+      "description": "Dynamic and unlimited language support through a Query String-based structure."
+    },
+    {
+      "name": "ASP.NET Identity",
+      "description": "Role-based authorization for users with Root and Admin roles."
+    },
+    {
+      "name": "Modular CMS Structure",
+      "description": "Dynamic management of pages and content through the admin panel."
+    },
+    {
+      "name": "Excel-Based Bulk Data Management",
+      "description": "Bulk data upload via Excel files with automatic error analysis."
+    },
+    {
+      "name": "Soft Delete Mechanism",
+      "description": "Records are not deleted from the database; they are set to an inactive state."
+    }
+  ],
+  "contentBlocks": [
+    {
+      "type": 0,
+      "heading": "Project Overview",
+      "subheading": "Corporate Site Management Platform for Universities",
+      "content": "The Corporate Web Content and Event Management Platform is a comprehensive ASP.NET Core MVC application operating on a CMS logic, aimed at creating dynamic websites for academic congresses and events held at universities.\n\nThrough the administration panel, homepage contents, headings, subpages, board members, event dates, pricing information, accommodation details, rules, contact information, and additional pages can be managed centrally and with ease.\n\nThanks to Query String-based language selection, content is dynamically presented in a multilingual format. Using the ASP.NET Identity infrastructure, a secure, controlled, and authorization-based management environment has been established for users with Root and Admin roles.\n\nAn unlimited number of additional pages can be created as needed. These pages can be designed through the Admin panel and flexibly added to the navigation menu as a main item or under a dropdown menu.\n\nOn the technical side, the project was developed in a layered architecture based on ASP.NET Core MVC. The Controller, Service, Data (Context), and ViewModel layers are clearly separated from one another; business logic, data access, and interface structure are isolated. This approach improves code readability and simplifies maintenance and development processes.\n\nAn interface-based structure was used in the service layer to create a loosely coupled architecture. Database operations are managed securely and sustainably with Entity Framework Core. The layered structure allows developers who join the project later to quickly understand the system and contribute effectively."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1770500616/mvc_projeleri_ozeti_cmpegt.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1770417874/proje-ozet-poster_kqob26.png",
+      "caption": "Project Summary"
+    },
+    {
+      "type": 0,
+      "heading": "User Interface",
+      "subheading": "Frontend structure presented to visitors",
+      "content": "The user interface is built on a simple and intuitive structure. At the top of each page, the relevant page title is displayed, and the content belonging to that page is presented in an organized manner just below it. The main pages offered to users within the system are as follows:\n\n**1. Homepage:** The dates defined in the *Important Dates* page are displayed first. Below this is a dynamically changing image area (slider). Further down the page, the event poster and event letter are presented side by side to the visitor.\n\n**2. Organizing Committee:** Organizing committee members are listed grouped by their defined categories.\n\n**3. Scientific Committee:** Scientific committee members are presented in an organized view, separated by their categories.\n\n**4. Invited Speakers:** Invited speakers are displayed classified according to their respective categories.\n\n**5. Topics:** This page contains the academic topics to be covered within the scope of the event.\n\n**6. Event Program:** This is the page where the detailed event program is shared in PDF format.\n\n**7. Important Dates:** This page lists the critical dates related to application, paper submission, and event processes.\n\n**8. Writing Guidelines:** This page contains the writing rules to be followed when preparing paper abstracts.\n\n**9. Presentation Guidelines:** This page explains the rules that presenting participants must follow.\n\n**10. Participation Fee:** This page contains participation fees, payment conditions, services included in the fees, and bank account information required for payment.\n\n**11. Accommodation:** This page contains the names, contact information, and details of facilities where participants can stay in the city where the event is held.\n\n**12. Application:** This page contains downloadable forms and contact email information required during the application process.\n\n**13. Contact:** This is the contact page containing the event's address, email, and phone information.\n\nIn addition to these, the system allows an unlimited number of new pages to be added or existing pages to be removed thanks to its flexible CMS structure."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1768735300/dafsem_ozet_jdbgwh.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768764267/Ekran_g%C3%B6r%C3%BCnt%C3%BCs%C3%BC_2026-01-18_081849_ujjxmz.png",
+      "caption": "Frontend structure presented to visitors"
+    },
+    {
+      "type": 0,
+      "heading": "Administration Panel",
+      "subheading": "Content and system management",
+      "content": "The administration panel is designed to enable all content related to academic events to be managed through a centralized and authorized structure. It provides a simple, intuitive, and modular interface so that even non-technical administrative staff can use it with ease.\n\nThe following content and modules can be managed through the panel:\n\n**• Homepage:** Dynamic content, images, and showcase areas on the homepage are managed.\n\n**• Board:** Board structures such as the organizing committee, scientific committee, and invited speakers are managed by dividing them into categories.\n\n**• Topics:** Academic topics to be covered within the scope of the event are defined and updated.\n\n**• Dates:** Important dates related to application, paper submission, and event processes are managed.\n\n**• Rules:** Content concerning participants, such as writing and presentation guidelines, is edited.\n\n**• Services:** Services provided during the event are defined.\n\n**• Fees:** Participation fees, fee types, and related descriptions are managed.\n\n**• Accommodation:** Accommodation options, facility information, and contact details are edited.\n\n**• Bank Information:** Bank and account information required for payment processes is managed.\n\n**• Application:** Downloadable documents and guidance information related to the application are defined.\n\n**• Contact:** Institutional contact information (address, email, phone) is updated.\n\n**• Languages:** The system supports multiple languages, and multilingual content is managed centrally.\n\n**• Additional Pages:** An unlimited number of new pages can be created as needed. These pages can be added to the navigation as a main item or under a dropdown menu.\n\n**• Settings:** General configurations and system settings for the site are managed.\n\n**• Accounts:** Role-based authorization and account management are provided for Root and Admin users.\n\nAll management processes have been supported with role-based authorization and security controls, developed to provide a sustainable, scalable, and enterprise-ready structure."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1768769679/panel-ozeti_p5yx9a.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768769725/panel-ozet-poster_z3gxxa.png",
+      "caption": "Administration Panel Summary"
+    },
+    {
+      "type": 0,
+      "heading": "Homepage Content Management",
+      "content": "Homepage content management is designed to allow administrative users to quickly and flexibly update the showcase areas of the event without requiring any technical knowledge.\n\nThrough the administration panel, the event letter, featured dates, images in the slider area, and the event poster image can be easily managed. All of this content can be instantly changed through add, edit, delete, and update operations.\n\nThe images used in the slider section are controlled through a dynamic structure; photos can be added one by one, their order can be changed, or they can be completely removed from the system. Similarly, the event's poster image can be conveniently updated or deleted and replaced with a new image through the admin panel."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1768825928/anasayfa-yonetimi_ugqrnz.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768843626/anasayfa-yonetimi-posteri_qyodjc.png",
+      "caption": "Homepage Content Management"
+    },
+    {
+      "type": 0,
+      "heading": "Board Members Management",
+      "subheading": "Category, title, and bulk data management",
+      "content": "The board members management process is designed with a multi-step and flexible structure to enable academic structures to be managed in a hierarchical and organized manner.\n\nBefore a board member can be added, the board category to which the member will belong must first be defined in the system. During the category creation step, it is determined under which page (e.g., Organizing Committee, Scientific Committee, Invited Speakers, etc.) this category will be displayed. This ensures that the board structure is managed consistently and in a controlled manner across the entire site.\n\nAfter the category is defined, the academic title of the board member is added to the system, and then the personal and institutional information of the board member is entered in detail through the admin panel.\n\nFor cases where the number of board members is large, bulk data management support is provided. By uploading an Excel file through the admin panel, a large number of board members can be imported into the system at once. The system automatically analyzes the uploaded Excel file, detects incorrectly or incompletely entered data on a row-by-row basis, and presents each error along with its cause in a table on the administrator's screen.\n\nThe detected erroneous records can be downloaded as a separate Excel file containing only the problematic rows. This way, the administrator only needs to correct the faulty data and re-upload it, without having to reorganize the entire file from scratch. This structure makes it possible to manage large-scale academic boards quickly and accurately."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1768848710/kurulu-uyeleri-yonetimi_v3vum9.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768848062/kurulu-uyeleri-yonetimi-posteri_hfuwur.png",
+      "caption": "Board Members Management"
+    },
+    {
+      "type": 0,
+      "heading": "Topics, Writing Guidelines, and Presentation Guidelines Management",
+      "subheading": "Category-based and secure content management",
+      "content": "Topics management is designed as one of the most fundamental and straightforward management areas of the system. New topics can be easily added through the Topics tab in the admin panel; existing records can be viewed, edited, or deleted. To protect user experience and data integrity, delete operations in the system are not performed as physical deletions. When a record is deleted, instead of being completely removed from the database, the status of the relevant record is changed from active (True) to inactive (False), managed through a soft delete approach.\n\nWriting Guidelines and Presentation Guidelines management is built on a category-based structure. Before a new rule is added to the system, the category to which the rule will belong must be defined. For example, Writing Guidelines and Presentation Guidelines are added as separate categories, and each rule is configured to be linked to a category.\n\nOnce the category definition is complete, the rule content is created through the admin panel, the relevant category is selected, and the rule is added to the system. This structure allows rules to be managed in a page-based, organized, and sustainable manner. The category-based architecture both ensures that content is displayed on the correct pages for users and allows new types of rules to be easily integrated into the system in the future."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1768851470/baslik-yazim-sunum-kurallari_wjjo1b.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1768853963/baslik-yazim-sunum-kurallari-posteri_sjjydh.png",
+      "caption": "Topics, Writing Guidelines, and Presentation Guidelines Management"
+    },
+    {
+      "type": 0,
+      "heading": "Participation Fee Management",
+      "subheading": "Fees, Services, and Bank Accounts",
+      "content": "All fee, service, and bank account information on the Participation Fee page is managed centrally through the Admin panel.\n\nThrough the Fees tab, new fees can be added, existing fees can be edited, or they can be deleted.\n\nIn service management, each service must be linked to a category (service type). First, the service type is created, and then one or more services belonging to that type are added. Service types and services can be edited or deleted.\n\nBank accounts are added through the Bank Accounts tab. Existing bank accounts can be edited, deleted, or their details can be viewed.\n\nAll of this information is presented to users in an organized and clear manner under the Participation Fee heading on a single page."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769196416/hizmet-ucret-bank_Clipchamp_ile_yap%C4%B1ld%C4%B1_ygkqd7.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769196720/hizmet-ucret-bank-posteri_mpksr8.png",
+      "caption": "Fees, Services, and Bank Accounts Management"
+    },
+    {
+      "type": 0,
+      "heading": "Accommodation Page and Room Types Management",
+      "subheading": "Easy management of accommodation venues and room types",
+      "content": "The accommodation page is designed to allow users attending the event to view detailed information about available accommodation options. This page displays all necessary information such as the accommodation name, address, contact details, and available room types.\n\nTo add a new accommodation venue, the Accommodation tab in the admin panel is accessed and basic information about the relevant accommodation is filled in to create the record. After the accommodation information is saved, the system automatically displays the room addition modal, allowing room types for that accommodation to be entered.\n\nRoom types are defined each with a specific price. For example, different room types such as Single Room: 900 ₺ can be added. Multiple room types can be defined for a single accommodation, and all these operations are carried out through a fully flexible structure.\n\nExisting room types can be viewed, edited, or deleted through the Room Types tab located just below the Accommodation tab. Additionally, new room types can also be added to the system through this area. All accommodation and room management operations can be handled quickly and easily through the admin panel."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769255819/konaklama-odalari_Clipchamp_ile_yap%C4%B1ld%C4%B1_s947ck.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769255823/konaklama-odalari-posteri_qb16eg.png",
+      "caption": "Easy management of accommodation venues and room types"
+    },
+    {
+      "type": 0,
+      "heading": "Application and Contact Pages Management",
+      "subheading": "Centralized management of the application form and contact information",
+      "content": "To manage the application and contact pages, the Application tab is accessed from the admin panel. In this area, the upper and lower description texts to be displayed on the application page are entered. The application form is then uploaded to the system. The uploaded form can be downloaded or deleted.\n\nOn the application page, the user can download the form, fill it out, and send it to the email address specified on the page.\n\nFor contact page management, the email address, physical address, and phone information are entered. Multiple extension numbers can be added for each phone. Extension numbers can be edited or deleted. All contact information is easily managed through the admin panel."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769266157/basvuru-iletisim_adbzka.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769266162/basvuru-iletisim-posteri_jizjff.png",
+      "caption": "Application form and contact information centralized management"
+    },
+    {
+      "type": 0,
+      "heading": "Settings Management",
+      "subheading": "Centralized control of general site settings",
+      "content": "Site settings are managed from the Settings tab in the admin panel. In this area, the content displayed in the hero section of each page can be edited. The site name and institution name can be changed. The institution name is displayed in the hero area.\n\nThe main logo of the site and the logos on the left and right sides of the hero area can be updated. Existing logos can be replaced or new ones can be uploaded.\n\nIn the lower section of the Settings tab, page names are managed. Page titles can be customized. For example, a different name can be written instead of Homepage. The Contact page can be renamed to Contact Us.\n\nTo reset page names to their default state, the Reset button is used. With this action, all page names return to their original values such as Homepage, Contact, etc."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769277011/ayarlar_j3g81y.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769279828/ayarlar-posteri_gut7ui.png",
+      "caption": "Centralized control of general site settings"
+    },
+    {
+      "type": 0,
+      "heading": "Additional Pages Management",
+      "subheading": "Dynamic and unlimited content creation",
+      "content": "One of the most powerful features of the system is the additional page creation structure. An unlimited number of additional pages can be created through the Admin Panel. These pages can be added next to the main pages in the navbar, and clicking on them redirects directly to the relevant page.\n\nThe content of each additional page is managed entirely dynamically. Headings, paragraphs, and many other content elements can be added through the panel. Content can be multiplied and reordered as desired.\n\nAdditional pages can also be defined as a dropdown menu within the navbar. For example, a dropdown list is created under the heading Congress Program. This list contains subpages such as Congress Program and Workshop Program. Each subpage links to a separate page.\n\nAll additional pages can be edited from the admin panel. Their details can be viewed. They can be completely deleted when necessary. There is no limit to the number of additional pages or the amount of content."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769332618/eksayfalar_rndmlx.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769332356/eksayfalar-posteri_mw6mli.png",
+      "caption": "Dynamic and unlimited content creation"
+    },
+    {
+      "type": 0,
+      "heading": "Authorization and Account Management",
+      "subheading": "Root and Admin role structure",
+      "content": "The system includes two different authorization levels for the Admin Panel: Root and Admin.\n\nThe Root role can perform all operations in the system without any restrictions. The Admin role can perform all operations on content, pages, and data, but cannot add, delete, or manage new admin accounts.\n\nWhen a user with Admin authorization wants to add a new admin, this action does not take place directly. The system sends a notification to all accounts with Root authorization. If one of the accounts with Root authorization gives approval, the relevant admin account becomes active.\n\nUsers with Root authorization can lock existing accounts. A locked account cannot log into the system. During login, the user is shown a warning message indicating that their account has been locked. A locked account can only be reactivated by a user with Root authorization.\n\nAll accounts can edit their own profiles, change their passwords, and update their email addresses. Users with Root authorization can edit the profile information of all accounts in the system, while users with Admin authorization can only manage their own profiles and make password changes."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769342230/hesaplar_yqo8ex.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769342524/hesaplar_xhvsgb.png",
+      "caption": "Authorization and Account Management"
+    },
+    {
+      "type": 0,
+      "heading": "Multilingual Content Management",
+      "subheading": "Language-based independent content structure",
+      "content": "The system supports presenting content in multiple languages.\n\nA new language can be added through the Admin Panel to create a completely independent content area. Turkish is accepted as the default language. After Turkish content is completed and a new language is added, all fields belonging to that language start empty and content is entered from scratch.\n\nThe active language can be easily changed through the language selection dropdown menu in the management panel. For example, when Turkish is selected, only Turkish content is displayed and managed.\n\nWhen another language is selected, only the content belonging to that language is shown. Each language's content is independent from the others and can be edited separately."
+    },
+    {
+      "type": 2,
+      "heading": "",
+      "videoUrl": "https://res.cloudinary.com/dvx6nsrd9/video/upload/v1769363612/diller_aag76a.mp4",
+      "posterUrl": "https://res.cloudinary.com/dvx6nsrd9/image/upload/v1769370497/diller-posteri_msbabj.png",
+      "caption": "Multilingual Content Management"
+    }
+  ],
+  "challenges": [],
+  "solutions": [],
+  "results": [],
+  "testimonial": null
+}
