@@ -14,6 +14,30 @@ interface Message {
   isTyping?: boolean;
 }
 
+interface ActionCard {
+  type:
+    | "projects"
+    | "contact"
+    | "skills"
+    | "articles"
+    | "education"
+    | "experience"
+    | "volunteering"
+    | "languages"
+    | "certificate";
+  title: string;
+  subtitle: string;
+  buttonLabel: string;
+  targetId: string;
+}
+
+/* ── Backend NavigationAction shape ──────────────────────────────────────── */
+interface NavigationAction {
+  type: "navigate";
+  url: string; // "#projects" | "#contact" | "#skills" | "#articles"
+  label: string;
+}
+
 const SUGGESTED_QUESTIONS = [
   "What are Yasir's main skills?",
   "Tell me about his AI projects",
@@ -25,6 +49,98 @@ const SESSION_ID =
   typeof crypto !== "undefined"
     ? crypto.randomUUID()
     : Math.random().toString(36).slice(2);
+
+/* ── localStorage key ─────────────────────────────────────────────────────── */
+const LS_KEY = "chatbot_nav_accepted";
+
+function getNavAccepted(): boolean {
+  try {
+    return localStorage.getItem(LS_KEY) === "true";
+  } catch {
+    return false;
+  }
+}
+function setNavAccepted() {
+  try {
+    localStorage.setItem(LS_KEY, "true");
+  } catch {}
+}
+function clearNavAccepted() {
+  try {
+    localStorage.removeItem(LS_KEY);
+  } catch {}
+}
+
+/* ── Section map: backend url → DOM id ───────────────────────────────────── */
+const URL_TO_ID: Record<string, string> = {
+  "#home": "home",
+  "#projects": "projects",
+  "#articles": "articles",
+  "#contact": "contact",
+  "#skills": "skills",
+  "#education": "education",
+  "#experience": "experience",
+  "#volunteering": "volunteering",
+  "#certificate": "certificate",
+  "#languages": "languages",
+};
+
+const URL_TO_CARD: Record<string, Omit<ActionCard, "targetId">> = {
+  "#projects": {
+    type: "projects",
+    title: "Explore Projects",
+    subtitle: "Live demos and source code from Yasir's builds",
+    buttonLabel: "View Projects",
+  },
+  "#contact": {
+    type: "contact",
+    title: "Let's Connect",
+    subtitle: "Reach out for work, collab, or just a hello",
+    buttonLabel: "Open Contact",
+  },
+  "#skills": {
+    type: "skills",
+    title: "Tech Stack",
+    subtitle: "Languages, frameworks and tools Yasir works with",
+    buttonLabel: "View Skills",
+  },
+  "#articles": {
+    type: "articles",
+    title: "Read the Blog",
+    subtitle: "Yasir's takes on AI, engineering and beyond",
+    buttonLabel: "Browse Articles",
+  },
+  "#education": {
+    type: "education",
+    title: "Academic Background",
+    subtitle: "Degrees, courses and institutions that shaped Yasir",
+    buttonLabel: "View Education",
+  },
+  "#experience": {
+    type: "experience",
+    title: "Work Experience",
+    subtitle: "Roles, companies and impact across Yasir's career",
+    buttonLabel: "View Experience",
+  },
+  "#volunteering": {
+    type: "volunteering",
+    title: "Volunteering",
+    subtitle: "Community work and causes Yasir contributes to",
+    buttonLabel: "View Volunteering",
+  },
+  "#certificate": {
+    type: "certificate",
+    title: "Certificates",
+    subtitle: "Courses and credentials Yasir has earned",
+    buttonLabel: "View Certificates",
+  },
+  "#languages": {
+    type: "languages",
+    title: "languages",
+    subtitle: "Languages that Yasir speaks",
+    buttonLabel: "View Languages",
+  },
+};
 
 function shortenUrl(url: string): string {
   try {
@@ -41,7 +157,7 @@ function shortenUrl(url: string): string {
 function fixLinks(text: string): string {
   return text.replace(
     /\[((https?:\/\/)[^\]]+)\]/g,
-    (_, url) => `[${shortenUrl(url)}](${url})`
+    (_, url) => `[${shortenUrl(url)}](${url})`,
   );
 }
 
@@ -49,34 +165,50 @@ function fixMarkdown(text: string): string {
   return text
     .split("\n")
     .map((line) => {
-      // "* **Kategori**· item1 · item2" veya "- **Kategori**· item1 · item2"
       const match = line.match(/^[*\-]\s+\*\*([^*]+)\*\*[·•]\s*(.+)$/);
       if (!match) return line;
-
       const category = match[1].trim();
       const items = match[2]
         .split(/\s*[·•]\s*/)
         .filter(Boolean)
         .map((item) => `- ${item.trim()}`)
         .join("\n");
-
       return `**${category}**\n${items}`;
     })
     .join("\n");
 }
 
+/* ── Colors ────────────────────────────────────────────────────────────────── */
 const ACCENT = "#e8a87c";
 const ACCENT_SOFT = "rgba(232,168,124,0.12)";
 const ACCENT_BORDER = "rgba(232,168,124,0.3)";
 
+/* ── Main Component ────────────────────────────────────────────────────────── */
 const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
-  const [displayedContent, setDisplayedContent] = useState<Record<number, string>>({});
+  const [displayedContent, setDisplayedContent] = useState<
+    Record<number, string>
+  >({});
+
+  /* Diamond card states */
+  const [actionCard, setActionCard] = useState<ActionCard | null>(null);
+  const [actionVisible, setActionVisible] = useState(false);
+  const [scanActive, setScanActive] = useState(false);
+  const [cornersVisible, setCornersVisible] = useState(false);
+  const [gridVisible, setGridVisible] = useState(false);
+  const [cardShow, setCardShow] = useState(false);
+
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
-  const typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
+  const typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>(
+    {},
+  );
+  const typingPausedRef = useRef(false); // true = typing paused for card
+  const typingResumeRef = useRef<(() => void) | null>(null); // call to resume
+  /* pendingAction: set while typing is still in progress */
+  const pendingActionRef = useRef<ActionCard | null>(null);
 
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 250);
@@ -86,42 +218,184 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, displayedContent]);
 
-  const typeMessage = useCallback((index: number, fullText: string) => {
-    let i = 0;
-    const speed = Math.max(5, Math.min(15, 1800 / fullText.length));
-    const tick = () => {
-      i++;
-      setDisplayedContent((prev) => ({ ...prev, [index]: fullText.slice(0, i) }));
-      if (i < fullText.length) {
-        typingTimers.current[index] = setTimeout(tick, speed);
+  /* ── Diamond reveal sequence ────────────────────────────────────────────── */
+  const showDiamondCard = useCallback((card: ActionCard) => {
+    setActionCard(card);
+    setActionVisible(true);
+
+    // 1. blur messages + scan line
+    setScanActive(true);
+
+    // 2. corners
+    setTimeout(() => setCornersVisible(true), 400);
+
+    // 3. grid
+    setTimeout(() => setGridVisible(true), 700);
+
+    // 4. card
+    setTimeout(() => setCardShow(true), 1050);
+
+    // hide scan after animation
+    setTimeout(() => setScanActive(false), 1400);
+  }, []);
+
+  const dismissDiamond = useCallback(() => {
+    setCardShow(false);
+    setGridVisible(false);
+    setCornersVisible(false);
+    setTimeout(() => {
+      setActionCard(null);
+      setActionVisible(false);
+    }, 400);
+    // Resume typing if paused
+    setTimeout(() => {
+      typingPausedRef.current = false;
+      const resume = typingResumeRef.current;
+      typingResumeRef.current = null;
+      resume?.();
+    }, 450);
+  }, []);
+
+  /* ── Handle backend NavigationAction ───────────────────────────────────── */
+  const handleNavAction = useCallback(
+    (navAction: NavigationAction) => {
+      const targetId = URL_TO_ID[navAction.url];
+      if (!targetId) return;
+
+      const accepted = getNavAccepted();
+
+      if (accepted) {
+        // Direct scroll, no card
+        const el = document.getElementById(targetId);
+        if (el) el.scrollIntoView({ behavior: "smooth" });
       } else {
-        setMessages((prev) =>
-          prev.map((m, idx) => (idx === index ? { ...m, isTyping: false } : m))
+        // Show diamond card
+        const cardMeta = URL_TO_CARD[navAction.url];
+        if (!cardMeta) return;
+        showDiamondCard({ ...cardMeta, targetId });
+      }
+    },
+    [showDiamondCard],
+  );
+
+  const handleActionClick = useCallback(
+    (card: ActionCard) => {
+      setNavAccepted();
+      dismissDiamond();
+      // Scroll immediately
+      const el = document.getElementById(card.targetId);
+      if (el) el.scrollIntoView({ behavior: "smooth" });
+      // Resume typing after diamond dismiss animation
+      setTimeout(() => {
+        typingPausedRef.current = false;
+        const resume = typingResumeRef.current;
+        typingResumeRef.current = null;
+        resume?.();
+      }, 450);
+    },
+    [dismissDiamond],
+  );
+
+  /* ── Typing ─────────────────────────────────────────────────────────────── */
+  const typeMessage = useCallback(
+    (
+      index: number,
+      fullText: string,
+      onCardTrigger?: () => void,
+      onFinish?: () => void,
+    ) => {
+      let i = 0;
+      const speed = Math.max(5, Math.min(15, 1800 / fullText.length));
+      // ~40% of the text typed → show card and pause
+      const cardTriggerAt = Math.floor(fullText.length * 0.4);
+      let cardTriggered = false;
+
+      const tick = () => {
+        // If paused, store resume function and stop
+        if (typingPausedRef.current) {
+          typingResumeRef.current = tick;
+          return;
+        }
+        i++;
+        setDisplayedContent((prev) => ({
+          ...prev,
+          [index]: fullText.slice(0, i),
+        }));
+
+        // Trigger card at ~40% mark
+        if (!cardTriggered && onCardTrigger && i >= cardTriggerAt) {
+          cardTriggered = true;
+          typingPausedRef.current = true;
+          typingResumeRef.current = tick; // will be called after card dismiss/accept
+          onCardTrigger();
+          return; // stop typing, wait for resume
+        }
+
+        if (i < fullText.length) {
+          typingTimers.current[index] = setTimeout(tick, speed);
+        } else {
+          setMessages((prev) =>
+            prev.map((m, idx) =>
+              idx === index ? { ...m, isTyping: false } : m,
+            ),
+          );
+          onFinish?.();
+        }
+      };
+      tick();
+    },
+    [],
+  );
+
+  const skipTyping = useCallback(
+    (index: number, fullText: string) => {
+      if (typingTimers.current[index])
+        clearTimeout(typingTimers.current[index]);
+      typingPausedRef.current = false;
+      typingResumeRef.current = null;
+      setDisplayedContent((prev) => ({ ...prev, [index]: fullText }));
+      setMessages((prev) =>
+        prev.map((m, idx) => (idx === index ? { ...m, isTyping: false } : m)),
+      );
+      // Fire pending nav action if any
+      const pending = pendingActionRef.current;
+      if (pending) {
+        pendingActionRef.current = null;
+        setTimeout(
+          () =>
+            handleNavAction({
+              type: "navigate",
+              url: "#" + pending.targetId,
+              label: pending.buttonLabel,
+            }),
+          80,
         );
       }
-    };
-    tick();
-  }, []);
+    },
+    [handleNavAction],
+  );
 
-  const skipTyping = useCallback((index: number, fullText: string) => {
-    if (typingTimers.current[index]) clearTimeout(typingTimers.current[index]);
-    setDisplayedContent((prev) => ({ ...prev, [index]: fullText }));
-    setMessages((prev) =>
-      prev.map((m, idx) => (idx === index ? { ...m, isTyping: false } : m))
-    );
-  }, []);
-
+  /* ── Clear session ──────────────────────────────────────────────────────── */
   const clearSession = () => {
     Object.values(typingTimers.current).forEach(clearTimeout);
     typingTimers.current = {};
+    typingPausedRef.current = false;
+    typingResumeRef.current = null;
+    pendingActionRef.current = null;
     setMessages([]);
     setDisplayedContent({});
     setInput("");
+    dismissDiamond();
+    clearNavAccepted(); // reset acceptance on new session
   };
 
+  /* ── Send message ───────────────────────────────────────────────────────── */
   const sendMessage = async (text?: string) => {
     const userText = (text ?? input).trim();
     if (!userText || loading) return;
+
+    dismissDiamond();
+    pendingActionRef.current = null;
 
     const userMsg: Message = { role: "user", content: userText };
     const updatedMessages = [...messages, userMsg];
@@ -140,8 +414,9 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       });
       const data = await res.json();
       const answer = fixMarkdown(
-        fixLinks(data.answer ?? "An error occurred, please try again.")
+        fixLinks(data.answer ?? "An error occurred, please try again."),
       );
+      const navAction: NavigationAction | null = data.action ?? null;
 
       const assistantIndex = updatedMessages.length;
       setMessages((prev) => [
@@ -149,7 +424,45 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
         { role: "assistant", content: answer, isTyping: true },
       ]);
       setDisplayedContent((prev) => ({ ...prev, [assistantIndex]: "" }));
-      setTimeout(() => typeMessage(assistantIndex, answer), 80);
+
+      // Always store navAction in ref — both skipTyping and onTypingFinish use it
+      if (navAction) {
+        const targetId = URL_TO_ID[navAction.url];
+        const cardMeta = URL_TO_CARD[navAction.url];
+        pendingActionRef.current =
+          targetId && cardMeta ? { ...cardMeta, targetId } : null;
+      } else {
+        pendingActionRef.current = null;
+      }
+
+      // onCardTrigger: fires at ~40% of typing, pauses typing, shows card/scrolls
+      const onCardTrigger = pendingActionRef.current
+        ? () => {
+            const pending = pendingActionRef.current;
+            if (!pending) return;
+            if (getNavAccepted()) {
+              // Already accepted: just scroll, resume typing immediately
+              const el = document.getElementById(pending.targetId);
+              if (el) el.scrollIntoView({ behavior: "smooth" });
+              typingPausedRef.current = false;
+              const resume = typingResumeRef.current;
+              typingResumeRef.current = null;
+              setTimeout(() => resume?.(), 50);
+            } else {
+              // Show diamond card — typing stays paused until user interacts
+              pendingActionRef.current = null;
+              showDiamondCard(pending);
+            }
+          }
+        : undefined;
+
+      // onFinish: fires when typing completes (no card was triggered, or card already handled)
+      const onFinish = undefined;
+
+      setTimeout(
+        () => typeMessage(assistantIndex, answer, onCardTrigger, onFinish),
+        80,
+      );
     } catch {
       setMessages((prev) => [
         ...prev,
@@ -166,6 +479,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
 
   const isEmpty = messages.length === 0;
 
+  /* ── Markdown components ─────────────────────────────────────────────────── */
   const mdComponents = {
     p: ({ children }: any) => (
       <p
@@ -222,7 +536,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
           fontWeight: 700,
           fontSize: "11px",
           letterSpacing: "0.6px",
-          textTransform: "uppercase",
+          textTransform: "uppercase" as const,
           color: "#b5651d",
           marginTop: "18px",
           marginBottom: "8px",
@@ -266,32 +580,8 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
           whiteSpace: "nowrap",
           textOverflow: "ellipsis",
           verticalAlign: "middle",
-          transition: "all 0.15s ease",
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.background = "rgba(232,168,124,0.22)";
-          e.currentTarget.style.borderColor = ACCENT;
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.background = ACCENT_SOFT;
-          e.currentTarget.style.borderColor = ACCENT_BORDER;
         }}
       >
-        <svg
-          width="9"
-          height="9"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          strokeLinejoin="round"
-          style={{ flexShrink: 0 }}
-        >
-          <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" />
-          <polyline points="15 3 21 3 21 9" />
-          <line x1="10" y1="14" x2="21" y2="3" />
-        </svg>
         <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>
           {typeof children === "string" && children.startsWith("http")
             ? shortenUrl(children)
@@ -315,6 +605,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     ),
   };
 
+  /* ── Render ──────────────────────────────────────────────────────────────── */
   return (
     <>
       {isOpen && (
@@ -349,7 +640,6 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
               flexShrink: 0,
             }}
           >
-            {/* Avatar */}
             <div style={{ position: "relative", flexShrink: 0 }}>
               <div
                 style={{
@@ -357,14 +647,16 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                   height: 40,
                   borderRadius: "50%",
                   overflow: "hidden",
-                  flexShrink: 0,
                   border: `2px solid ${ACCENT_BORDER}`,
                 }}
               >
                 <img
                   src="/images/vactor_yasir.png"
                   alt="Yasir"
-                  style={{ width:"40", height:"40", objectFit: "cover", transform: "translateY(2px)" }}
+                  style={{
+                    objectFit: "cover",
+                    transform: "translateY(2px)",
+                  }}
                 />
               </div>
               <div
@@ -380,7 +672,6 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                 }}
               />
             </div>
-
             <div style={{ flex: 1 }}>
               <p
                 style={{
@@ -393,11 +684,16 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
               >
                 Yasir's Assistant
               </p>
-              <p style={{ margin: "1px 0 0", fontSize: "11.5px", color: "#8e8e93" }}>
+              <p
+                style={{
+                  margin: "1px 0 0",
+                  fontSize: "11.5px",
+                  color: "#8e8e93",
+                }}
+              >
                 AI · Usually responds instantly
               </p>
             </div>
-
             <div style={{ display: "flex", gap: "6px" }}>
               {!isEmpty && (
                 <button
@@ -479,351 +775,958 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
             </div>
           </div>
 
-          {/* ── Messages ── */}
+          {/* ── Messages area ── */}
           <div
             style={{
               flex: 1,
-              overflowY: "auto",
+              position: "relative",
+              overflow: "hidden",
               background: "#ffffff",
-              scrollbarWidth: "none",
               display: "flex",
               flexDirection: "column",
             }}
           >
-            {isEmpty ? (
-              /* Empty state */
-              <div
-                style={{
-                  flex: 1,
-                  display: "flex",
-                  flexDirection: "column",
-                  alignItems: "center",
-                  justifyContent: "center",
-                  padding: "28px 22px",
-                  animation: "fadeIn 0.35s ease",
-                }}
-              >
+            {/* Messages scroll */}
+            <div
+              style={{
+                flex: 1,
+                overflowY: "auto",
+                scrollbarWidth: "none",
+                display: "flex",
+                flexDirection: "column",
+                transition: "filter 0.6s ease, opacity 0.6s ease",
+                filter: actionVisible ? "blur(3px)" : "none",
+                opacity: actionVisible ? 0.22 : 1,
+                pointerEvents: actionVisible ? "none" : "auto",
+              }}
+            >
+              {isEmpty ? (
                 <div
                   style={{
-                    width: 72,
-                    height: 72,
-                    borderRadius: "24px",
-                    overflow: "hidden",
-                    marginBottom: "18px",
-                    border: `2px solid ${ACCENT_BORDER}`,
-                    boxShadow: `0 8px 32px rgba(232,168,124,0.35)`,
+                    flex: 1,
+                    display: "flex",
+                    flexDirection: "column",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    padding: "28px 22px",
+                    animation: "fadeIn 0.35s ease",
                   }}
                 >
-                  <img
-                    src="/images/vactor_yasir.png"
-                    alt="Yasir"
-                    style={{ width:"40", height:"40", objectFit: "cover", transform: "translateY(4px)" }}
-                  />
-                </div>
-
-                <p
-                  style={{
-                    margin: "0 0 5px",
-                    fontSize: "16px",
-                    fontWeight: 700,
-                    color: "#1c1c1e",
-                    textAlign: "center",
-                    letterSpacing: "-0.3px",
-                  }}
-                >
-                  Hi, I'm Yasir's AI
-                </p>
-                <p
-                  style={{
-                    margin: "0 0 26px",
-                    fontSize: "13px",
-                    color: "#8e8e93",
-                    textAlign: "center",
-                    lineHeight: 1.5,
-                  }}
-                >
-                  Ask me anything about Yasir's work, skills, or experience.
-                </p>
-
-                <div
-                  style={{
-                    display: "grid",
-                    gridTemplateColumns: "1fr 1fr",
-                    gap: "8px",
-                    width: "100%",
-                  }}
-                >
-                  {SUGGESTED_QUESTIONS.map((q) => (
-                    <button
-                      key={q}
-                      onClick={() => sendMessage(q)}
-                      style={{
-                        background: "#f8f8f8",
-                        border: "1px solid rgba(0,0,0,0.07)",
-                        borderRadius: "12px",
-                        padding: "10px 12px",
-                        fontSize: "12px",
-                        color: "#3a3a3c",
-                        cursor: "pointer",
-                        textAlign: "left",
-                        lineHeight: 1.45,
-                        fontWeight: 500,
-                        transition: "all 0.15s ease",
-                      }}
-                      onMouseEnter={(e) => {
-                        Object.assign(e.currentTarget.style, {
-                          background: ACCENT_SOFT,
-                          borderColor: ACCENT_BORDER,
-                          color: "#1c1c1e",
-                          transform: "translateY(-1px)",
-                        });
-                      }}
-                      onMouseLeave={(e) => {
-                        Object.assign(e.currentTarget.style, {
-                          background: "#f8f8f8",
-                          borderColor: "rgba(0,0,0,0.07)",
-                          color: "#3a3a3c",
-                          transform: "translateY(0)",
-                        });
-                      }}
-                    >
-                      {q}
-                    </button>
-                  ))}
-                </div>
-
-                {/* Privacy notice */}
-                <p style={{
-                  marginTop: "18px",
-                  fontSize: "10.5px",
-                  color: "#aeaeb2",
-                  textAlign: "center",
-                  lineHeight: 1.5,
-                }}>
-                  🔒 Conversations may be logged to improve response quality.{" "}
-                  <span
-                    onClick={() => window.open("/privacy", "_blank")}
+                  <div
                     style={{
-                      color: "#b5651d",
-                      cursor: "pointer",
-                      textDecoration: "underline",
-                      textUnderlineOffset: "2px",
+                      width: 72,
+                      height: 72,
+                      borderRadius: "24px",
+                      overflow: "hidden",
+                      marginBottom: "18px",
+                      border: `2px solid ${ACCENT_BORDER}`,
+                      boxShadow: `0 8px 32px rgba(232,168,124,0.35)`,
                     }}
                   >
-                    Privacy Policy
-                  </span>
-                </p>
-              </div>
-            ) : (
-              /* Messages list */
-              <div
-                style={{
-                  padding: "18px 16px 10px",
-                  display: "flex",
-                  flexDirection: "column",
-                  gap: "14px",
-                }}
-              >
-                {messages.map((msg, i) => {
-                  const content =
-                    msg.role === "assistant"
-                      ? (displayedContent[i] ?? "")
-                      : msg.content;
-                  const isStillTyping = msg.role === "assistant" && msg.isTyping;
-                  const isUser = msg.role === "user";
-
-                  return (
+                    <img
+                      src="/images/vactor_yasir.png"
+                      alt="Yasir"
+                      style={{
+                        objectFit: "cover",
+                        transform: "translateY(4px)",
+                      }}
+                    />
+                  </div>
+                  <p
+                    style={{
+                      margin: "0 0 5px",
+                      fontSize: "16px",
+                      fontWeight: 700,
+                      color: "#1c1c1e",
+                      textAlign: "center",
+                      letterSpacing: "-0.3px",
+                    }}
+                  >
+                    Hi, I'm Yasir's AI
+                  </p>
+                  <p
+                    style={{
+                      margin: "0 0 26px",
+                      fontSize: "13px",
+                      color: "#8e8e93",
+                      textAlign: "center",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    Ask me anything about Yasir's work, skills, or experience.
+                  </p>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "1fr 1fr",
+                      gap: "8px",
+                      width: "100%",
+                    }}
+                  >
+                    {SUGGESTED_QUESTIONS.map((q) => (
+                      <button
+                        key={q}
+                        onClick={() => sendMessage(q)}
+                        style={{
+                          background: "#f8f8f8",
+                          border: "1px solid rgba(0,0,0,0.07)",
+                          borderRadius: "12px",
+                          padding: "10px 12px",
+                          fontSize: "12px",
+                          color: "#3a3a3c",
+                          cursor: "pointer",
+                          textAlign: "left",
+                          lineHeight: 1.45,
+                          fontWeight: 500,
+                          transition: "all 0.15s ease",
+                        }}
+                        onMouseEnter={(e) => {
+                          Object.assign(e.currentTarget.style, {
+                            background: ACCENT_SOFT,
+                            borderColor: ACCENT_BORDER,
+                            color: "#1c1c1e",
+                            transform: "translateY(-1px)",
+                          });
+                        }}
+                        onMouseLeave={(e) => {
+                          Object.assign(e.currentTarget.style, {
+                            background: "#f8f8f8",
+                            borderColor: "rgba(0,0,0,0.07)",
+                            color: "#3a3a3c",
+                            transform: "translateY(0)",
+                          });
+                        }}
+                      >
+                        {q}
+                      </button>
+                    ))}
+                  </div>
+                  <p
+                    style={{
+                      marginTop: "18px",
+                      fontSize: "10.5px",
+                      color: "#aeaeb2",
+                      textAlign: "center",
+                      lineHeight: 1.5,
+                    }}
+                  >
+                    🔒 Conversations may be logged to improve response quality.{" "}
+                    <span
+                      onClick={() => window.open("/privacy", "_blank")}
+                      style={{
+                        color: "#b5651d",
+                        cursor: "pointer",
+                        textDecoration: "underline",
+                        textUnderlineOffset: "2px",
+                      }}
+                    >
+                      Privacy Policy
+                    </span>
+                  </p>
+                </div>
+              ) : (
+                <div
+                  style={{
+                    padding: "18px 16px 10px",
+                    display: "flex",
+                    flexDirection: "column",
+                    gap: "14px",
+                  }}
+                >
+                  {messages.map((msg, i) => {
+                    const content =
+                      msg.role === "assistant"
+                        ? (displayedContent[i] ?? "")
+                        : msg.content;
+                    const isStillTyping =
+                      msg.role === "assistant" && msg.isTyping;
+                    const isUser = msg.role === "user";
+                    return (
+                      <div
+                        key={i}
+                        style={{
+                          display: "flex",
+                          justifyContent: isUser ? "flex-end" : "flex-start",
+                          alignItems: "flex-end",
+                          gap: "8px",
+                          animation: "fadeIn 0.2s ease",
+                        }}
+                      >
+                        {!isUser && (
+                          <div
+                            style={{
+                              width: 28,
+                              height: 28,
+                              borderRadius: "50%",
+                              overflow: "hidden",
+                              flexShrink: 0,
+                              border: `1.5px solid ${ACCENT_BORDER}`,
+                            }}
+                          >
+                            <img
+                              src="/images/vactor_yasir.png"
+                              alt="Yasir"
+                              style={{
+                                objectFit: "cover",
+                                transform: "translateY(2px)",
+                              }}
+                            />
+                          </div>
+                        )}
+                        <div
+                          style={{
+                            maxWidth: "76%",
+                            padding: isUser ? "10px 15px" : "12px 15px",
+                            borderRadius: isUser
+                              ? "18px 18px 4px 18px"
+                              : "4px 18px 18px 18px",
+                            background: isUser
+                              ? "linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%)"
+                              : "#f8f8f8",
+                            border: isUser
+                              ? "none"
+                              : "1px solid rgba(0,0,0,0.06)",
+                            color: isUser ? "white" : "#1c1c1e",
+                            fontSize: "13.5px",
+                            lineHeight: 1.6,
+                            fontWeight: isUser ? 500 : 400,
+                            boxShadow: isUser
+                              ? "0 2px 12px rgba(0,0,0,0.15)"
+                              : "0 1px 4px rgba(0,0,0,0.04)",
+                            minWidth: 0,
+                            overflow: "hidden",
+                          }}
+                        >
+                          {isUser ? (
+                            <span style={{ fontSize: "13.5px" }}>
+                              {msg.content}
+                            </span>
+                          ) : (
+                            <>
+                              <ReactMarkdown components={mdComponents}>
+                                {content}
+                              </ReactMarkdown>
+                              {isStillTyping && (
+                                <span
+                                  style={{
+                                    display: "inline-block",
+                                    width: "2px",
+                                    height: "14px",
+                                    background: ACCENT,
+                                    marginLeft: "2px",
+                                    verticalAlign: "middle",
+                                    animation:
+                                      "cursorBlink 0.65s step-end infinite",
+                                  }}
+                                />
+                              )}
+                            </>
+                          )}
+                        </div>
+                        {isStillTyping && (
+                          <div
+                            style={{
+                              position: "relative",
+                              display: "inline-flex",
+                              alignSelf: "flex-end",
+                              marginBottom: "2px",
+                            }}
+                            onMouseEnter={(e) => {
+                              const tip = e.currentTarget.querySelector(
+                                ".skip-tip",
+                              ) as HTMLElement;
+                              if (tip) tip.style.opacity = "1";
+                            }}
+                            onMouseLeave={(e) => {
+                              const tip = e.currentTarget.querySelector(
+                                ".skip-tip",
+                              ) as HTMLElement;
+                              if (tip) tip.style.opacity = "0";
+                            }}
+                          >
+                            <div
+                              className="skip-tip"
+                              style={{
+                                position: "absolute",
+                                bottom: "calc(100% + 6px)",
+                                left: "50%",
+                                transform: "translateX(-50%)",
+                                background: "#1c1c1e",
+                                color: "white",
+                                fontSize: "10.5px",
+                                padding: "3px 8px",
+                                borderRadius: "6px",
+                                whiteSpace: "nowrap",
+                                opacity: 0,
+                                pointerEvents: "none",
+                                transition: "opacity 0.15s ease",
+                                zIndex: 10,
+                              }}
+                            >
+                              Hepsini göster
+                            </div>
+                            <button
+                              onClick={() => skipTyping(i, msg.content)}
+                              style={{
+                                display: "inline-flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                background: ACCENT_SOFT,
+                                border: `1px solid ${ACCENT_BORDER}`,
+                                borderRadius: "6px",
+                                width: "22px",
+                                height: "22px",
+                                color: "#b5651d",
+                                cursor: "pointer",
+                                padding: 0,
+                              }}
+                            >
+                              <svg
+                                width="9"
+                                height="9"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="2.5"
+                                strokeLinecap="round"
+                                strokeLinejoin="round"
+                              >
+                                <polygon points="5 3 19 12 5 21 5 3" />
+                              </svg>
+                            </button>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })}
+                  {loading && (
                     <div
-                      key={i}
                       style={{
                         display: "flex",
-                        justifyContent: isUser ? "flex-end" : "flex-start",
                         alignItems: "flex-end",
                         gap: "8px",
                         animation: "fadeIn 0.2s ease",
                       }}
                     >
-                      {!isUser && (
-                        <div
-                          style={{
-                            width: 28,
-                            height: 28,
-                            borderRadius: "50%",
-                            overflow: "hidden",
-                            flexShrink: 0,
-                            border: `1.5px solid ${ACCENT_BORDER}`,
-                          }}
-                        >
-                          <img
-                            src="/images/vactor_yasir.png"
-                            alt="Yasir"
-                            style={{ width:"40", height:"40", objectFit: "cover", transform: "translateY(2px)" }}
-                          />
-                        </div>
-                      )}
                       <div
                         style={{
-                          maxWidth: "76%",
-                          padding: isUser ? "10px 15px" : "12px 15px",
-                          borderRadius: isUser
-                            ? "18px 18px 4px 18px"
-                            : "4px 18px 18px 18px",
-                          background: isUser
-                            ? "linear-gradient(135deg, #1c1c1e 0%, #2c2c2e 100%)"
-                            : "#f8f8f8",
-                          border: isUser ? "none" : "1px solid rgba(0,0,0,0.06)",
-                          color: isUser ? "white" : "#1c1c1e",
-                          fontSize: "13.5px",
-                          lineHeight: 1.6,
-                          fontWeight: isUser ? 500 : 400,
-                          boxShadow: isUser
-                            ? "0 2px 12px rgba(0,0,0,0.15)"
-                            : "0 1px 4px rgba(0,0,0,0.04)",
-                          minWidth: 0,
+                          width: 28,
+                          height: 28,
+                          borderRadius: "50%",
                           overflow: "hidden",
+                          flexShrink: 0,
+                          border: `1.5px solid ${ACCENT_BORDER}`,
                         }}
                       >
-                        {isUser ? (
-                          <span style={{ fontSize: "13.5px" }}>{msg.content}</span>
-                        ) : (
-                          <>
-                            <ReactMarkdown components={mdComponents}>{content}</ReactMarkdown>
-                            {isStillTyping && (
-                              <span style={{
-                                display: "inline-block", width: "2px", height: "14px",
-                                background: ACCENT, marginLeft: "2px",
-                                verticalAlign: "middle", animation: "cursorBlink 0.65s step-end infinite",
-                              }} />
-                            )}
-                          </>
-                        )}
+                        <img
+                          src="/images/vactor_yasir.png"
+                          alt="Yasir"
+                          style={{
+                            objectFit: "cover",
+                            transform: "translateY(2px)",
+                          }}
+                        />
                       </div>
-
-                      {/* Skip button — outside the bubble */}
-                      {isStillTyping && (
-                        <div
-                          style={{ position: "relative", display: "inline-flex", alignSelf: "flex-end", marginBottom: "2px" }}
-                          onMouseEnter={(e) => {
-                            const tip = e.currentTarget.querySelector(".skip-tip") as HTMLElement;
-                            if (tip) tip.style.opacity = "1";
-                          }}
-                          onMouseLeave={(e) => {
-                            const tip = e.currentTarget.querySelector(".skip-tip") as HTMLElement;
-                            if (tip) tip.style.opacity = "0";
-                          }}
-                        >
-                          <div className="skip-tip" style={{
-                            position: "absolute",
-                            bottom: "calc(100% + 6px)",
-                            left: "50%",
-                            transform: "translateX(-50%)",
-                            background: "#1c1c1e",
-                            color: "white",
-                            fontSize: "10.5px",
-                            padding: "3px 8px",
-                            borderRadius: "6px",
-                            whiteSpace: "nowrap",
-                            opacity: 0,
-                            pointerEvents: "none",
-                            transition: "opacity 0.15s ease",
-                            zIndex: 10,
-                          }}>
-                            Hepsini göster
-                            <div style={{
-                              position: "absolute", top: "100%", left: "50%",
-                              transform: "translateX(-50%)",
-                              width: 0, height: 0,
-                              borderLeft: "4px solid transparent",
-                              borderRight: "4px solid transparent",
-                              borderTop: "4px solid #1c1c1e",
-                            }} />
-                          </div>
-                          <button
-                            onClick={() => skipTyping(i, msg.content)}
+                      <div
+                        style={{
+                          padding: "12px 16px",
+                          borderRadius: "4px 18px 18px 18px",
+                          background: "#f8f8f8",
+                          border: "1px solid rgba(0,0,0,0.06)",
+                          display: "flex",
+                          gap: "5px",
+                          alignItems: "center",
+                        }}
+                      >
+                        {[0, 1, 2].map((i) => (
+                          <span
+                            key={i}
                             style={{
-                              display: "inline-flex", alignItems: "center", justifyContent: "center",
-                              background: ACCENT_SOFT,
-                              border: `1px solid ${ACCENT_BORDER}`,
-                              borderRadius: "6px",
-                              width: "22px", height: "22px",
-                              color: "#b5651d",
-                              cursor: "pointer",
-                              transition: "all 0.15s ease",
-                              padding: 0,
+                              width: 7,
+                              height: 7,
+                              borderRadius: "50%",
+                              background: "#c8c8cc",
+                              display: "block",
+                              animation: `aidot 1.4s ${i * 0.2}s ease-in-out infinite`,
                             }}
-                            onMouseEnter={(e) => {
-                              e.currentTarget.style.background = "rgba(232,168,124,0.22)";
-                              e.currentTarget.style.borderColor = ACCENT;
-                            }}
-                            onMouseLeave={(e) => {
-                              e.currentTarget.style.background = ACCENT_SOFT;
-                              e.currentTarget.style.borderColor = ACCENT_BORDER;
-                            }}
-                          >
-                            <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-                              <polygon points="5 3 19 12 5 21 5 3" />
-                            </svg>
-                          </button>
-                        </div>
-                      )}
+                          />
+                        ))}
+                      </div>
                     </div>
-                  );
-                })}
+                  )}
+                  <div ref={messagesEndRef} />
+                </div>
+              )}
+            </div>
 
-                {/* Typing indicator */}
-                {loading && (
+            {/* ── Diamond Overlay ── */}
+            {actionCard && (
+              <div
+                style={{
+                  position: "absolute",
+                  inset: 0,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  padding: "20px",
+                  pointerEvents: actionVisible ? "auto" : "none",
+                  zIndex: 10,
+                }}
+              >
+                {/* Scan line */}
+                {scanActive && (
                   <div
                     style={{
-                      display: "flex",
-                      alignItems: "flex-end",
-                      gap: "8px",
-                      animation: "fadeIn 0.2s ease",
+                      position: "absolute",
+                      left: 0,
+                      right: 0,
+                      height: "2px",
+                      background: `linear-gradient(90deg, transparent 0%, ${ACCENT} 40%, #fff 50%, ${ACCENT} 60%, transparent 100%)`,
+                      animation:
+                        "scanline 1.1s cubic-bezier(0.4,0,0.6,1) forwards",
+                      zIndex: 30,
+                      pointerEvents: "none",
+                    }}
+                  />
+                )}
+
+                {/* Grid lines */}
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    pointerEvents: "none",
+                    opacity: gridVisible ? 1 : 0,
+                    transition: "opacity 0.5s ease",
+                  }}
+                >
+                  {[
+                    {
+                      top: "33%",
+                      left: 0,
+                      right: 0,
+                      height: "1px",
+                      transitionDelay: "0.1s",
+                    },
+                    {
+                      top: "66%",
+                      left: 0,
+                      right: 0,
+                      height: "1px",
+                      transitionDelay: "0.2s",
+                    },
+                  ].map((s, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        position: "absolute",
+                        background: "rgba(232,168,124,0.1)",
+                        transform: gridVisible ? "scaleX(1)" : "scaleX(0)",
+                        transformOrigin: "left",
+                        transition: `transform 0.5s cubic-bezier(0.16,1,0.3,1) ${s.transitionDelay}`,
+                        ...s,
+                      }}
+                    />
+                  ))}
+                  {[
+                    {
+                      left: "33%",
+                      top: 0,
+                      bottom: 0,
+                      width: "1px",
+                      transitionDelay: "0.15s",
+                    },
+                    {
+                      left: "66%",
+                      top: 0,
+                      bottom: 0,
+                      width: "1px",
+                      transitionDelay: "0.25s",
+                    },
+                  ].map((s, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        position: "absolute",
+                        background: "rgba(232,168,124,0.1)",
+                        transform: gridVisible ? "scaleY(1)" : "scaleY(0)",
+                        transformOrigin: "top",
+                        transition: `transform 0.5s cubic-bezier(0.16,1,0.3,1) ${s.transitionDelay}`,
+                        ...s,
+                      }}
+                    />
+                  ))}
+                </div>
+
+                {/* Corner brackets */}
+                {(["tl", "tr", "bl", "br"] as const).map((pos) => (
+                  <div
+                    key={pos}
+                    style={{
+                      position: "absolute",
+                      width: 32,
+                      height: 32,
+                      opacity: cornersVisible ? 1 : 0,
+                      transition: "opacity 0.3s ease",
+                      ...(pos === "tl"
+                        ? {
+                            top: 14,
+                            left: 14,
+                            borderTop: `2px solid ${ACCENT}`,
+                            borderLeft: `2px solid ${ACCENT}`,
+                            borderRadius: "4px 0 0 0",
+                          }
+                        : {}),
+                      ...(pos === "tr"
+                        ? {
+                            top: 14,
+                            right: 14,
+                            borderTop: `2px solid ${ACCENT}`,
+                            borderRight: `2px solid ${ACCENT}`,
+                            borderRadius: "0 4px 0 0",
+                          }
+                        : {}),
+                      ...(pos === "bl"
+                        ? {
+                            bottom: 14,
+                            left: 14,
+                            borderBottom: `2px solid ${ACCENT}`,
+                            borderLeft: `2px solid ${ACCENT}`,
+                            borderRadius: "0 0 0 4px",
+                          }
+                        : {}),
+                      ...(pos === "br"
+                        ? {
+                            bottom: 14,
+                            right: 14,
+                            borderBottom: `2px solid ${ACCENT}`,
+                            borderRight: `2px solid ${ACCENT}`,
+                            borderRadius: "0 0 4px 0",
+                          }
+                        : {}),
+                    }}
+                  />
+                ))}
+
+                {/* Card */}
+                <div
+                  style={{
+                    background: "rgba(255,255,255,0.99)",
+                    borderRadius: 22,
+                    border: `1px solid rgba(232,168,124,0.4)`,
+                    padding: "28px 24px 22px",
+                    width: "100%",
+                    maxWidth: 310,
+                    textAlign: "center",
+                    position: "relative",
+                    zIndex: 20,
+                    boxShadow:
+                      "0 8px 60px rgba(232,168,124,0.22), 0 2px 16px rgba(0,0,0,0.07)",
+                    transform: cardShow
+                      ? "scale(1) translateY(0)"
+                      : "scale(0.7) translateY(40px)",
+                    opacity: cardShow ? 1 : 0,
+                    transition:
+                      "transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease",
+                  }}
+                >
+                  {/* Sparkles */}
+                  {[
+                    {
+                      top: "12px",
+                      left: "22px",
+                      width: 4,
+                      height: 4,
+                      delay: "0s",
+                    },
+                    {
+                      top: "20px",
+                      right: "18px",
+                      width: 3,
+                      height: 3,
+                      delay: "0.6s",
+                    },
+                    {
+                      bottom: "30px",
+                      left: "16px",
+                      width: 5,
+                      height: 5,
+                      delay: "1.2s",
+                    },
+                    {
+                      bottom: "50px",
+                      right: "22px",
+                      width: 3,
+                      height: 3,
+                      delay: "0.3s",
+                    },
+                  ].map((s, i) => (
+                    <div
+                      key={i}
+                      style={{
+                        position: "absolute",
+                        borderRadius: "50%",
+                        background: ACCENT,
+                        animation: cardShow
+                          ? `sparkleAnim 2s ${s.delay} ease-in-out infinite`
+                          : "none",
+                        opacity: cardShow ? undefined : 0,
+                        width: s.width,
+                        height: s.height,
+                        ...(s as any),
+                      }}
+                    />
+                  ))}
+
+                  {/* Gem */}
+                  <div
+                    style={{
+                      width: 90,
+                      height: 90,
+                      margin: "0 auto 18px",
+                      position: "relative",
+                    }}
+                  >
+                    {/* Rings */}
+                    {[
+                      {
+                        size: 90,
+                        border: `1px solid rgba(232,168,124,0.25)`,
+                        anim: "spinRing1 5s linear infinite reverse",
+                        delay: "0.4s",
+                      },
+                      {
+                        size: 110,
+                        border: `1px solid rgba(232,168,124,0.18)`,
+                        anim: "spinRing1 8s linear infinite",
+                        delay: "0.5s",
+                      },
+                      {
+                        size: 130,
+                        border: `1px dashed rgba(232,168,124,0.1)`,
+                        anim: "spinRing2 14s linear infinite",
+                        delay: "0.7s",
+                      },
+                    ].map((r, i) => (
+                      <div
+                        key={i}
+                        style={{
+                          position: "absolute",
+                          borderRadius: "50%",
+                          border: r.border,
+                          width: r.size,
+                          height: r.size,
+                          top: "50%",
+                          left: "50%",
+                          transform: "translate(-50%,-50%)",
+                          animation: cardShow ? r.anim : "none",
+                          opacity: cardShow ? 1 : 0,
+                          transition: `opacity 0.5s ease ${r.delay}`,
+                        }}
+                      />
+                    ))}
+                    {/* Diamond SVG */}
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "50%",
+                        left: "50%",
+                        transform: "translate(-50%,-50%)",
+                        animation: cardShow
+                          ? "gemFloat 3s ease-in-out infinite"
+                          : "none",
+                        filter: "drop-shadow(0 4px 12px rgba(232,168,124,0.5))",
+                        opacity: cardShow ? 1 : 0,
+                        transition: "opacity 0.4s ease 0.9s",
+                      }}
+                    >
+                      <svg
+                        width="56"
+                        height="52"
+                        viewBox="0 0 56 52"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <polygon
+                          points="28,0 56,18 44,52 12,52 0,18"
+                          fill="#f5d4b0"
+                          stroke="#e8a87c"
+                          strokeWidth="1"
+                        />
+                        <polygon points="28,0 56,18 28,10" fill="#f0c090" />
+                        <polygon points="28,0 0,18 28,10" fill="#f8e0c0" />
+                        <polygon points="56,18 44,52 28,10" fill="#e8a87c" />
+                        <polygon points="0,18 12,52 28,10" fill="#f5c898" />
+                        <polygon points="28,10 44,52 12,52" fill="#fde8cc" />
+                        <polygon
+                          points="28,0 40,16 28,10 16,16"
+                          fill="rgba(255,255,255,0.4)"
+                        />
+                        <line
+                          x1="28"
+                          y1="0"
+                          x2="28"
+                          y2="10"
+                          stroke="#e8a87c"
+                          strokeWidth="0.5"
+                          opacity="0.5"
+                        />
+                        <line
+                          x1="0"
+                          y1="18"
+                          x2="56"
+                          y2="18"
+                          stroke="#e8a87c"
+                          strokeWidth="0.5"
+                          opacity="0.3"
+                        />
+                        <line
+                          x1="28"
+                          y1="10"
+                          x2="12"
+                          y2="52"
+                          stroke="#e8a87c"
+                          strokeWidth="0.5"
+                          opacity="0.3"
+                        />
+                        <line
+                          x1="28"
+                          y1="10"
+                          x2="44"
+                          y2="52"
+                          stroke="#e8a87c"
+                          strokeWidth="0.5"
+                          opacity="0.3"
+                        />
+                      </svg>
+                    </div>
+                  </div>
+
+                  {/* Badge */}
+                  <div
+                    style={{
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: 6,
+                      background: ACCENT_SOFT,
+                      border: `1px solid ${ACCENT_BORDER}`,
+                      borderRadius: 999,
+                      padding: "3px 12px 3px 9px",
+                      marginBottom: 14,
+                      opacity: cardShow ? 1 : 0,
+                      transform: cardShow ? "translateY(0)" : "translateY(6px)",
+                      transition:
+                        "opacity 0.4s ease 1.1s, transform 0.4s ease 1.1s",
                     }}
                   >
                     <div
                       style={{
-                        width: 28,
-                        height: 28,
+                        position: "relative",
+                        width: 6,
+                        height: 6,
                         borderRadius: "50%",
-                        overflow: "hidden",
-                        flexShrink: 0,
-                        border: `1.5px solid ${ACCENT_BORDER}`,
+                        background: ACCENT,
                       }}
                     >
-                      <img
-                        src="/images/vactor_yasir.png"
-                        alt="Yasir"
-                        style={{ width:"40", height:"40", objectFit: "cover", transform: "translateY(2px)" }}
+                      <span
+                        style={{
+                          position: "absolute",
+                          inset: "-3px",
+                          borderRadius: "50%",
+                          background: "rgba(232,168,124,0.4)",
+                          animation: "ping 2s ease-in-out infinite",
+                        }}
                       />
                     </div>
-                    <div
+                    <span
                       style={{
-                        padding: "12px 16px",
-                        borderRadius: "4px 18px 18px 18px",
-                        background: "#f8f8f8",
-                        border: "1px solid rgba(0,0,0,0.06)",
-                        display: "flex",
-                        gap: "5px",
-                        alignItems: "center",
+                        fontSize: 9.5,
+                        fontWeight: 700,
+                        letterSpacing: "1.5px",
+                        color: "#b5651d",
+                        textTransform: "uppercase" as const,
                       }}
                     >
-                      {[0, 1, 2].map((i) => (
-                        <span
-                          key={i}
-                          style={{
-                            width: 7,
-                            height: 7,
-                            borderRadius: "50%",
-                            background: "#c8c8cc",
-                            display: "block",
-                            animation: `aidot 1.4s ${i * 0.2}s ease-in-out infinite`,
-                          }}
-                        />
-                      ))}
-                    </div>
+                      Suggested
+                    </span>
                   </div>
-                )}
-                <div ref={messagesEndRef} />
+
+                  {/* Title */}
+                  <p
+                    style={{
+                      fontSize: 20,
+                      fontWeight: 800,
+                      color: "#1c1c1e",
+                      letterSpacing: "-0.5px",
+                      margin: "0 0 5px",
+                      opacity: cardShow ? 1 : 0,
+                      transform: cardShow ? "translateY(0)" : "translateY(8px)",
+                      transition:
+                        "opacity 0.4s ease 1.2s, transform 0.4s ease 1.2s",
+                    }}
+                  >
+                    {actionCard.title}
+                  </p>
+                  <p
+                    style={{
+                      fontSize: 12,
+                      color: "#8e8e93",
+                      lineHeight: 1.5,
+                      margin: "0 0 20px",
+                      padding: "0 8px",
+                      opacity: cardShow ? 1 : 0,
+                      transform: cardShow ? "translateY(0)" : "translateY(8px)",
+                      transition:
+                        "opacity 0.4s ease 1.3s, transform 0.4s ease 1.3s",
+                    }}
+                  >
+                    {actionCard.subtitle}
+                  </p>
+
+                  {/* CTA — ghost arrow */}
+                  <button
+                    onClick={() => handleActionClick(actionCard)}
+                    style={{
+                      width: "100%",
+                      height: 48,
+                      padding: "0 18px",
+                      borderRadius: 14,
+                      border: `1.5px solid rgba(232,168,124,0.7)`,
+                      background: "transparent",
+                      color: "#c07340",
+                      fontSize: 13,
+                      fontWeight: 700,
+                      letterSpacing: "0.4px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "space-between",
+                      position: "relative",
+                      overflow: "hidden",
+                      opacity: cardShow ? 1 : 0,
+                      transform: cardShow
+                        ? "translateY(0)"
+                        : "translateY(10px)",
+                      transition:
+                        "opacity 0.4s ease 1.4s, transform 0.4s ease 1.4s, border-color 0.2s, color 0.2s, background 0.2s",
+                      fontFamily: "inherit",
+                    }}
+                    onMouseEnter={(e) => {
+                      Object.assign(e.currentTarget.style, {
+                        borderColor: "#e8a87c",
+                        background: "rgba(232,168,124,0.08)",
+                        color: "#b5651d",
+                      });
+                      const track = e.currentTarget.querySelector(
+                        ".arrow-track",
+                      ) as HTMLElement;
+                      const icon = e.currentTarget.querySelector(
+                        ".arrow-icon",
+                      ) as HTMLElement;
+                      if (track) track.style.opacity = "1";
+                      if (icon) icon.style.transform = "translateX(4px)";
+                    }}
+                    onMouseLeave={(e) => {
+                      Object.assign(e.currentTarget.style, {
+                        borderColor: "rgba(232,168,124,0.7)",
+                        background: "transparent",
+                        color: "#c07340",
+                      });
+                      const track = e.currentTarget.querySelector(
+                        ".arrow-track",
+                      ) as HTMLElement;
+                      const icon = e.currentTarget.querySelector(
+                        ".arrow-icon",
+                      ) as HTMLElement;
+                      if (track) track.style.opacity = "0";
+                      if (icon) icon.style.transform = "translateX(0)";
+                    }}
+                  >
+                    <span style={{ position: "relative", zIndex: 1 }}>
+                      {actionCard.buttonLabel}
+                    </span>
+                    <span
+                      style={{
+                        display: "flex",
+                        alignItems: "center",
+                        gap: 0,
+                        position: "relative",
+                        zIndex: 1,
+                      }}
+                    >
+                      <span
+                        className="arrow-track"
+                        style={{
+                          width: 24,
+                          height: 1,
+                          background: `linear-gradient(90deg, transparent, ${ACCENT})`,
+                          opacity: 0,
+                          transition: "opacity 0.25s ease",
+                        }}
+                      />
+                      <svg
+                        className="arrow-icon"
+                        width="16"
+                        height="16"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        style={{
+                          marginLeft: 4,
+                          transition:
+                            "transform 0.25s cubic-bezier(0.16,1,0.3,1)",
+                        }}
+                      >
+                        <line x1="5" y1="12" x2="19" y2="12" />
+                        <polyline points="12 5 19 12 12 19" />
+                      </svg>
+                    </span>
+                    {/* shimmer */}
+                    <span
+                      style={{
+                        position: "absolute",
+                        top: 0,
+                        left: "-80%",
+                        width: "60%",
+                        height: "100%",
+                        background:
+                          "linear-gradient(90deg, transparent, rgba(232,168,124,0.15), transparent)",
+                        animation: "shimBtn 3s ease-in-out infinite",
+                        pointerEvents: "none",
+                      }}
+                    />
+                  </button>
+
+                  {/* Dismiss */}
+                  <button
+                    onClick={dismissDiamond}
+                    style={{
+                      marginTop: 11,
+                      background: "none",
+                      border: "none",
+                      fontSize: 11.5,
+                      color: "#aeaeb2",
+                      cursor: "pointer",
+                      padding: "4px 8px",
+                      borderRadius: 6,
+                      width: "100%",
+                      fontFamily: "inherit",
+                      opacity: cardShow ? 1 : 0,
+                      transition: "opacity 0.4s ease 1.5s, color 0.15s",
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.color = "#8e8e93";
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.color = "#aeaeb2";
+                    }}
+                  >
+                    Continue chatting
+                  </button>
+                </div>
               </div>
             )}
           </div>
@@ -934,7 +1837,14 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       )}
 
       {/* ── FAB ── */}
-      <div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
+      <div
+        style={{
+          position: "fixed",
+          bottom: "28px",
+          right: "28px",
+          zIndex: 9999,
+        }}
+      >
         {isOpen == false && (
           <div
             style={{
@@ -966,7 +1876,6 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                 ✦ Ask AI about Yasir
               </p>
             </div>
-            {/* Arrow */}
             <div
               style={{
                 position: "absolute",
@@ -983,9 +1892,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
             />
           </div>
         )}
-
         <div style={{ position: "relative", width: "56px", height: "56px" }}>
-          {/* Pulse rings */}
           {!isOpen && (
             <>
               <div
@@ -1010,7 +1917,6 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
               />
             </>
           )}
-
           <button
             onClick={() => setIsOpen(!isOpen)}
             style={{
@@ -1028,13 +1934,9 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
             }}
             onMouseEnter={(e) => {
               (e.currentTarget as HTMLElement).style.transform = "scale(1.08)";
-              (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 6px 28px rgba(232,168,124,0.55)";
             }}
             onMouseLeave={(e) => {
               (e.currentTarget as HTMLElement).style.transform = "scale(1)";
-              (e.currentTarget as HTMLElement).style.boxShadow =
-                "0 4px 20px rgba(232,168,124,0.45)";
             }}
           >
             {isOpen ? (
@@ -1113,30 +2015,19 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       </div>
 
       <style>{`
-        @keyframes popUp {
-          from { opacity: 0; transform: scale(0.94) translateY(12px); }
-          to   { opacity: 1; transform: scale(1) translateY(0); }
-        }
-        @keyframes fadeIn {
-          from { opacity: 0; transform: translateY(4px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes fadeUp {
-          from { opacity: 0; transform: translateY(8px); }
-          to   { opacity: 1; transform: translateY(0); }
-        }
-        @keyframes aidot {
-          0%, 80%, 100% { transform: translateY(0); opacity: 0.3; }
-          40% { transform: translateY(-6px); opacity: 1; }
-        }
-        @keyframes pulse {
-          0%   { transform: scale(1);   opacity: 0.15; }
-          70%  { transform: scale(1.7); opacity: 0; }
-          100% { transform: scale(1.7); opacity: 0; }
-        }
-        @keyframes cursorBlink {
-          0%, 100% { opacity: 1; } 50% { opacity: 0; }
-        }
+        @keyframes popUp { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes fadeUp { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: translateY(0); } }
+        @keyframes aidot { 0%, 80%, 100% { transform: translateY(0); opacity: 0.3; } 40% { transform: translateY(-6px); opacity: 1; } }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 0.15; } 70% { transform: scale(1.7); opacity: 0; } 100% { transform: scale(1.7); opacity: 0; } }
+        @keyframes cursorBlink { 0%, 100% { opacity: 1; } 50% { opacity: 0; } }
+        @keyframes ping { 0% { transform: scale(1); opacity: 0.7; } 70% { transform: scale(2.2); opacity: 0; } 100% { transform: scale(2.2); opacity: 0; } }
+        @keyframes gemFloat { 0%, 100% { transform: translate(-50%,-50%) translateY(0); } 50% { transform: translate(-50%,-50%) translateY(-6px); } }
+        @keyframes spinRing1 { to { transform: translate(-50%,-50%) rotate(360deg); } }
+        @keyframes spinRing2 { to { transform: translate(-50%,-50%) rotate(-360deg); } }
+        @keyframes sparkleAnim { 0%, 100% { opacity: 0; transform: scale(0.5); } 50% { opacity: 0.9; transform: scale(1); } }
+        @keyframes scanline { 0% { top: 0px; opacity: 1; } 80% { top: 580px; opacity: 1; } 100% { top: 580px; opacity: 0; } }
+        @keyframes shimBtn { 0% { left: -80%; } 100% { left: 140%; } }
       `}</style>
     </>
   );

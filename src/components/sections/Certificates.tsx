@@ -622,7 +622,7 @@ const Certificates = () => {
   return (
     <>
       <section
-        id="certificates"
+        id="certificate"
         style={{
           background: "#f5ede0",
           paddingTop: isMobile ? "72px" : "120px",

@@ -7,7 +7,8 @@ const LANGUAGES = [
   {
     native: "العربية",
     name: "Arabic",
-    description: "Native language proficiency in reading, writing, and speaking.",
+    description:
+      "Native language proficiency in reading, writing, and speaking.",
     icon: images.numb01,
   },
   {
@@ -19,17 +20,19 @@ const LANGUAGES = [
   {
     native: "Türkçe",
     name: "Turkish",
-    description: "Full professional proficiency in reading, writing and speaking.",
+    description:
+      "Full professional proficiency in reading, writing and speaking.",
     icon: images.numb03,
   },
 ];
 
 const Languages = () => {
-  const w        = useWidth();
+  const w = useWidth();
   const isMobile = w < 768;
 
   return (
-    <div
+    <section
+      id="languages"
       style={{
         background: "rgba(245,238,228,0.92)",
         borderRadius: isMobile ? "40px" : "98px",
@@ -102,12 +105,20 @@ const Languages = () => {
           >
             {lang.name}
           </span>
-          <p style={{ fontSize: "15px", color: "#555", lineHeight: 1.65, margin: 0, maxWidth: "220px" }}>
+          <p
+            style={{
+              fontSize: "15px",
+              color: "#555",
+              lineHeight: 1.65,
+              margin: 0,
+              maxWidth: "220px",
+            }}
+          >
             {lang.description}
           </p>
         </div>
       ))}
-    </div>
+    </section>
   );
 };
 
