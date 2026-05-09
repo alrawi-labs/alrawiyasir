@@ -130,7 +130,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     setLoading(true);
 
     try {
-      const res = await fetch("https://yasir723-Rag_Based_Portfolio.hf.space/ask", {
+      const res = await fetch("https://yasir723-rag-based-portfolio.hf.space/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
