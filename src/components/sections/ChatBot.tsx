@@ -986,7 +986,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
 
         <div style={{ position: "relative", width: "56px", height: "56px" }}>
           {/* Pulse rings */}
-          {!isOpen && (
+          {isOpen == false && (
             <>
               <div
                 style={{
