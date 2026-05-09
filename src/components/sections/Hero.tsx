@@ -41,6 +41,7 @@ const Hero = () => {
   const isTablet = w >= 768 && w < 1024;
   const [hovered, setHovered]             = useState<boolean>(false);
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen]       = useState(false);
 
   return (
     <section
@@ -238,7 +239,7 @@ const Hero = () => {
       <Languages />
 
       {/* ChatBot — sağ alt köşeye sabit */}
-      <ChatBot />
+      <ChatBot isOpen={isChatOpen} setIsOpen={setIsChatOpen} />
     </section>
   );
 };
