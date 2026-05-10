@@ -5,28 +5,18 @@ import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight } from "lucide-react";
 import { Article } from '../../types/article';
 import Link from "next/link";
+import useWidth from "../../../hooks/useWidth";
 
 const images = {
   heroBg: "/images/hero-bg.png",
 };
 
-const useWidth = () => {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
-  React.useEffect(() => {
-    const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
-  }, []);
-  return w;
-};
 
 const MAX_VISIBLE = 3;
 
 const Articles = () => {
   const w = useWidth();
-  const isMobile = w < 768;
+  const isMobile = w > 0 && w < 768;
   const isTablet = w >= 768 && w < 1024;
 
   const [articles, setArticles] = useState<Article[]>([]);

@@ -934,8 +934,8 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       )}
 
       {/* ── FAB ── */}
-      <div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
-        {isOpen == false && (
+      <div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 500 }}>
+        {!isOpen && (
           <div
             style={{
               position: "absolute",

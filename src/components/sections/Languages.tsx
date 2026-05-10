@@ -25,8 +25,14 @@ const LANGUAGES = [
 ];
 
 const Languages = () => {
-  const w        = useWidth();
+  const w = useWidth();
+
+  // w null ise henüz mount olmamış, hiçbir şey render etme
+  if (w === null) return null;
+
   const isMobile = w < 768;
+  const isTablet = w >= 768 && w < 1024;
+
 
   return (
     <div

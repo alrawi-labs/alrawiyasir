@@ -1,23 +1,12 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import { motion, AnimatePresence } from "motion/react";
-import { RippleButton } from "../ui/RippleButton";
 import { ChevronRight } from "lucide-react";
+import useWidth from "../../../hooks/useWidth";
 
 const heroBg = "/images/hero-bg.png";
 
-const useWidth = () => {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280,
-  );
-  useEffect(() => {
-    const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
-  }, []);
-  return w;
-};
 
 const items = [
   {
@@ -73,7 +62,8 @@ const MAX_VISIBLE = 4;
 
 const Volunteering = () => {
   const w = useWidth();
-  const isMobile = w < 768;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
 
   const [showAll, setShowAll] = useState(false);
 

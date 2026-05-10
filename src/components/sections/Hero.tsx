@@ -6,6 +6,7 @@ import Languages from "@/components/sections/Languages";
 import ChatBot from "@/components/sections/ChatBot"; // ← ekle, yolu ayarla
 import useWidth from "../../../hooks/useWidth";
 import images from "../../../constants/images";
+import Image from "next/image"
 
 interface SocialLink {
   icon: React.ElementType;
@@ -36,29 +37,43 @@ const socialLinks: SocialLink[] = [
 ];
 
 const Hero = () => {
-  const w        = useWidth();
+  const w = useWidth();
+  // ← Hook'lar return'den ÖNCE
+  const [hovered, setHovered] = useState<boolean>(false);
+  const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
+  const [isChatOpen, setIsChatOpen] = useState(false);
+
+  
+  // w null ise henüz mount olmamış, hiçbir şey render etme
+  if (w === null) return null;
+
+
+
   const isMobile = w < 768;
   const isTablet = w >= 768 && w < 1024;
-  const [hovered, setHovered]             = useState<boolean>(false);
-  const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
-  const [isChatOpen, setIsChatOpen]       = useState(false);
+
 
   return (
     <section
       id="home"
-      style={{
-        backgroundImage: `url(${images.heroBg})`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        minHeight: "100vh",
-        display: "flex",
-        flexDirection: "column",
-        justifyContent: "center",
-        position: "relative",
-        paddingTop: isMobile ? "88px" : "120px",
-      }}
-      className={isMobile ? "rounded-b-[64px]" : "rounded-b-[128px]"}
-    >
+        style={{
+    minHeight: "100vh",
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "center",
+    position: "relative",
+    paddingTop: isMobile ? "88px" : "120px",
+  }}
+>
+  {/* Background image — Next.js optimizasyonu ile */}
+  <Image
+    src={images.heroBg}
+    alt=""
+    fill
+    priority
+    quality={10}
+    style={{ objectFit: "cover", objectPosition: "center", zIndex: -1 }}
+  />
       <div
         style={{
           maxWidth: "1480px",
@@ -225,11 +240,13 @@ const Hero = () => {
           {/* Right — illustration */}
           {!isMobile && !isTablet && (
             <div style={{ display: "flex", justifyContent: "center", alignItems: "flex-end" }}>
-              <img
+              <Image
                 src={images.heroYasir}
-                alt="Hero"
-                style={{ width: "100%", maxWidth: "580px", height: "auto" }}
-                referrerPolicy="no-referrer"
+                 alt="Hero"
+  width={580}
+  height={600}
+  priority  // ← hero gibi ilk görünen fotoğraflar için
+  quality={85}
               />
             </div>
           )}

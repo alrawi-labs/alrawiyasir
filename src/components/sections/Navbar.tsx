@@ -52,7 +52,7 @@ const Navbar = ({ onAskAI }: NavbarProps) => {
           <div className="flex items-center gap-3">
             <img
               className={
-                isMobile ? "w-9 h-9 object-contain" : "w-36 h-36 object-contain"
+                isMobile ? "w-20 h-20 object-contain" : "w-36 h-36 object-contain"
               }
               src={images.logo}
               alt="Alrawi Logo"
