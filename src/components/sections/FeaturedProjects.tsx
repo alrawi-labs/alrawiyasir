@@ -195,6 +195,7 @@ const FeaturedProjects = () => {
                   exit={{ opacity: 0, y: 12 }}
                   transition={{ delay: idx * 0.05, duration: 0.3 }}
                   whileHover={{ y: -6 }}
+                  
                 >
                   <Link
                     href={`/projects/${project.slug}`}
@@ -205,6 +206,7 @@ const FeaturedProjects = () => {
                       minHeight: isMobile ? "380px" : "500px",
                       textDecoration: "none",
                       color: "inherit",
+                      height: "100%",
                     }}
                     className="project-card relative bg-[#f5ede0] rounded-3xl overflow-hidden flex flex-col group"
                   >
