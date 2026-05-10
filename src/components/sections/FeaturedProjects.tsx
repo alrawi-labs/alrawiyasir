@@ -13,14 +13,14 @@ const MAX_VISIBLE = 9;
 const FeaturedProjects = () => {
  const w = useWidth();
 
+ const [projects, setProjects] = useState<Project[]>([]);
+ const [activeTag, setActiveTag] = useState("All");
+ const [showAll, setShowAll] = useState(false);
   
   if (w === null) return null;
   const isMobile = w > 0 && w < 768;
   const isTablet = w >= 768 && w < 1024;
 
-  const [projects, setProjects] = useState<Project[]>([]);
-  const [activeTag, setActiveTag] = useState("All");
-  const [showAll, setShowAll] = useState(false);
 
   useEffect(() => {
     fetch("/api/projects")
