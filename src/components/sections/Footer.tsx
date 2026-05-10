@@ -25,9 +25,13 @@ const CONTACT_INFO = [
   },
 ];
 const Footer = () => {
-  const w = useWidth();
-  const isMobile = w < 768;
-  const handleNav = useSmoothNav();
+ const w = useWidth();
+
+ const handleNav = useSmoothNav();
+  
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
 
   return (
     <footer className="pt-12 pb-0" style={{ background: "#f5ede0" }}>

@@ -16,10 +16,14 @@ interface NavbarProps {
 }
 
 const Navbar = ({ onAskAI }: NavbarProps) => {
+  const w = useWidth();
   const [isOpen, setIsOpen] = useState(false);
   const [signHovered, setSignHovered] = useState(false);
-  const w = useWidth();
-  const isMobile = w < 768;
+
+  
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
   const handleNav = useSmoothNav();
 
   return (

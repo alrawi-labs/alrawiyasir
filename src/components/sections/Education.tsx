@@ -44,9 +44,12 @@ const otherCards = [
 ];
 
 const Education = () => {
-  const w         = useWidth();
-  const isMobile  = w < 768;
-  const isTablet  = w >= 768 && w < 1024;
+ const w = useWidth();
+
+  
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
 
   return (
     <section

@@ -61,11 +61,14 @@ const items = [
 const MAX_VISIBLE = 4;
 
 const Volunteering = () => {
-  const w = useWidth();
+ const w = useWidth();
+
+ const [showAll, setShowAll] = useState(false);
+  
+  if (w === null) return null;
   const isMobile = w > 0 && w < 768;
   const isTablet = w >= 768 && w < 1024;
 
-  const [showAll, setShowAll] = useState(false);
 
   const visible = showAll ? items : items.slice(0, MAX_VISIBLE);
   const hasMore = items.length > MAX_VISIBLE;

@@ -15,12 +15,17 @@ const images = {
 const MAX_VISIBLE = 3;
 
 const Articles = () => {
+  
   const w = useWidth();
+  
+  const [articles, setArticles] = useState<Article[]>([]);
+  const [showAll, setShowAll] = useState(false);
+
+  if (w === null) return null;
   const isMobile = w > 0 && w < 768;
   const isTablet = w >= 768 && w < 1024;
 
-  const [articles, setArticles] = useState<Article[]>([]);
-  const [showAll, setShowAll] = useState(false);
+
 
   useEffect(() => {
     fetch("/api/articles")

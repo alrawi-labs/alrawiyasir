@@ -89,8 +89,12 @@ const TYPE_COLORS: Record<string, { bg: string; color: string }> = {
 };
 
 const Experience = () => {
-  const w        = useWidth();
-  const isMobile = w < 768;
+ const w = useWidth();
+
+  
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
 
   return (
     <section id="experience" className="py-24 bg-brand-bg overflow-hidden">
