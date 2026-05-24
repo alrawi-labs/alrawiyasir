@@ -525,7 +525,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     setLoading(true);
 
     try {
-      const res = await fetch("http://127.0.0.1:7860/ask", {
+      const res = await fetch("https://yasir723-rag-based-portfolio.hf.space/ask", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
