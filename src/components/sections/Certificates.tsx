@@ -3,18 +3,7 @@
 import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight, X, ExternalLink } from "lucide-react";
-
-const useWidth = () => {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
-  React.useEffect(() => {
-    const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
-  }, []);
-  return w;
-};
+import useWidth from "../../../hooks/useWidth";
 
 // ─── Certificates data ───────────────────────────────────────────────
 const certificates = [
@@ -609,12 +598,17 @@ const MAX_VISIBLE = 6;
 
 // ─── Certificates ─────────────────────────────────────────────────────
 const Certificates = () => {
+  
   const w = useWidth();
-  const isMobile = w < 768;
+    const [showAll, setShowAll] = useState(false);
+  const [selectedCert, setSelectedCert] = useState<Cert | null>(null);
+
+  
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
   const isTablet = w >= 768 && w < 1024;
 
-  const [showAll, setShowAll] = useState(false);
-  const [selectedCert, setSelectedCert] = useState<Cert | null>(null);
+
 
   const visible = showAll ? certificates : certificates.slice(0, MAX_VISIBLE);
   const hasMore = certificates.length > MAX_VISIBLE;

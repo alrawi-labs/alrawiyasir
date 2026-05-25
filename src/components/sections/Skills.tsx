@@ -2,18 +2,7 @@
 
 import React, { useEffect, useState } from "react";
 import { motion } from "motion/react";
-
-const useWidth = () => {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
-  useEffect(() => {
-    const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
-  }, []);
-  return w;
-};
+import useWidth from "../../../hooks/useWidth";
 
 const cols = [
   {
@@ -56,8 +45,13 @@ const cols = [
 
 const Skills = () => {
   const w = useWidth();
+
+  // w null ise henüz mount olmamış, hiçbir şey render etme
+  if (w === null) return null;
+
   const isMobile = w < 768;
   const isTablet = w >= 768 && w < 1024;
+
 
   const gridCols = isMobile ? "1fr" : isTablet ? "1fr 1fr 1fr" : "repeat(3, 1fr)";
 

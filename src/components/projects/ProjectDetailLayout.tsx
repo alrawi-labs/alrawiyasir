@@ -3,6 +3,8 @@
 import { useRouter } from "next/navigation";
 import { Project } from "@/types/project";
 import ContentBlockRenderer from "./ContentBlockRenderer";
+import Image from "next/image";
+
 import {
   ExternalLink,
   Github,
@@ -112,17 +114,20 @@ export default function ProjectDetailLayout({
           {project.subtitle}
         </p>
 
-        <img
-          src={project.image}
-          alt={project.title}
-          style={{
-            width: "100%",
-            borderRadius: "20px",
-            aspectRatio: "16/9",
-            objectFit: "cover",
-            marginBottom: "32px",
-          }}
-        />
+        <Image
+  src={project.image}
+  alt={project.title}
+  width={900}
+  height={506}
+  priority
+  style={{
+    width: "100%",
+    height: "auto",
+    borderRadius: "20px",
+    objectFit: "cover",
+    marginBottom: "32px",
+  }}
+/>
 
         {/* Meta grid */}
         <div

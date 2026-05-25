@@ -2,16 +2,11 @@
 
 import { useState, useEffect } from "react";
 
-/**
- * Tarayıcı genişliğini reaktif olarak döndürür.
- * SSR güvenli: sunucuda varsayılan 1280px kullanılır.
- */
-const useWidth = (): number => {
-  const [w, setW] = useState<number>(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
+const useWidth = (): number | null => {
+  const [w, setW] = useState<number | null>(null);
 
   useEffect(() => {
+    setW(window.innerWidth);
     const handleResize = () => setW(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);

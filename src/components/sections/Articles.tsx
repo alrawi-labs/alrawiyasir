@@ -3,31 +3,18 @@
 import React, { useState, useMemo, useEffect } from "react";
 import { motion, AnimatePresence } from "motion/react";
 import { ChevronRight } from "lucide-react";
-import { Article } from '../../types/article';
+import { Article } from "../../types/article";
 import Link from "next/link";
+import useWidth from "../../../hooks/useWidth";
 
 const images = {
   heroBg: "/images/hero-bg.png",
-};
-
-const useWidth = () => {
-  const [w, setW] = useState(
-    typeof window !== "undefined" ? window.innerWidth : 1280
-  );
-  React.useEffect(() => {
-    const h = () => setW(window.innerWidth);
-    window.addEventListener("resize", h);
-    return () => window.removeEventListener("resize", h);
-  }, []);
-  return w;
 };
 
 const MAX_VISIBLE = 3;
 
 const Articles = () => {
   const w = useWidth();
-  const isMobile = w < 768;
-  const isTablet = w >= 768 && w < 1024;
 
   const [articles, setArticles] = useState<Article[]>([]);
   const [showAll, setShowAll] = useState(false);
@@ -40,10 +27,14 @@ const Articles = () => {
 
   const visible = useMemo(
     () => (showAll ? articles : articles.slice(0, MAX_VISIBLE)),
-    [showAll, articles]
+    [showAll, articles],
   );
 
   const hasMore = articles.length > MAX_VISIBLE;
+
+  if (w === null) return null;
+  const isMobile = w > 0 && w < 768;
+  const isTablet = w >= 768 && w < 1024;
 
   return (
     <section
@@ -105,8 +96,8 @@ const Articles = () => {
             }
             style={{ color: "rgb(255 255 255 / 65%)" }}
           >
-            I write about the things I build, learn, and think about —
-            from design and development to ideas that keep me curious.
+            I write about the things I build, learn, and think about — from
+            design and development to ideas that keep me curious.
           </p>
         </div>
 
@@ -213,9 +204,11 @@ const Articles = () => {
                 (e.currentTarget as HTMLElement).style.borderColor = "#f6c7b2";
               }}
               onMouseLeave={(e) => {
-                (e.currentTarget as HTMLElement).style.background = "rgba(255,255,255,0.1)";
+                (e.currentTarget as HTMLElement).style.background =
+                  "rgba(255,255,255,0.1)";
                 (e.currentTarget as HTMLElement).style.color = "white";
-                (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.3)";
+                (e.currentTarget as HTMLElement).style.borderColor =
+                  "rgba(255,255,255,0.3)";
               }}
             >
               {showAll
