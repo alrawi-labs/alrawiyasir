@@ -2,12 +2,13 @@ import { getProjectBySlug } from "@/lib/projects";
 import { notFound } from "next/navigation";
 import ProjectModal from "@/components/projects/ProjectModal";
 
-export default function ProjectModalPage({
+export default async function ProjectModalPage({
   params,
 }: {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 }) {
-  const project = getProjectBySlug(params.slug);
+  const { slug } = await params;
+  const project = getProjectBySlug(slug);
   if (!project) notFound();
   return <ProjectModal project={project} />;
 }
