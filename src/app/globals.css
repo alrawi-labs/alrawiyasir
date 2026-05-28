@@ -43,6 +43,11 @@ p {
 }
 
 
+  .chatbox-dimmed {
+    opacity: 0.45 !important;
+    filter: blur(2px) saturate(0.4) !important;
+  }
+
 .project-card::before {
   content: "";
   position: absolute;

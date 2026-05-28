@@ -2,7 +2,6 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
-import useWidth from '../../../hooks/useWidth';
 
 interface ChatBotProps {
   isOpen: boolean;
@@ -17,15 +16,9 @@ interface Message {
 
 interface ActionCard {
   type:
-    | "projects"
-    | "contact"
-    | "skills"
-    | "articles"
-    | "education"
-    | "experience"
-    | "volunteering"
-    | "languages"
-    | "certificate";
+    | "projects" | "contact" | "skills" | "articles"
+    | "education" | "experience" | "volunteering"
+    | "languages" | "certificate";
   title: string;
   subtitle: string;
   buttonLabel: string;
@@ -73,28 +66,22 @@ function clearNavAccepted() {
 }
 
 const URL_TO_ID: Record<string, string> = {
-  "#home": "home",
-  "#projects": "projects",
-  "#articles": "articles",
-  "#contact": "contact",
-  "#skills": "skills",
-  "#education": "education",
-  "#experience": "experience",
-  "#volunteering": "volunteering",
-  "#certificate": "certificate",
-  "#languages": "languages",
+  "#home": "home", "#projects": "projects", "#articles": "articles",
+  "#contact": "contact", "#skills": "skills", "#education": "education",
+  "#experience": "experience", "#volunteering": "volunteering",
+  "#certificate": "certificate", "#languages": "languages",
 };
 
 const URL_TO_CARD: Record<string, Omit<ActionCard, "targetId">> = {
-  "#projects": { type: "projects", title: "Explore Projects", subtitle: "Live demos and source code from Yasir's builds", buttonLabel: "View Projects" },
-  "#contact": { type: "contact", title: "Let's Connect", subtitle: "Reach out for work, collab, or just a hello", buttonLabel: "Open Contact" },
-  "#skills": { type: "skills", title: "Tech Stack", subtitle: "Languages, frameworks and tools Yasir works with", buttonLabel: "View Skills" },
-  "#articles": { type: "articles", title: "Read the Blog", subtitle: "Yasir's takes on AI, engineering and beyond", buttonLabel: "Browse Articles" },
-  "#education": { type: "education", title: "Academic Background", subtitle: "Degrees, courses and institutions that shaped Yasir", buttonLabel: "View Education" },
-  "#experience": { type: "experience", title: "Work Experience", subtitle: "Roles, companies and impact across Yasir's career", buttonLabel: "View Experience" },
-  "#volunteering": { type: "volunteering", title: "Volunteering", subtitle: "Community work and causes Yasir contributes to", buttonLabel: "View Volunteering" },
-  "#certificate": { type: "certificate", title: "Certificates", subtitle: "Courses and credentials Yasir has earned", buttonLabel: "View Certificates" },
-  "#languages": { type: "languages", title: "languages", subtitle: "Languages that Yasir speaks", buttonLabel: "View Languages" },
+  "#projects":    { type: "projects",    title: "Explore Projects",    subtitle: "Live demos and source code from Yasir's builds",       buttonLabel: "View Projects"    },
+  "#contact":     { type: "contact",     title: "Let's Connect",       subtitle: "Reach out for work, collab, or just a hello",          buttonLabel: "Open Contact"     },
+  "#skills":      { type: "skills",      title: "Tech Stack",          subtitle: "Languages, frameworks and tools Yasir works with",     buttonLabel: "View Skills"      },
+  "#articles":    { type: "articles",    title: "Read the Blog",       subtitle: "Yasir's takes on AI, engineering and beyond",          buttonLabel: "Browse Articles"  },
+  "#education":   { type: "education",   title: "Academic Background", subtitle: "Degrees, courses and institutions that shaped Yasir",  buttonLabel: "View Education"   },
+  "#experience":  { type: "experience",  title: "Work Experience",     subtitle: "Roles, companies and impact across Yasir's career",    buttonLabel: "View Experience"  },
+  "#volunteering":{ type: "volunteering",title: "Volunteering",        subtitle: "Community work and causes Yasir contributes to",       buttonLabel: "View Volunteering"},
+  "#certificate": { type: "certificate", title: "Certificates",        subtitle: "Courses and credentials Yasir has earned",             buttonLabel: "View Certificates"},
+  "#languages":   { type: "languages",   title: "languages",           subtitle: "Languages that Yasir speaks",                         buttonLabel: "View Languages"   },
 };
 
 function shortenUrl(url: string): string {
@@ -123,11 +110,10 @@ function fixMarkdown(text: string): string {
   }).join("\n");
 }
 
-const ACCENT = "#e8a87c";
-const ACCENT_SOFT = "rgba(232,168,124,0.12)";
-const ACCENT_BORDER = "rgba(232,168,124,0.3)";
+const ACCENT       = "#e8a87c";
+const ACCENT_SOFT  = "rgba(232,168,124,0.12)";
+const ACCENT_BORDER= "rgba(232,168,124,0.3)";
 
-/* ── useIsMobile hook ── */
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
   useEffect(() => {
@@ -142,50 +128,72 @@ function useIsMobile() {
 const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
   const isMobile = useIsMobile();
 
-  const [messages, setMessages] = useState<Message[]>([]);
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
+  const [messages,         setMessages        ] = useState<Message[]>([]);
+  const [input,            setInput           ] = useState("");
+  const [loading,          setLoading         ] = useState(false);
   const [displayedContent, setDisplayedContent] = useState<Record<number, string>>({});
 
-  const [actionCard, setActionCard] = useState<ActionCard | null>(null);
+  const [actionCard,    setActionCard   ] = useState<ActionCard | null>(null);
   const [actionVisible, setActionVisible] = useState(false);
-  const [scanActive, setScanActive] = useState(false);
-  const [cornersVisible, setCornersVisible] = useState(false);
-  const [gridVisible, setGridVisible] = useState(false);
-  const [cardShow, setCardShow] = useState(false);
-  const [char1Above, setChar1Above] = useState(false);
-  const [char1Visible, setChar1Visible] = useState(false);
-  const [char2Visible, setChar2Visible] = useState(false);
-  const [char3Visible, setChar3Visible] = useState(false);
-  const [char3Above, setChar3Above] = useState(false);
-  const [answeredVisible, setAnsweredVisible] = useState(false);
-  const [navEnabled, setNavEnabled] = useState(getNavAccepted());
-  const [lastTargetId, setLastTargetId] = useState("");
+  const [scanActive,    setScanActive   ] = useState(false);
+  const [cornersVisible,setCornersVisible] = useState(false);
+  const [gridVisible,   setGridVisible  ] = useState(false);
+  const [cardShow,      setCardShow     ] = useState(false);
+  const [char1Above,    setChar1Above   ] = useState(false);
+  const [char1Visible,  setChar1Visible ] = useState(false);
+  const [char2Visible,  setChar2Visible ] = useState(false);
+  const [char3Visible,  setChar3Visible ] = useState(false);
+  const [char3Above,    setChar3Above   ] = useState(false);
+  const [answeredVisible,setAnsweredVisible] = useState(false);
+  const [navEnabled,    setNavEnabled   ] = useState(getNavAccepted());
+  const [lastTargetId,  setLastTargetId ] = useState("");
 
-  const messagesEndRef = useRef<HTMLDivElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
-  const typingTimers = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
-  const typingPausedRef = useRef(false);
-  const typingResumeRef = useRef<(() => void) | null>(null);
+  // ── YENİ: mobil kararma modu ──
+  const [isDimmed, setIsDimmed] = useState(false);
+  const dimTouchStartX = useRef(0);
+  const dimTouchStartY = useRef(0);
+
+  const messagesEndRef   = useRef<HTMLDivElement>(null);
+  const inputRef         = useRef<HTMLInputElement>(null);
+  const typingTimers     = useRef<Record<number, ReturnType<typeof setTimeout>>>({});
+  const typingPausedRef  = useRef(false);
+  const typingResumeRef  = useRef<(() => void) | null>(null);
   const pendingActionRef = useRef<ActionCard | null>(null);
 
   useEffect(() => {
     if (isOpen) setTimeout(() => inputRef.current?.focus(), 250);
   }, [isOpen]);
 
-  // Mobilde scroll'u kilitle
   useEffect(() => {
-    if (isMobile && isOpen) {
-      document.body.style.overflow = "hidden";
-    } else {
-      document.body.style.overflow = "";
-    }
+    if (isMobile && isOpen) { document.body.style.overflow = "hidden"; }
+    else { document.body.style.overflow = ""; }
     return () => { document.body.style.overflow = ""; };
   }, [isMobile, isOpen]);
+
+  // Chatbot kapanınca kararma sıfırla
+  useEffect(() => {
+    if (!isOpen) setIsDimmed(false);
+  }, [isOpen]);
 
   useEffect(() => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, displayedContent]);
+
+  // ── YENİ: mobil için scroll + kararma ──
+  const scrollAndDim = useCallback((targetId: string) => {
+    // Önce body scroll kilidini geçici kaldır, scroll et, kilitle
+    document.body.style.overflow = "";
+    const el = document.getElementById(targetId);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth" });
+    }
+    // Kısa gecikme sonra kararma uygula (scroll animasyonu başlasın)
+    setTimeout(() => {
+      setIsDimmed(true);
+      // Tekrar kilitle (input için değil, sayfa scroll'u için)
+      // Dim modda sayfa scroll edilebilir olsun — kilitleme
+    }, 80);
+  }, []);
 
   const showDiamondCard = useCallback((card: ActionCard) => {
     setActionCard(card);
@@ -193,10 +201,9 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     setScanActive(true);
     setChar2Visible(false);
     if (answeredVisible) {
-      setChar3Visible(true);
-      setChar3Above(false);
+      setChar3Visible(true); setChar3Above(false);
       setTimeout(() => setChar3Above(true), 400);
-      setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5 * 1000);
+      setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5000);
     }
     setTimeout(() => setCornersVisible(true), 400);
     setTimeout(() => setGridVisible(true), 700);
@@ -205,9 +212,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
   }, [answeredVisible]);
 
   const dismissDiamond = useCallback(() => {
-    setCardShow(false);
-    setGridVisible(false);
-    setCornersVisible(false);
+    setCardShow(false); setGridVisible(false); setCornersVisible(false);
     setTimeout(() => { setActionCard(null); setActionVisible(false); }, 400);
     setTimeout(() => {
       typingPausedRef.current = false;
@@ -222,12 +227,15 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     if (!targetId) return;
     setLastTargetId(targetId);
     if (getNavAccepted()) {
-      
-      const el = document.getElementById(targetId);
-      if (el) {
-        setTimeout(() => setChar2Visible(true), 300);
-        setTimeout(() => setChar2Visible(false), 5 * 1000);
-        el.scrollIntoView({ behavior: "smooth" });
+      if (isMobile) {
+        scrollAndDim(targetId);
+      } else {
+        const el = document.getElementById(targetId);
+        if (el) {
+          setTimeout(() => setChar2Visible(true), 300);
+          setTimeout(() => setChar2Visible(false), 5000);
+          el.scrollIntoView({ behavior: "smooth" });
+        }
       }
     } else if (getNavDismissed()) {
       setAnsweredVisible(true);
@@ -236,25 +244,27 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       if (!cardMeta) return;
       showDiamondCard({ ...cardMeta, targetId });
     }
-  }, [showDiamondCard]);
+  }, [showDiamondCard, isMobile, scrollAndDim]);
 
   const handleActionClick = useCallback((card: ActionCard) => {
     setNavAccepted();
     dismissDiamond();
     clearNavDismissed();
     setAnsweredVisible(true);
-    setChar1Above(false);
-    setChar1Visible(false);
+    setChar1Above(false); setChar1Visible(false);
     const el = document.getElementById(card.targetId);
     if (el) {
-      setTimeout(() => { setChar2Visible(true); }, 300);
-      setTimeout(() => {
-        setChar1Visible(true);
-        setChar1Above(false);
-        setTimeout(() => setChar1Above(true), 400);
-        setChar2Visible(false);
-      }, 5 * 1000);
-      el.scrollIntoView({ behavior: "smooth" });
+      if (isMobile) {
+        scrollAndDim(card.targetId);
+      } else {
+        setTimeout(() => { setChar2Visible(true); }, 300);
+        setTimeout(() => {
+          setChar1Visible(true); setChar1Above(false);
+          setTimeout(() => setChar1Above(true), 400);
+          setChar2Visible(false);
+        }, 5000);
+        el.scrollIntoView({ behavior: "smooth" });
+      }
     }
     setTimeout(() => {
       typingPausedRef.current = false;
@@ -262,16 +272,13 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
       typingResumeRef.current = null;
       resume?.();
     }, 450);
-  }, [dismissDiamond]);
+  }, [dismissDiamond, isMobile, scrollAndDim]);
 
   const handleNoActionClick = useCallback(() => {
-    dismissDiamond();
-    setNavDismissed();
-    setAnsweredVisible(true);
-    setChar3Visible(true);
-    setChar3Above(false);
+    dismissDiamond(); setNavDismissed(); setAnsweredVisible(true);
+    setChar3Visible(true); setChar3Above(false);
     setTimeout(() => setChar3Above(true), 400);
-    setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5 * 1000);
+    setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5000);
     setTimeout(() => {
       typingPausedRef.current = false;
       const resume = typingResumeRef.current;
@@ -282,37 +289,33 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
 
   const handleToggleActionMode = useCallback(() => {
     if (getNavAccepted()) {
-      clearNavAccepted();
-      clearNavDismissed();
-      setNavEnabled(false);
-      setChar3Visible(true);
-      setChar3Above(false);
+      clearNavAccepted(); clearNavDismissed(); setNavEnabled(false);
+      setChar3Visible(true); setChar3Above(false);
       setTimeout(() => setChar3Above(true), 400);
-      setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5 * 1000);
+      setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5000);
     } else {
-      setChar3Above(false);
-      setChar3Visible(false);
-      setNavAccepted();
-      clearNavDismissed();
-      setNavEnabled(true);
+      setChar3Above(false); setChar3Visible(false);
+      setNavAccepted(); clearNavDismissed(); setNavEnabled(true);
       if (lastTargetId) {
-        const el = document.getElementById(lastTargetId);
-        if (el) {
-          setChar1Visible(false);
-          setChar1Above(false);
-          setTimeout(() => { setChar2Visible(true); }, 300);
-          setTimeout(() => {
-            setChar1Visible(true);
-            setChar1Above(false);
-            setTimeout(() => setChar1Above(true), 400);
-            setChar2Visible(false);
-          }, 5 * 1000);
-          el.scrollIntoView({ behavior: "smooth" });
+        if (isMobile) {
+          scrollAndDim(lastTargetId);
+        } else {
+          const el = document.getElementById(lastTargetId);
+          if (el) {
+            setChar1Visible(false); setChar1Above(false);
+            setTimeout(() => { setChar2Visible(true); }, 300);
+            setTimeout(() => {
+              setChar1Visible(true); setChar1Above(false);
+              setTimeout(() => setChar1Above(true), 400);
+              setChar2Visible(false);
+            }, 5000);
+            el.scrollIntoView({ behavior: "smooth" });
+          }
         }
         setLastTargetId("");
       }
     }
-  }, [lastTargetId]);
+  }, [lastTargetId, isMobile, scrollAndDim]);
 
   const typeMessage = useCallback((index: number, fullText: string, onCardTrigger?: () => void, onFinish?: () => void) => {
     let i = 0;
@@ -359,13 +362,9 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     typingPausedRef.current = false;
     typingResumeRef.current = null;
     pendingActionRef.current = null;
-    setMessages([]);
-    setDisplayedContent({});
-    setInput("");
-    dismissDiamond();
-    clearNavAccepted();
-    clearNavDismissed();
-    setAnsweredVisible(false);
+    setMessages([]); setDisplayedContent({}); setInput("");
+    dismissDiamond(); clearNavAccepted(); clearNavDismissed();
+    setAnsweredVisible(false); setIsDimmed(false);
   };
 
   const sendMessage = async (text?: string) => {
@@ -376,8 +375,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
     const userMsg: Message = { role: "user", content: userText };
     const updatedMessages = [...messages, userMsg];
     setMessages(updatedMessages);
-    setInput("");
-    setLoading(true);
+    setInput(""); setLoading(true);
     try {
       const res = await fetch("https://yasir723-rag-based-portfolio.hf.space/ask", {
         method: "POST",
@@ -403,22 +401,30 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
             const pending = pendingActionRef.current;
             if (!pending) return;
             if (getNavAccepted()) {
-
-              const el = document.getElementById(pending.targetId);
-              if (el) {
-                setTimeout(() => { setChar1Visible(false); setChar1Above(false); setChar2Visible(true); }, 300);
-                setTimeout(() => { setChar1Visible(true); setChar1Above(false); setTimeout(() => setChar1Above(true), 400); setChar2Visible(false); }, 5 * 1000);
-                el.scrollIntoView({ behavior: "smooth" });
+              if (isMobile) {
+                pendingActionRef.current = null;
+                scrollAndDim(pending.targetId);
+                // typing devam etsin (dim modda mesaj görünüyor)
+                typingPausedRef.current = false;
+                const resume = typingResumeRef.current;
+                typingResumeRef.current = null;
+                setTimeout(() => resume?.(), 50);
+              } else {
+                const el = document.getElementById(pending.targetId);
+                if (el) {
+                  setTimeout(() => { setChar1Visible(false); setChar1Above(false); setChar2Visible(true); }, 300);
+                  setTimeout(() => { setChar1Visible(true); setChar1Above(false); setTimeout(() => setChar1Above(true), 400); setChar2Visible(false); }, 5000);
+                  el.scrollIntoView({ behavior: "smooth" });
+                }
+                typingPausedRef.current = false;
+                const resume = typingResumeRef.current;
+                typingResumeRef.current = null;
+                setTimeout(() => resume?.(), 50);
               }
-              typingPausedRef.current = false;
-              const resume = typingResumeRef.current;
-              typingResumeRef.current = null;
-              setTimeout(() => resume?.(), 50);
             } else if (getNavDismissed()) {
-              setChar3Visible(true);
-              setChar3Above(false);
+              setChar3Visible(true); setChar3Above(false);
               setTimeout(() => setChar3Above(true), 400);
-              setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5 * 1000);
+              setTimeout(() => { setChar3Above(false); setChar3Visible(false); }, 5000);
               typingPausedRef.current = false;
               const resume = typingResumeRef.current;
               typingResumeRef.current = null;
@@ -440,10 +446,10 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
   const isEmpty = messages.length === 0;
 
   const mdComponents = {
-    p: ({ children }: any) => <p style={{ margin: "0 0 7px", lineHeight: 1.7, fontSize: "13.5px", color: "#1c1c1e" }}>{children}</p>,
-    ul: ({ children }: any) => <ul style={{ margin: "6px 0 10px", padding: 0, listStyle: "none" }}>{children}</ul>,
-    ol: ({ children }: any) => <ol style={{ margin: "6px 0 10px", paddingLeft: "16px" }}>{children}</ol>,
-    li: ({ children }: any) => (
+    p:      ({ children }: any) => <p style={{ margin: "0 0 7px", lineHeight: 1.7, fontSize: "13.5px", color: "#1c1c1e" }}>{children}</p>,
+    ul:     ({ children }: any) => <ul style={{ margin: "6px 0 10px", padding: 0, listStyle: "none" }}>{children}</ul>,
+    ol:     ({ children }: any) => <ol style={{ margin: "6px 0 10px", paddingLeft: "16px" }}>{children}</ol>,
+    li:     ({ children }: any) => (
       <li style={{ margin: "6px 0", display: "flex", alignItems: "flex-start", gap: "9px", fontSize: "13.5px", lineHeight: 1.6, color: "#1c1c1e" }}>
         <span style={{ width: 6, height: 6, borderRadius: "50%", background: ACCENT, flexShrink: 0, marginTop: "7px", boxShadow: `0 0 0 2px ${ACCENT_SOFT}` }} />
         <span style={{ flex: 1, minWidth: 0 }}>{children}</span>
@@ -455,56 +461,41 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
         {children}
       </strong>
     ),
-    a: ({ href, children }: any) => (
+    a:      ({ href, children }: any) => (
       <a href={href} target="_blank" rel="noreferrer" title={href} style={{ display: "inline-flex", alignItems: "center", gap: "4px", color: "#b5651d", textDecoration: "none", fontWeight: 500, fontSize: "12px", background: ACCENT_SOFT, borderRadius: "6px", padding: "2px 8px", border: `1px solid ${ACCENT_BORDER}`, maxWidth: "100%", overflow: "hidden", whiteSpace: "nowrap", textOverflow: "ellipsis", verticalAlign: "middle" }}>
         <span style={{ overflow: "hidden", textOverflow: "ellipsis" }}>{typeof children === "string" && children.startsWith("http") ? shortenUrl(children) : children}</span>
       </a>
     ),
-    code: ({ children }: any) => <code style={{ background: "#f0f0f0", borderRadius: "4px", padding: "1px 6px", fontSize: "12px", fontFamily: "monospace", color: "#c0392b" }}>{children}</code>,
+    code:   ({ children }: any) => <code style={{ background: "#f0f0f0", borderRadius: "4px", padding: "1px 6px", fontSize: "12px", fontFamily: "monospace", color: "#c0392b" }}>{children}</code>,
   };
 
-  /* ── Responsive chatbox styles ── */
   const chatboxStyle: React.CSSProperties = isMobile
     ? {
-        position: "fixed",
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        width: "100%",
-        height: "100%",
-        background: "#ffffff",
-        border: "none",
-        borderRadius: 0,
-        overflow: "hidden",
-        boxShadow: "none",
-        zIndex: 9998,
+        position: "fixed", top: 0, left: 0, right: 0, bottom: 0,
+        width: "100%", height: "100%",
+        background: "#ffffff", border: "none", borderRadius: 0,
+        overflow: "hidden", boxShadow: "none", zIndex: 9998,
         animation: "slideUpMobile 0.35s cubic-bezier(0.16,1,0.3,1) both",
-        display: "flex",
-        flexDirection: "column",
+        display: "flex", flexDirection: "column",
+        // ── kararma geçişi ──
+        transition: "opacity 0.4s ease, filter 0.4s ease",
+        opacity:  isDimmed ? "0.25 !important" : "1 !important",
+        filter:   isDimmed ? "blur(2px) saturate(0.4)" : "none",
       }
     : {
-        position: "fixed",
-        bottom: "108px",
-        right: "28px",
-        width: "390px",
-        background: "#ffffff",
-        border: "1px solid rgba(0,0,0,0.08)",
-        borderRadius: "20px",
-        overflow: "hidden",
+        position: "fixed", bottom: "108px", right: "28px", width: "390px",
+        background: "#ffffff", border: "1px solid rgba(0,0,0,0.08)",
+        borderRadius: "20px", overflow: "hidden",
         boxShadow: "0 24px 80px rgba(0,0,0,0.18), 0 4px 16px rgba(0,0,0,0.08)",
         zIndex: 9998,
         animation: "popUp 0.3s cubic-bezier(0.16,1,0.3,1) both",
-        display: "flex",
-        flexDirection: "column",
-        height: "580px",
+        display: "flex", flexDirection: "column", height: "580px",
       };
 
   return (
     <>
       {isOpen && (
         <>
-          {/* Karakterler — sadece masaüstünde */}
           {!isMobile && char1Visible && getNavAccepted() && (
             <img src="/images/vactor_yasir_1.png" alt="" style={{ position: "fixed", bottom: "90px", right: "52px", width: "200px", height: "auto", pointerEvents: "none", zIndex: char1Above ? 9999 : 9997, animation: "slideUpChar 0.7s cubic-bezier(0.16,1,0.3,1) forwards", filter: "drop-shadow(0 -4px 20px rgba(232,168,124,0.25))" }} />
           )}
@@ -516,7 +507,10 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
           )}
 
           {/* ── Chatbot kutusu ── */}
-          <div style={chatboxStyle}>
+          <div
+            style={chatboxStyle}
+            className={isDimmed ? "chatbox-dimmed" : ""}
+          >
 
             {/* ── Header ── */}
             <div style={{ padding: isMobile ? "16px 16px" : "16px 18px", paddingTop: isMobile ? "calc(env(safe-area-inset-top) + 16px)" : "16px", background: "#fafafa", borderBottom: "1px solid rgba(0,0,0,0.06)", display: "flex", alignItems: "center", gap: "12px", flexShrink: 0 }}>
@@ -531,16 +525,13 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                 <p style={{ margin: "1px 0 0", fontSize: "11.5px", color: "#8e8e93" }}>AI · Usually responds instantly</p>
               </div>
               <div style={{ display: "flex", gap: "6px" }}>
-
                 {((!isEmpty && answeredVisible) || navEnabled) && (
-                  <button
-                    onClick={handleToggleActionMode}
+                  <button onClick={handleToggleActionMode}
                     style={{ background: "none", border: "none", borderRadius: "8px", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: navEnabled ? ACCENT : "#8e8e93", transition: "all 0.15s", marginRight: "17px" }}
                     title={navEnabled ? "Disable interaction mode" : "Enable interaction mode"}
                     onMouseEnter={(e) => { e.currentTarget.style.background = "#f0f0f0"; e.currentTarget.style.color = "#1c1c1e"; }}
-                    onMouseLeave={(e) => { e.currentTarget.style.background = navEnabled ? ACCENT_SOFT : "none"; e.currentTarget.style.color = navEnabled ? ACCENT : "#8e8e93"; e.currentTarget.style.border = navEnabled ? `1px solid ${ACCENT_BORDER}` : "1px solid transparent"; }}
-                  >
-                    <svg width="16" height="16" viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    onMouseLeave={(e) => { e.currentTarget.style.background = navEnabled ? ACCENT_SOFT : "none"; e.currentTarget.style.color = navEnabled ? ACCENT : "#8e8e93"; e.currentTarget.style.border = navEnabled ? `1px solid ${ACCENT_BORDER}` : "1px solid transparent"; }}>
+                    <svg width="16" height="16" viewBox="0 0 28 28" fill="none">
                       <circle cx="14" cy="14" r="4.5" fill="currentColor"/><circle cx="14" cy="14" r="2" fill="white"/>
                       <line x1="14" y1="1" x2="14" y2="8.5" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
                       <line x1="14" y1="19.5" x2="14" y2="27" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round"/>
@@ -560,16 +551,15 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                       <circle cx="4" cy="24" r="1.4" fill="currentColor" opacity="0.4"/>
                       <circle cx="14" cy="14" r="19" fill="none" stroke="currentColor" strokeWidth="0.8" strokeOpacity="0.15" strokeDasharray="2 3"/>
                     </svg>
-                    
                   </button>
                 )}
                 {!isEmpty && (
                   <button onClick={clearSession} title="Clear conversation" style={{ background: "none", border: "none", borderRadius: "8px", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#8e8e93", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f0f0f0"; e.currentTarget.style.color = "#1c1c1e"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#8e8e93"; }}>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6" /><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2" /></svg>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14H6L5 6M10 11v6M14 11v6M9 6V4h6v2"/></svg>
                   </button>
                 )}
                 <button onClick={() => setIsOpen(false)} style={{ background: "none", border: "none", borderRadius: "8px", width: 32, height: 32, display: "flex", alignItems: "center", justifyContent: "center", cursor: "pointer", color: "#8e8e93", transition: "all 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.background = "#f0f0f0"; e.currentTarget.style.color = "#1c1c1e"; }} onMouseLeave={(e) => { e.currentTarget.style.background = "none"; e.currentTarget.style.color = "#8e8e93"; }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                 </button>
               </div>
             </div>
@@ -627,7 +617,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                               onMouseLeave={(e) => { const tip = e.currentTarget.querySelector(".skip-tip") as HTMLElement; if (tip) tip.style.opacity = "0"; }}>
                               <div className="skip-tip" style={{ position: "absolute", bottom: "calc(100% + 6px)", left: "50%", transform: "translateX(-50%)", background: "#1c1c1e", color: "white", fontSize: "10.5px", padding: "3px 8px", borderRadius: "6px", whiteSpace: "nowrap", opacity: 0, pointerEvents: "none", transition: "opacity 0.15s ease", zIndex: 10 }}>Hepsini göster</div>
                               <button onClick={() => skipTyping(i, msg.content)} style={{ display: "inline-flex", alignItems: "center", justifyContent: "center", background: ACCENT_SOFT, border: `1px solid ${ACCENT_BORDER}`, borderRadius: "6px", width: "22px", height: "22px", color: "#b5651d", cursor: "pointer", padding: 0 }}>
-                                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3" /></svg>
+                                <svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"/></svg>
                               </button>
                             </div>
                           )}
@@ -640,7 +630,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                           <img src="/images/vactor_yasir.png" alt="Yasir" style={{ objectFit: "cover", transform: "translateY(2px)" }} />
                         </div>
                         <div style={{ padding: "12px 16px", borderRadius: "4px 18px 18px 18px", background: "#f8f8f8", border: "1px solid rgba(0,0,0,0.06)", display: "flex", gap: "5px", alignItems: "center" }}>
-                          {[0, 1, 2].map((i) => <span key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#c8c8cc", display: "block", animation: `aidot 1.4s ${i * 0.2}s ease-in-out infinite` }} />)}
+                          {[0,1,2].map((i) => <span key={i} style={{ width: 7, height: 7, borderRadius: "50%", background: "#c8c8cc", display: "block", animation: `aidot 1.4s ${i*0.2}s ease-in-out infinite` }} />)}
                         </div>
                       </div>
                     )}
@@ -657,13 +647,13 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                     {[{ top: "33%", left: 0, right: 0, height: "1px", transitionDelay: "0.1s" }, { top: "66%", left: 0, right: 0, height: "1px", transitionDelay: "0.2s" }].map((s, i) => <div key={i} style={{ position: "absolute", background: "rgba(232,168,124,0.1)", transform: gridVisible ? "scaleX(1)" : "scaleX(0)", transformOrigin: "left", transition: `transform 0.5s cubic-bezier(0.16,1,0.3,1) ${s.transitionDelay}`, ...s }} />)}
                     {[{ left: "33%", top: 0, bottom: 0, width: "1px", transitionDelay: "0.15s" }, { left: "66%", top: 0, bottom: 0, width: "1px", transitionDelay: "0.25s" }].map((s, i) => <div key={i} style={{ position: "absolute", background: "rgba(232,168,124,0.1)", transform: gridVisible ? "scaleY(1)" : "scaleY(0)", transformOrigin: "top", transition: `transform 0.5s cubic-bezier(0.16,1,0.3,1) ${s.transitionDelay}`, ...s }} />)}
                   </div>
-                  {(["tl", "tr", "bl", "br"] as const).map((pos) => <div key={pos} style={{ position: "absolute", width: 32, height: 32, opacity: cornersVisible ? 1 : 0, transition: "opacity 0.3s ease", ...(pos === "tl" ? { top: 14, left: 14, borderTop: `2px solid ${ACCENT}`, borderLeft: `2px solid ${ACCENT}`, borderRadius: "4px 0 0 0" } : {}), ...(pos === "tr" ? { top: 14, right: 14, borderTop: `2px solid ${ACCENT}`, borderRight: `2px solid ${ACCENT}`, borderRadius: "0 4px 0 0" } : {}), ...(pos === "bl" ? { bottom: 14, left: 14, borderBottom: `2px solid ${ACCENT}`, borderLeft: `2px solid ${ACCENT}`, borderRadius: "0 0 0 4px" } : {}), ...(pos === "br" ? { bottom: 14, right: 14, borderBottom: `2px solid ${ACCENT}`, borderRight: `2px solid ${ACCENT}`, borderRadius: "0 0 4px 0" } : {}) }} />)}
+                  {(["tl","tr","bl","br"] as const).map((pos) => <div key={pos} style={{ position: "absolute", width: 32, height: 32, opacity: cornersVisible ? 1 : 0, transition: "opacity 0.3s ease", ...(pos==="tl"?{top:14,left:14,borderTop:`2px solid ${ACCENT}`,borderLeft:`2px solid ${ACCENT}`,borderRadius:"4px 0 0 0"}:{}), ...(pos==="tr"?{top:14,right:14,borderTop:`2px solid ${ACCENT}`,borderRight:`2px solid ${ACCENT}`,borderRadius:"0 4px 0 0"}:{}), ...(pos==="bl"?{bottom:14,left:14,borderBottom:`2px solid ${ACCENT}`,borderLeft:`2px solid ${ACCENT}`,borderRadius:"0 0 0 4px"}:{}), ...(pos==="br"?{bottom:14,right:14,borderBottom:`2px solid ${ACCENT}`,borderRight:`2px solid ${ACCENT}`,borderRadius:"0 0 4px 0"}:{}) }} />)}
                   <div style={{ background: "rgba(255,255,255,0.99)", borderRadius: 22, border: `1px solid rgba(232,168,124,0.4)`, padding: "28px 24px 22px", width: "100%", maxWidth: 310, textAlign: "center", position: "relative", zIndex: 20, boxShadow: "0 8px 60px rgba(232,168,124,0.22), 0 2px 16px rgba(0,0,0,0.07)", transform: cardShow ? "scale(1) translateY(0)" : "scale(0.7) translateY(40px)", opacity: cardShow ? 1 : 0, transition: "transform 0.6s cubic-bezier(0.16,1,0.3,1), opacity 0.4s ease" }}>
-                    {[{ top: "12px", left: "22px", width: 4, height: 4, delay: "0s" }, { top: "20px", right: "18px", width: 3, height: 3, delay: "0.6s" }, { bottom: "30px", left: "16px", width: 5, height: 5, delay: "1.2s" }, { bottom: "50px", right: "22px", width: 3, height: 3, delay: "0.3s" }].map((s, i) => <div key={i} style={{ position: "absolute", borderRadius: "50%", background: ACCENT, animation: cardShow ? `sparkleAnim 2s ${s.delay} ease-in-out infinite` : "none", opacity: cardShow ? undefined : 0, width: s.width, height: s.height, ...(s as any) }} />)}
-                    <div style={{ width: 90, height: 90, margin: "0 auto 18px", position: "relative" }}>
-                      {[{ size: 90, border: `1px solid rgba(232,168,124,0.25)`, anim: "spinRing1 5s linear infinite reverse", delay: "0.4s" }, { size: 110, border: `1px solid rgba(232,168,124,0.18)`, anim: "spinRing1 8s linear infinite", delay: "0.5s" }, { size: 130, border: `1px dashed rgba(232,168,124,0.1)`, anim: "spinRing2 14s linear infinite", delay: "0.7s" }].map((r, i) => <div key={i} style={{ position: "absolute", borderRadius: "50%", border: r.border, width: r.size, height: r.size, top: "50%", left: "50%", transform: "translate(-50%,-50%)", animation: cardShow ? r.anim : "none", opacity: cardShow ? 1 : 0, transition: `opacity 0.5s ease ${r.delay}` }} />)}
-                      <div style={{ position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", animation: cardShow ? "gemFloat 3s ease-in-out infinite" : "none", filter: "drop-shadow(0 4px 12px rgba(232,168,124,0.5))", opacity: cardShow ? 1 : 0, transition: "opacity 0.4s ease 0.9s" }}>
-                        <svg width="56" height="52" viewBox="0 0 56 52" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    {[{top:"12px",left:"22px",width:4,height:4,delay:"0s"},{top:"20px",right:"18px",width:3,height:3,delay:"0.6s"},{bottom:"30px",left:"16px",width:5,height:5,delay:"1.2s"},{bottom:"50px",right:"22px",width:3,height:3,delay:"0.3s"}].map((s,i) => <div key={i} style={{ position:"absolute", borderRadius:"50%", background:ACCENT, animation:cardShow?`sparkleAnim 2s ${s.delay} ease-in-out infinite`:"none", opacity:cardShow?undefined:0, width:s.width, height:s.height, ...(s as any) }} />)}
+                    <div style={{ width:90, height:90, margin:"0 auto 18px", position:"relative" }}>
+                      {[{size:90,border:`1px solid rgba(232,168,124,0.25)`,anim:"spinRing1 5s linear infinite reverse",delay:"0.4s"},{size:110,border:`1px solid rgba(232,168,124,0.18)`,anim:"spinRing1 8s linear infinite",delay:"0.5s"},{size:130,border:`1px dashed rgba(232,168,124,0.1)`,anim:"spinRing2 14s linear infinite",delay:"0.7s"}].map((r,i) => <div key={i} style={{ position:"absolute", borderRadius:"50%", border:r.border, width:r.size, height:r.size, top:"50%", left:"50%", transform:"translate(-50%,-50%)", animation:cardShow?r.anim:"none", opacity:cardShow?1:0, transition:`opacity 0.5s ease ${r.delay}` }} />)}
+                      <div style={{ position:"absolute", top:"50%", left:"50%", transform:"translate(-50%,-50%)", animation:cardShow?"gemFloat 3s ease-in-out infinite":"none", filter:"drop-shadow(0 4px 12px rgba(232,168,124,0.5))", opacity:cardShow?1:0, transition:"opacity 0.4s ease 0.9s" }}>
+                        <svg width="56" height="52" viewBox="0 0 56 52" fill="none">
                           <polygon points="28,0 56,18 44,52 12,52 0,18" fill="#f5d4b0" stroke="#e8a87c" strokeWidth="1"/>
                           <polygon points="28,0 56,18 28,10" fill="#f0c090"/><polygon points="28,0 0,18 28,10" fill="#f8e0c0"/>
                           <polygon points="56,18 44,52 28,10" fill="#e8a87c"/><polygon points="0,18 12,52 28,10" fill="#f5c898"/>
@@ -675,25 +665,25 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                         </svg>
                       </div>
                     </div>
-                    <div style={{ display: "inline-flex", alignItems: "center", gap: 6, background: ACCENT_SOFT, border: `1px solid ${ACCENT_BORDER}`, borderRadius: 999, padding: "3px 12px 3px 9px", marginBottom: 14, opacity: cardShow ? 1 : 0, transform: cardShow ? "translateY(0)" : "translateY(6px)", transition: "opacity 0.4s ease 1.1s, transform 0.4s ease 1.1s" }}>
-                      <div style={{ position: "relative", width: 6, height: 6, borderRadius: "50%", background: ACCENT }}>
-                        <span style={{ position: "absolute", inset: "-3px", borderRadius: "50%", background: "rgba(232,168,124,0.4)", animation: "ping 2s ease-in-out infinite" }} />
+                    <div style={{ display:"inline-flex", alignItems:"center", gap:6, background:ACCENT_SOFT, border:`1px solid ${ACCENT_BORDER}`, borderRadius:999, padding:"3px 12px 3px 9px", marginBottom:14, opacity:cardShow?1:0, transform:cardShow?"translateY(0)":"translateY(6px)", transition:"opacity 0.4s ease 1.1s, transform 0.4s ease 1.1s" }}>
+                      <div style={{ position:"relative", width:6, height:6, borderRadius:"50%", background:ACCENT }}>
+                        <span style={{ position:"absolute", inset:"-3px", borderRadius:"50%", background:"rgba(232,168,124,0.4)", animation:"ping 2s ease-in-out infinite" }} />
                       </div>
-                      <span style={{ fontSize: 9.5, fontWeight: 700, letterSpacing: "1.5px", color: "#b5651d", textTransform: "uppercase" as const }}>Suggested</span>
+                      <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:"1.5px", color:"#b5651d", textTransform:"uppercase" as const }}>Suggested</span>
                     </div>
-                    <p style={{ fontSize: 20, fontWeight: 800, color: "#1c1c1e", letterSpacing: "-0.5px", margin: "0 0 5px", opacity: cardShow ? 1 : 0, transform: cardShow ? "translateY(0)" : "translateY(8px)", transition: "opacity 0.4s ease 1.2s, transform 0.4s ease 1.2s" }}>{actionCard.title}</p>
-                    <p style={{ fontSize: 12, color: "#8e8e93", lineHeight: 1.5, margin: "0 0 20px", padding: "0 8px", opacity: cardShow ? 1 : 0, transform: cardShow ? "translateY(0)" : "translateY(8px)", transition: "opacity 0.4s ease 1.3s, transform 0.4s ease 1.3s" }}>{actionCard.subtitle}</p>
-                    <button onClick={() => handleActionClick(actionCard)} style={{ width: "100%", height: 48, padding: "0 18px", borderRadius: 14, border: `1.5px solid rgba(232,168,124,0.7)`, background: "transparent", color: "#c07340", fontSize: 13, fontWeight: 700, letterSpacing: "0.4px", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "space-between", position: "relative", overflow: "hidden", opacity: cardShow ? 1 : 0, transform: cardShow ? "translateY(0)" : "translateY(10px)", transition: "opacity 0.4s ease 1.4s, transform 0.4s ease 1.4s, border-color 0.2s, color 0.2s, background 0.2s", fontFamily: "inherit" }}
-                      onMouseEnter={(e) => { Object.assign(e.currentTarget.style, { borderColor: "#e8a87c", background: "rgba(232,168,124,0.08)", color: "#b5651d" }); const track = e.currentTarget.querySelector(".arrow-track") as HTMLElement; const icon = e.currentTarget.querySelector(".arrow-icon") as HTMLElement; if (track) track.style.opacity = "1"; if (icon) icon.style.transform = "translateX(4px)"; }}
-                      onMouseLeave={(e) => { Object.assign(e.currentTarget.style, { borderColor: "rgba(232,168,124,0.7)", background: "transparent", color: "#c07340" }); const track = e.currentTarget.querySelector(".arrow-track") as HTMLElement; const icon = e.currentTarget.querySelector(".arrow-icon") as HTMLElement; if (track) track.style.opacity = "0"; if (icon) icon.style.transform = "translateX(0)"; }}>
-                      <span style={{ position: "relative", zIndex: 1 }}>{actionCard.buttonLabel}</span>
-                      <span style={{ display: "flex", alignItems: "center", gap: 0, position: "relative", zIndex: 1 }}>
-                        <span className="arrow-track" style={{ width: 24, height: 1, background: `linear-gradient(90deg, transparent, ${ACCENT})`, opacity: 0, transition: "opacity 0.25s ease" }} />
-                        <svg className="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft: 4, transition: "transform 0.25s cubic-bezier(0.16,1,0.3,1)" }}><line x1="5" y1="12" x2="19" y2="12" /><polyline points="12 5 19 12 12 19" /></svg>
+                    <p style={{ fontSize:20, fontWeight:800, color:"#1c1c1e", letterSpacing:"-0.5px", margin:"0 0 5px", opacity:cardShow?1:0, transform:cardShow?"translateY(0)":"translateY(8px)", transition:"opacity 0.4s ease 1.2s, transform 0.4s ease 1.2s" }}>{actionCard.title}</p>
+                    <p style={{ fontSize:12, color:"#8e8e93", lineHeight:1.5, margin:"0 0 20px", padding:"0 8px", opacity:cardShow?1:0, transform:cardShow?"translateY(0)":"translateY(8px)", transition:"opacity 0.4s ease 1.3s, transform 0.4s ease 1.3s" }}>{actionCard.subtitle}</p>
+                    <button onClick={() => handleActionClick(actionCard)} style={{ width:"100%", height:48, padding:"0 18px", borderRadius:14, border:`1.5px solid rgba(232,168,124,0.7)`, background:"transparent", color:"#c07340", fontSize:13, fontWeight:700, letterSpacing:"0.4px", cursor:"pointer", display:"flex", alignItems:"center", justifyContent:"space-between", position:"relative", overflow:"hidden", opacity:cardShow?1:0, transform:cardShow?"translateY(0)":"translateY(10px)", transition:"opacity 0.4s ease 1.4s, transform 0.4s ease 1.4s, border-color 0.2s, color 0.2s, background 0.2s", fontFamily:"inherit" }}
+                      onMouseEnter={(e) => { Object.assign(e.currentTarget.style,{borderColor:"#e8a87c",background:"rgba(232,168,124,0.08)",color:"#b5651d"}); const t=e.currentTarget.querySelector(".arrow-track") as HTMLElement; const ic=e.currentTarget.querySelector(".arrow-icon") as HTMLElement; if(t)t.style.opacity="1"; if(ic)ic.style.transform="translateX(4px)"; }}
+                      onMouseLeave={(e) => { Object.assign(e.currentTarget.style,{borderColor:"rgba(232,168,124,0.7)",background:"transparent",color:"#c07340"}); const t=e.currentTarget.querySelector(".arrow-track") as HTMLElement; const ic=e.currentTarget.querySelector(".arrow-icon") as HTMLElement; if(t)t.style.opacity="0"; if(ic)ic.style.transform="translateX(0)"; }}>
+                      <span style={{ position:"relative", zIndex:1 }}>{actionCard.buttonLabel}</span>
+                      <span style={{ display:"flex", alignItems:"center", gap:0, position:"relative", zIndex:1 }}>
+                        <span className="arrow-track" style={{ width:24, height:1, background:`linear-gradient(90deg, transparent, ${ACCENT})`, opacity:0, transition:"opacity 0.25s ease" }} />
+                        <svg className="arrow-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ marginLeft:4, transition:"transform 0.25s cubic-bezier(0.16,1,0.3,1)" }}><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
                       </span>
-                      <span style={{ position: "absolute", top: 0, left: "-80%", width: "60%", height: "100%", background: "linear-gradient(90deg, transparent, rgba(232,168,124,0.15), transparent)", animation: "shimBtn 3s ease-in-out infinite", pointerEvents: "none" }} />
+                      <span style={{ position:"absolute", top:0, left:"-80%", width:"60%", height:"100%", background:"linear-gradient(90deg, transparent, rgba(232,168,124,0.15), transparent)", animation:"shimBtn 3s ease-in-out infinite", pointerEvents:"none" }} />
                     </button>
-                    <button onClick={handleNoActionClick} style={{ marginTop: 11, background: "none", border: "none", fontSize: 11.5, color: "#aeaeb2", cursor: "pointer", padding: "4px 8px", borderRadius: 6, width: "100%", fontFamily: "inherit", opacity: cardShow ? 1 : 0, transition: "opacity 0.4s ease 1.5s, color 0.15s" }} onMouseEnter={(e) => { e.currentTarget.style.color = "#8e8e93"; }} onMouseLeave={(e) => { e.currentTarget.style.color = "#aeaeb2"; }}>Continue chatting</button>
+                    <button onClick={handleNoActionClick} style={{ marginTop:11, background:"none", border:"none", fontSize:11.5, color:"#aeaeb2", cursor:"pointer", padding:"4px 8px", borderRadius:6, width:"100%", fontFamily:"inherit", opacity:cardShow?1:0, transition:"opacity 0.4s ease 1.5s, color 0.15s" }} onMouseEnter={(e)=>{e.currentTarget.style.color="#8e8e93";}} onMouseLeave={(e)=>{e.currentTarget.style.color="#aeaeb2";}}>Continue chatting</button>
                   </div>
                 </div>
               )}
@@ -708,61 +698,92 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   onKeyDown={(e) => { if (e.key === "Enter" && !e.shiftKey) { e.preventDefault(); sendMessage(); } }}
-                  onFocus={(e) => { e.currentTarget.parentElement!.style.borderColor = ACCENT; }}
+                  // ── YENİ: input'a dokunulunca kararma kalkar ──
+                  onFocus={() => { if (isDimmed) setIsDimmed(false); }}
                   onBlur={(e) => { e.currentTarget.parentElement!.style.borderColor = "rgba(0,0,0,0.1)"; }}
-                  placeholder="Ask something about Yasir..."
+                  placeholder={isDimmed ? "Tap here to continue chatting..." : "Ask something about Yasir..."}
                   style={{ flex: 1, background: "none", border: "none", outline: "none", color: "#1c1c1e", fontSize: "13.5px", caretColor: ACCENT }}
                 />
                 <button onClick={() => sendMessage()} disabled={!input.trim() || loading} style={{ width: 34, height: 34, flexShrink: 0, borderRadius: "10px", border: "none", background: input.trim() && !loading ? `linear-gradient(135deg, ${ACCENT} 0%, #d4956a 100%)` : "#efefef", display: "flex", alignItems: "center", justifyContent: "center", cursor: input.trim() && !loading ? "pointer" : "default", transition: "all 0.15s ease", boxShadow: input.trim() && !loading ? "0 2px 8px rgba(232,168,124,0.4)" : "none" }}>
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={input.trim() && !loading ? "white" : "#aaa"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5" /><polyline points="5 12 12 5 19 12" /></svg>
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={input.trim() && !loading ? "white" : "#aaa"} strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
                 </button>
               </div>
               <p style={{ margin: "8px 0 0", textAlign: "center", fontSize: "10.5px", color: "#aeaeb2", letterSpacing: "0.2px" }}>⚡ First response may take ~30s to wake up</p>
             </div>
           </div>
+
+          {/* ── MOBİL: kararma overlay (swipe → kapat, tap → kapat, input → aydınlan) ── */}
+          {isMobile && isDimmed && (
+            <div
+              style={{
+                position: "fixed", inset: 0, zIndex: 9999,
+                // Tamamen transparan — sadece dokunma olaylarını yakalar
+                background: "transparent",
+              }}
+              onTouchStart={(e) => {
+                dimTouchStartX.current = e.touches[0].clientX;
+                dimTouchStartY.current = e.touches[0].clientY;
+              }}
+              onTouchEnd={(e) => {
+                const dx = Math.abs(e.changedTouches[0].clientX - dimTouchStartX.current);
+                const dy = Math.abs(e.changedTouches[0].clientY - dimTouchStartY.current);
+                const moved = dx > 8 || dy > 8;
+                if (moved) {
+                  // Swipe → chatbot'u kapat, sayfa scroll'una bırak
+                  setIsOpen(false);
+                } else {
+                  // Tap → sadece aydınlan, chatbot devam etsin
+                  setIsDimmed(false);
+                  setTimeout(() => inputRef.current?.focus(), 100);
+                }
+              }}
+            />
+          )}
         </>
       )}
+
       {/* ── FAB ── */}
-      {!(isMobile && isOpen) &&
-       (<div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
-        {!isOpen && (
-          <div style={{ position: "absolute", bottom: "70px", right: 0, pointerEvents: "none", animation: "fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both" }}>
-            <div style={{ background: "white", borderRadius: "12px", padding: "7px 14px", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", border: "1px solid rgba(0,0,0,0.06)", whiteSpace: "nowrap" }}>
-              <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "#1c1c1e" }}>✦ Ask AI about Yasir </p>
-            </div>
-            <div style={{ position: "absolute", bottom: -5, right: 20, width: 10, height: 10, background: "white", border: "1px solid rgba(0,0,0,0.06)", borderTop: "none", borderLeft: "none", transform: "rotate(45deg)" }} />
-          </div>
-        )}
-        <div style={{ position: "relative", width: "56px", height: "56px" }}>
+      {!(isMobile && isOpen) && (
+        <div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
           {!isOpen && (
-            <>
-              <div style={{ position: "absolute", inset: "-10px", borderRadius: "50%", background: ACCENT, opacity: 0.15, animation: "pulse 2.5s ease-out infinite" }} />
-              <div style={{ position: "absolute", inset: "-5px", borderRadius: "50%", background: ACCENT, opacity: 0.12, animation: "pulse 2.5s ease-out infinite 0.6s" }} />
-            </>
+            <div style={{ position: "absolute", bottom: "70px", right: 0, pointerEvents: "none", animation: "fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both" }}>
+              <div style={{ background: "white", borderRadius: "12px", padding: "7px 14px", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", border: "1px solid rgba(0,0,0,0.06)", whiteSpace: "nowrap" }}>
+                <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "#1c1c1e" }}>✦ Ask AI about Yasir </p>
+              </div>
+              <div style={{ position: "absolute", bottom: -5, right: 20, width: 10, height: 10, background: "white", border: "1px solid rgba(0,0,0,0.06)", borderTop: "none", borderLeft: "none", transform: "rotate(45deg)" }} />
+            </div>
           )}
-          <button
-            onClick={() => setIsOpen(!isOpen)}
-            style={{ position: "absolute", inset: 0, borderRadius: "50%", background: `linear-gradient(135deg, ${ACCENT} 0%, #d4956a 100%)`, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.2s ease, box-shadow 0.2s ease", boxShadow: "0 4px 20px rgba(232,168,124,0.45)" }}
-            onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.08)"; }}
-            onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
-          >
-            {isOpen ? (
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-            ) : (
-              <svg width="28" height="28" viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <line x1="11" y1="1" x2="11" y2="4" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
-                <circle cx="11" cy="0.8" r="1.1" fill="white"/>
-                <rect x="3" y="4" width="16" height="12" rx="3" fill="white" fillOpacity="0.9"/>
-                <circle cx="8" cy="9" r="1.8" fill="#d4956a"/><circle cx="14" cy="9" r="1.8" fill="#d4956a"/>
-                <circle cx="8.5" cy="9.4" r="0.8" fill="white"/><circle cx="14.5" cy="9.4" r="0.8" fill="white"/>
-                <path d="M7.5 12 Q11 13.8 14.5 12" stroke="#d4956a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
-                <rect x="1" y="7.5" width="2" height="3.5" rx="1" fill="white" fillOpacity="0.9"/>
-                <rect x="19" y="7.5" width="2" height="3.5" rx="1" fill="white" fillOpacity="0.9"/>
-              </svg>
+          <div style={{ position: "relative", width: "56px", height: "56px" }}>
+            {!isOpen && (
+              <>
+                <div style={{ position: "absolute", inset: "-10px", borderRadius: "50%", background: ACCENT, opacity: 0.15, animation: "pulse 2.5s ease-out infinite" }} />
+                <div style={{ position: "absolute", inset: "-5px", borderRadius: "50%", background: ACCENT, opacity: 0.12, animation: "pulse 2.5s ease-out infinite 0.6s" }} />
+              </>
             )}
-          </button>
+            <button
+              onClick={() => setIsOpen(!isOpen)}
+              style={{ position: "absolute", inset: 0, borderRadius: "50%", background: `linear-gradient(135deg, ${ACCENT} 0%, #d4956a 100%)`, border: "none", cursor: "pointer", display: "flex", alignItems: "center", justifyContent: "center", transition: "transform 0.2s ease, box-shadow 0.2s ease", boxShadow: "0 4px 20px rgba(232,168,124,0.45)" }}
+              onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1.08)"; }}
+              onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.transform = "scale(1)"; }}
+            >
+              {isOpen ? (
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+              ) : (
+                <svg width="28" height="28" viewBox="0 0 22 22" fill="none">
+                  <line x1="11" y1="1" x2="11" y2="4" stroke="white" strokeWidth="1.4" strokeLinecap="round"/>
+                  <circle cx="11" cy="0.8" r="1.1" fill="white"/>
+                  <rect x="3" y="4" width="16" height="12" rx="3" fill="white" fillOpacity="0.9"/>
+                  <circle cx="8" cy="9" r="1.8" fill="#d4956a"/><circle cx="14" cy="9" r="1.8" fill="#d4956a"/>
+                  <circle cx="8.5" cy="9.4" r="0.8" fill="white"/><circle cx="14.5" cy="9.4" r="0.8" fill="white"/>
+                  <path d="M7.5 12 Q11 13.8 14.5 12" stroke="#d4956a" strokeWidth="1.2" fill="none" strokeLinecap="round"/>
+                  <rect x="1" y="7.5" width="2" height="3.5" rx="1" fill="white" fillOpacity="0.9"/>
+                  <rect x="19" y="7.5" width="2" height="3.5" rx="1" fill="white" fillOpacity="0.9"/>
+                </svg>
+              )}
+            </button>
+          </div>
         </div>
-      </div>)}
+      )}
 
       <style>{`
         @keyframes popUp { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }

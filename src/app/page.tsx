@@ -36,7 +36,6 @@ export default function Home() {
         <ContactForm />
       </main>
       <Footer />
-      <ChatBot isOpen={chatOpen} setIsOpen={setChatOpen} />
     </div>
   );
 }
