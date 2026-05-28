@@ -2,6 +2,7 @@
 
 import { useState, useRef, useEffect, useCallback } from "react";
 import ReactMarkdown from "react-markdown";
+import useWidth from '../../../hooks/useWidth';
 
 interface ChatBotProps {
   isOpen: boolean;
@@ -721,13 +722,13 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
           </div>
         </>
       )}
-
       {/* ── FAB ── */}
-      <div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
-        {isOpen === false && (
+      {!(isMobile && isOpen) &&
+       (<div style={{ position: "fixed", bottom: "28px", right: "28px", zIndex: 9999 }}>
+        {!isOpen && (
           <div style={{ position: "absolute", bottom: "70px", right: 0, pointerEvents: "none", animation: "fadeUp 0.4s cubic-bezier(0.16,1,0.3,1) both" }}>
             <div style={{ background: "white", borderRadius: "12px", padding: "7px 14px", boxShadow: "0 4px 20px rgba(0,0,0,0.12)", border: "1px solid rgba(0,0,0,0.06)", whiteSpace: "nowrap" }}>
-              <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "#1c1c1e" }}>✦ Ask AI about Yasir</p>
+              <p style={{ margin: 0, fontSize: "12.5px", fontWeight: 600, color: "#1c1c1e" }}>✦ Ask AI about Yasir </p>
             </div>
             <div style={{ position: "absolute", bottom: -5, right: 20, width: 10, height: 10, background: "white", border: "1px solid rgba(0,0,0,0.06)", borderTop: "none", borderLeft: "none", transform: "rotate(45deg)" }} />
           </div>
@@ -761,7 +762,7 @@ const ChatBot = ({ isOpen, setIsOpen }: ChatBotProps) => {
             )}
           </button>
         </div>
-      </div>
+      </div>)}
 
       <style>{`
         @keyframes popUp { from { opacity: 0; transform: scale(0.94) translateY(12px); } to { opacity: 1; transform: scale(1) translateY(0); } }

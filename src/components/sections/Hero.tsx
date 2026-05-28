@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Download, Linkedin, Github, Instagram } from "lucide-react";
 import Languages from "@/components/sections/Languages";
-import ChatBot from "@/components/sections/ChatBot"; // ← ekle, yolu ayarla
 import useWidth from "../../../hooks/useWidth";
 import images from "../../../constants/images";
 import Image from "next/image"
@@ -39,10 +38,8 @@ const socialLinks: SocialLink[] = [
 const Hero = () => {
   const w = useWidth();
   // ← Hook'lar return'den ÖNCE
-  const [hovered, setHovered] = useState<boolean>(false);
+  const [hovered, setHovered] = useState(false);
   const [hoveredSocial, setHoveredSocial] = useState<string | null>(null);
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatOpen, setChatOpen]           = useState(false); 
   
   // w null ise henüz mount olmamış, hiçbir şey render etme
   if (w === null) return null;
@@ -51,6 +48,7 @@ const Hero = () => {
 
   const isMobile = w < 768;
   const isTablet = w >= 768 && w < 1024;
+
 
 
   return (
@@ -254,9 +252,6 @@ const Hero = () => {
       </div>
 
       <Languages />
-
-      {/* ChatBot — sağ alt köşeye sabit */}
-      <ChatBot isOpen={chatOpen} setIsOpen={setChatOpen} /> 
     </section>
   );
 };

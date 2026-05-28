@@ -25,6 +25,7 @@ export default function Home() {
       <Navbar onAskAI={() => setChatOpen(true)}/>
       <main>
         <Hero />
+        <ChatBot isOpen={chatOpen} setIsOpen={setChatOpen} /> 
         <Education />
         <FeaturedProjects />
         <Experience />
