@@ -164,8 +164,15 @@ const Hero = () => {
             >
               {/* CV Butonu */}
               <button
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.href = "/docs/yasir-cv.pdf";  // public klasöründeki dosya yolu
+                  link.download = "Yasir_CV.pdf";     // indirilen dosyanın adı
+                  link.click();
+                }}
                 onMouseEnter={() => setHovered(true)}
                 onMouseLeave={() => setHovered(false)}
+                
                 className="relative overflow-hidden flex items-center gap-2"
                 style={{
                   background: "#f6c7b2",
